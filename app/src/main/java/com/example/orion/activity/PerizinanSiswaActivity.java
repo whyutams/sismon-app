@@ -446,4 +446,11 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
         for (int i = 0; i < total; i++) addFilteredItem(dataList.get(i), i, total);
         ll_notfound.setVisibility(View.GONE);
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_none, R.anim.activity_exit);
+    }
+
 }
