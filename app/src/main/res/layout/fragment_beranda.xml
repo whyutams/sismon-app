@@ -1,0 +1,816 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.BerandaFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="175dp"
+                android:background="@drawable/hero_beranda">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="32dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="8dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/imgProfile"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center"
+                            android:scaleType="centerCrop"
+                            app:contentPadding="-5dp"
+                            app:shapeAppearanceOverlay="@style/CircleImage"
+                            tools:src="@drawable/ic_account_circle_24"
+                            app:tint="@color/white" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="Rezaldy S. Umar, S.Pd." />
+
+                        <TextView
+                            android:id="@+id/user_jurusan_alias"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            tools:text="Guru RPL" />
+
+                        <TextView
+                            android:id="@+id/user_jurusan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="10sp"
+                            tools:text="Rekayasa Perangkat Lunak" />
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:translationY="-100dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_outline"
+                    android:elevation="8dp"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="16dp"
+                    android:paddingVertical="8dp">
+
+                    <LinearLayout
+                        android:id="@+id/ll_count"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+
+                        <LinearLayout
+                            android:id="@+id/ll_count1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/count1_num"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="0"
+                                android:textColor="@color/primary"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                tools:text="99" />
+
+                            <TextView
+                                android:id="@+id/count1_ket"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:textAlignment="center"
+                                android:textColor="@color/text"
+                                android:textSize="10sp"
+                                tools:text="Keterangan" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/count_div1"
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginVertical="32dp"
+                            android:background="@color/skeleton"
+                            android:orientation="vertical" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_count2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/count2_num"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="0"
+                                android:textColor="@color/primary"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                tools:text="99" />
+
+                            <TextView
+                                android:id="@+id/count2_ket"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:textAlignment="center"
+                                android:textColor="@color/text"
+                                android:textSize="10sp"
+                                tools:text="Keterangan" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/count_div2"
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginVertical="32dp"
+                            android:background="@color/skeleton"
+                            android:orientation="vertical" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_count3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/count3_num"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="0"
+                                android:textColor="@color/primary"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                tools:text="99" />
+
+                            <TextView
+                                android:id="@+id/count3_ket"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:textAlignment="center"
+                                android:textColor="@color/text"
+                                android:textSize="10sp"
+                                tools:text="Keterangan" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/count_div3"
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginVertical="32dp"
+                            android:background="@color/skeleton"
+                            android:orientation="vertical" />
+
+                        <LinearLayout
+                            android:id="@+id/ll_count4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <TextView
+                                android:id="@+id/count4_num"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:text="0"
+                                android:textColor="@color/primary"
+                                android:textSize="28sp"
+                                android:textStyle="bold"
+                                tools:text="99" />
+
+                            <TextView
+                                android:id="@+id/count4_ket"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:textAlignment="center"
+                                android:textColor="@color/text"
+                                android:textSize="10sp"
+                                tools:text="Keterangan" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        tools:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <View
+                                    android:layout_width="60dp"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:layout_marginTop="8dp"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"  />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginHorizontal="4dp"
+                                android:layout_marginVertical="28dp"
+                                android:background="@color/gray"
+                                android:orientation="vertical" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <View
+                                    android:layout_width="60dp"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"  />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:layout_marginTop="8dp"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"  />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginHorizontal="4dp"
+                                android:layout_marginVertical="28dp"
+                                android:background="@color/gray"
+                                android:orientation="vertical" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <View
+                                    android:layout_width="60dp"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"  />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="30dp"
+                                    android:layout_gravity="center"
+                                    android:layout_marginTop="8dp"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"  />
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginHorizontal="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Menu"
+                        android:textColor="@color/text"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_menu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/ll_menu1"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_outline"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <ImageView
+                                    android:id="@+id/menu1_icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:scaleType="centerCrop"
+                                    android:layout_gravity="center_horizontal"
+                                    tools:src="@drawable/ic_exit_to_app_24"
+                                    android:tintMode="src_in"
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/menu1_ket"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="14sp"
+                                    tools:text="Keterangan" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="15dp"
+                                android:layout_height="wrap_content" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_menu2"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_outline"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <ImageView
+                                    android:id="@+id/menu2_icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:scaleType="centerCrop"
+                                    android:layout_gravity="center_horizontal"
+                                    tools:src="@drawable/ic_access_time_24"
+                                    android:tintMode="src_in"
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/menu2_ket"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="14sp"
+                                    tools:text="Keterangan" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/ll_menu3"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_outline"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <ImageView
+                                    android:id="@+id/menu3_icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center_horizontal"
+                                    android:scaleType="centerCrop"
+                                    tools:src="@drawable/ic_school_24"
+                                    android:tintMode="src_in"
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/menu3_ket"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="14sp"
+                                    tools:text="Keterangan" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="15dp"
+                                android:layout_height="wrap_content" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_menu4"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_outline"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <ImageView
+                                    android:id="@+id/menu4_icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center_horizontal"
+                                    tools:src="@drawable/ic_access_time_24"
+                                    android:scaleType="centerCrop"
+                                    android:tintMode="src_in"
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/menu4_ket"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="14sp"
+                                    tools:text="Keterangan" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/ll_menu5"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_outline"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <ImageView
+                                    android:id="@+id/menu5_icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center_horizontal"
+                                    tools:src="@drawable/ic_school_24"
+                                    android:tintMode="src_in"
+                                    android:scaleType="centerCrop"
+
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/menu5_ket"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="14sp"
+                                    tools:text="Keterangan" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="15dp"
+                                android:layout_height="wrap_content" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_menu6"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_outline"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <ImageView
+                                    android:id="@+id/menu6_icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center_horizontal"
+                                    android:scaleType="centerCrop"
+                                    tools:src="@drawable/ic_access_time_24"
+                                    android:tintMode="src_in"
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/menu6_ket"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="14sp"
+                                    tools:text="Keterangan" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:id="@+id/ll_menu7"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_outline"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <ImageView
+                                    android:id="@+id/menu7_icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center_horizontal"
+                                    tools:src="@drawable/ic_school_24"
+                                    android:tintMode="src_in"
+                                    android:scaleType="centerCrop"
+
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/menu7_ket"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="14sp"
+                                    tools:text="Keterangan" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="15dp"
+                                android:layout_height="wrap_content" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_menu8"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:layout_weight="1"
+                                android:background="@drawable/rounded_outline"
+                                android:orientation="vertical"
+                                android:padding="16dp">
+
+                                <ImageView
+                                    android:id="@+id/menu8_icon"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center_horizontal"
+                                    android:scaleType="centerCrop"
+                                    tools:src="@drawable/ic_access_time_24"
+                                    android:tintMode="src_in"
+                                    app:tint="@color/primary" />
+
+                                <TextView
+                                    android:id="@+id/menu8_ket"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="4dp"
+                                    android:textAlignment="center"
+                                    android:textColor="@color/text"
+                                    android:textSize="14sp"
+                                    tools:text="Keterangan" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/shimmer2"
+                        tools:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="110dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"
+                                    android:orientation="vertical"
+                                    android:padding="16dp"/>
+
+                                <LinearLayout
+                                    android:layout_width="15dp"
+                                    android:layout_height="wrap_content" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="110dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"
+                                    android:orientation="vertical"
+                                    android:padding="16dp"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="110dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"
+                                    android:orientation="vertical"
+                                    android:padding="16dp"/>
+
+                                <LinearLayout
+                                    android:layout_width="15dp"
+                                    android:layout_height="wrap_content" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="110dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"
+                                    android:orientation="vertical"
+                                    android:padding="16dp"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="110dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"
+                                    android:orientation="vertical"
+                                    android:padding="16dp"/>
+
+                                <LinearLayout
+                                    android:layout_width="15dp"
+                                    android:layout_height="wrap_content" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="110dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"
+                                    android:orientation="vertical"
+                                    android:padding="16dp"/>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="110dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"
+                                    android:orientation="vertical"
+                                    android:padding="16dp"/>
+
+                                <LinearLayout
+                                    android:layout_width="15dp"
+                                    android:layout_height="wrap_content" />
+
+                                <View
+                                    android:layout_width="match_parent"
+                                    android:layout_height="110dp"
+                                    android:layout_weight="1"
+                                    android:background="@drawable/rounded_solid"
+                                    android:backgroundTint="@color/skeleton"
+                                    android:orientation="vertical"
+                                    android:padding="16dp"/>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

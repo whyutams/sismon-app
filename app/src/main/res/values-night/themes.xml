@@ -1,0 +1,46 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme -->
+    <style name="Theme.OrionAPP" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+
+        <!-- Background and surface -->
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/text</item>
+
+        <!-- Secondary color (opsional, gunakan variasi primary yang lebih muda) -->
+        <item name="colorSecondary">@color/primary</item>
+        <item name="colorOnSecondary">@color/white</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+
+        <!-- Font -->
+        <item name="fontFamily">@font/inter</item>
+
+        <!-- Matikan Splash -->
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="31">@null</item>
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">@color/white</item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="31">0</item>
+
+        <!-- Customize -->
+        <item name="materialButtonStyle">@style/OrionButton</item>
+        <item name="textInputStyle">@style/OrionTextTitle</item>
+        <item name="android:textColorHighlight">@color/highlight_primary</item>
+
+        <!-- warna error -->
+        <item name="colorError">@color/error</item>
+
+        <item name="searchViewStyle">@style/SearchViewStyle.White</item>
+
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="Base.Theme.OrionAPP" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your dark theme here. -->
+        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    </style>
+</resources>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="OrionButton" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginHorizontal">4px</item>
+        <item name="android:buttonCornerRadius" tools:targetApi="p">12dp</item>
+    </style>
+
+    <style name="OrionTextTitle" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/primary</item>
+        <item name="hintTextColor">@color/primary</item>
+        <item name="boxBackgroundMode">outline</item>
+    </style>
+
+    <style name="CircleImage">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <style name="CustomDatePickerTheme" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorSurface">@color/background</item>
+    </style>
+
+    <style name="SearchViewTheme" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">#80FFFFFF</item>
+        <item name="android:iconTint">@android:color/white</item>
+        <item name="android:buttonTint">@android:color/white</item>
+    </style>
+
+    <style name="SearchViewStyle.White" parent="Widget.AppCompat.SearchView">
+        <!--        <item name="queryBackground">@android:color/transparent</item>-->
+        <item name="searchHintIcon">@drawable/ic_search_24</item>
+        <item name="cursorColor">@color/white</item>
+        <item name="submitBackground">@android:color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:iconTint">@android:color/white</item>
+        <item name="android:buttonTint">@android:color/white</item>
+    </style>
+</resources>
+
