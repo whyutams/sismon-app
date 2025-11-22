@@ -245,6 +245,7 @@ public class BerandaFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(requireContext(), KeterlambatanSiswaActivity.class);
                     startActivity(intent);
+                    requireActivity().overridePendingTransition(R.anim.activity_enter, R.anim.activity_none);;
                 }
             };
             View.OnClickListener clickListener_ll_menu2 = new View.OnClickListener() {
@@ -252,6 +253,7 @@ public class BerandaFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(requireContext(), PerizinanSiswaActivity.class);
                     startActivity(intent);
+                    requireActivity().overridePendingTransition(R.anim.activity_enter, R.anim.activity_none);
                 }
             };
 

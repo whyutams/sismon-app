@@ -476,5 +476,10 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
         ll_notfound.setVisibility(View.GONE);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_none, R.anim.activity_exit);
+    }
 
 }
