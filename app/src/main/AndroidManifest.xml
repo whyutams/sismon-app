@@ -22,65 +22,91 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.TambahJurusanTerdaftarActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi" />
+        <activity
+            android:name=".activity.TambahAkunOrangtuaActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi" />
+        <activity
+            android:name=".activity.TambahAkunGuruActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi" />
+        <activity
+            android:name=".activity.TambahPengaturanKelasActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi" />
+        <activity
+            android:name=".activity.TambahSiswaTerdaftarActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi" />
+        <activity
             android:name=".activity.JurusanTerdaftarActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.PengaturanKelasActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.SiswaTerdaftarActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.AkunGuruActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.AkunOrangtuaActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.DetailPerizinanSiswaActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.TambahPerizinanSiswaActivity"
-            android:exported="false"  android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.PerizinanSiswaActivity"
             android:exported="false"
-            android:theme="@style/Theme.OrionAPP"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            android:theme="@style/Theme.OrionAPP"
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.DetailKeterlambatanSiswaActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.TambahKeterlambatanSiswaActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.KeterlambatanSiswaActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.EditProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.SplashActivity"
             android:exported="true"
