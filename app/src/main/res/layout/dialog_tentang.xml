@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="12dp">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="Tentang Aplikasi" />
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:textSize="16sp"
+        android:lineSpacingExtra="4dp"
+        android:text="SISMON (Sistem Monitoring Siswa) adalah aplikasi untuk membantu sekolah dalam mengelola keterlambatan, perizinan, dan aktivitas keluar-masuk siswa secara real-time.\n\nAplikasi ini bertujuan meningkatkan kedisiplinan dan keamanan sekolah melalui informasi yang cepat dan transparan.\n\nDikembangkan oleh: Tim ORION\nVersi: 1.0.0" />
+
+</LinearLayout>

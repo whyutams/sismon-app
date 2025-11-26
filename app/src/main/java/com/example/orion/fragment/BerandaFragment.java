@@ -26,6 +26,7 @@ import com.example.orion.R;
 import com.example.orion.activity.KeterlambatanSiswaActivity;
 import com.example.orion.activity.LoginActivity;
 import com.example.orion.activity.PerizinanSiswaActivity;
+import com.example.orion.activity.WelcomeActivity;
 import com.example.orion.utils.Helpers;
 import com.example.orion.utils.NetworkUtil;
 import com.example.orion.utils.PreferenceManager;
@@ -40,6 +41,9 @@ import com.google.gson.JsonObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
+
 
 public class BerandaFragment extends Fragment {
 
@@ -176,6 +180,8 @@ public class BerandaFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        PreferenceManager pref = new PreferenceManager(requireContext());
+
         if (getActivity() != null) {
             Window window = getActivity().getWindow();
             window.getDecorView().setSystemUiVisibility(
@@ -195,7 +201,7 @@ public class BerandaFragment extends Fragment {
                 int navBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
 
                 ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
-                p.topMargin = statusBarHeight+360;
+                p.topMargin = statusBarHeight + 360;
                 toolbar.setLayoutParams(p);
                 toolbar.requestLayout();
 
@@ -206,13 +212,24 @@ public class BerandaFragment extends Fragment {
                 return insets;
             });
 
+
             toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.nav_about) {
-                    Toast.makeText(requireContext(), "Menu About Diklik!", Toast.LENGTH_SHORT).show();
+                    showDialogTentang();
                     return true;
+                } else if (item.getItemId() == R.id.nav_logout) {
+                    Helpers.showConfirm(requireActivity(), "Konfirmasi", "Apakah Anda yakin ingin keluar?", (dialogInterface, i) -> {
+                        Intent intent = new Intent(requireContext(), WelcomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        pref.clear();
+                        startActivity(intent);
+                        Helpers.overridePendingTransition_Enter_v1(requireActivity());
+                        requireActivity().finish();
+                    });
                 }
                 return false;
             });
+
         }
 
         if (appBarLayout != null) {
@@ -252,7 +269,6 @@ public class BerandaFragment extends Fragment {
             });
         }
     }
-
     public void refreshUserData() {
         PreferenceManager pref = new PreferenceManager(requireContext());
         JsonObject user = pref.getUserData();
@@ -496,4 +512,12 @@ public class BerandaFragment extends Fragment {
             ((TextView) child1).setText(title);
         }
     }
+
+    private void showDialogTentang () {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.dialog_tentang);
+        dialog.setCancelable(true);
+        dialog.show();
+    }
+
 }

@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/nav_update"
+        android:title="Pembaruan" />
+
     <item
         android:id="@+id/nav_about"
-        android:title="Tentang"  />
+        android:title="Tentang" />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Keluar" />
 </menu>

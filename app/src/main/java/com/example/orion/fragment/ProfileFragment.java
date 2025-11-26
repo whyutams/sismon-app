@@ -1,5 +1,6 @@
 package com.example.orion.fragment;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
 import com.example.orion.activity.MainActivity;
+import com.example.orion.activity.UbahPasswordActivity;
 import com.example.orion.activity.WelcomeActivity;
 import com.example.orion.utils.Helpers;
 import com.example.orion.utils.PreferenceManager;
@@ -102,8 +104,17 @@ public class ProfileFragment extends Fragment {
         if(toolbar != null) {
             toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.nav_about) {
-                    Toast.makeText(requireContext(), "About di Profil Diklik!", Toast.LENGTH_SHORT).show();
+                    showDialogTentang();
                     return true;
+                }else if (item.getItemId() == R.id.nav_logout) {
+                    Helpers.showConfirm(requireActivity(), "Konfirmasi", "Apakah Anda yakin ingin keluar?", (dialogInterface, i) -> {
+                        Intent intent = new Intent(requireContext(), WelcomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        pref.clear();
+                        startActivity(intent);
+                        Helpers.overridePendingTransition_Enter_v1(requireActivity());
+                        requireActivity().finish();
+                    });
                 }
                 return false;
             });
@@ -125,6 +136,14 @@ public class ProfileFragment extends Fragment {
                 ((MainActivity) getActivity()).openEditProfile();
             }
         });
+
+        Button btn_changePassword = view.findViewById(R.id.btn_changePassword);
+
+        btn_changePassword.setOnClickListener(v -> {
+            Intent intent = new Intent(requireContext(), UbahPasswordActivity.class);
+            startActivity(intent);
+        });
+
 
         return view;
     }
@@ -204,5 +223,12 @@ public class ProfileFragment extends Fragment {
             shimmer2.setVisibility(View.GONE);
             shimmer2.stopShimmer();
         }
+    }
+
+    private void showDialogTentang () {
+        Dialog dialog = new Dialog(requireContext());
+        dialog.setContentView(R.layout.dialog_tentang);
+        dialog.setCancelable(true);
+        dialog.show();
     }
 }

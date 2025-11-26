@@ -628,18 +628,43 @@
                 </com.facebook.shimmer.ShimmerFrameLayout>
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_logout"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:backgroundTint="@color/merah"
-                android:drawableLeft="@drawable/ic_logout_20"
-                android:drawableTint="@color/white"
-                android:text="Keluar"
-                android:textAllCaps="false"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <Button
+                    android:layout_marginTop="16dp"
+                    android:id="@+id/btn_logout"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="32dp"
+                    android:backgroundTint="@color/merah"
+                    android:drawableLeft="@drawable/ic_logout_20"
+                    android:drawableTint="@color/white"
+                    android:text="Keluar"
+                    android:textAllCaps="false"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_changePassword"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="0dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="32dp"
+                    android:backgroundTint="@color/primary"
+                    android:text="Ubah Password"
+                    android:textAllCaps="false"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
+
+
         </LinearLayout>
     </ScrollView>
 
