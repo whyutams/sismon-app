@@ -186,4 +186,10 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
             });
         }
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        Helpers.overridePendingTransition_Exit_v1(this);
+    }
 }

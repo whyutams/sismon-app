@@ -503,4 +503,9 @@ public class TambahPerizinanSiswaActivity extends AppCompatActivity {
         );
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        Helpers.overridePendingTransition_Exit_v1(this);
+    }
 }
