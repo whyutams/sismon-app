@@ -479,7 +479,7 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.activity_none, R.anim.activity_exit);
+        Helpers.overridePendingTransition_Exit_v1(this);
     }
 
 }

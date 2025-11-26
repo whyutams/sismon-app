@@ -38,6 +38,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                Helpers.overridePendingTransition_Enter_v1(SplashActivity.this);
                 finish();
             }
         });

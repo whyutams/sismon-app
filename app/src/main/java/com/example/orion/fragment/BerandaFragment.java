@@ -1,71 +1,57 @@
 package com.example.orion.fragment;
 
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
 import com.example.orion.activity.KeterlambatanSiswaActivity;
 import com.example.orion.activity.LoginActivity;
-import com.example.orion.activity.MainActivity;
 import com.example.orion.activity.PerizinanSiswaActivity;
-import com.example.orion.activity.WelcomeActivity;
 import com.example.orion.utils.Helpers;
 import com.example.orion.utils.NetworkUtil;
 import com.example.orion.utils.PreferenceManager;
 import com.example.orion.utils.api.ApiClient;
 import com.example.orion.utils.api.ApiService;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link BerandaFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class BerandaFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     public BerandaFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BerandaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static BerandaFragment newInstance(String param1, String param2) {
         BerandaFragment fragment = new BerandaFragment();
         Bundle args = new Bundle();
@@ -88,15 +74,16 @@ public class BerandaFragment extends Fragment {
     private ShapeableImageView siv_profile;
     private ShimmerFrameLayout shimmer1, shimmer2;
 
-    // Menus
     private LinearLayout ll_menu, ll_menu1, ll_menu2, ll_menu3, ll_menu4, ll_menu5, ll_menu6, ll_menu7, ll_menu8, ll_count, ll_count1, ll_count2, ll_count3, ll_count4, ll_count_div1, ll_count_div2, ll_count_div3;
+    private LinearLayout cardContainer;
+    private LinearLayout llProfileInfo;
+    private LinearLayout llMenuContainer;
 
     private ApiService apiService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_beranda, container, false);
 
         apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
@@ -130,6 +117,10 @@ public class BerandaFragment extends Fragment {
         ll_count_div1 = view.findViewById(R.id.count_div1);
         ll_count_div2 = view.findViewById(R.id.count_div2);
         ll_count_div3 = view.findViewById(R.id.count_div3);
+
+        cardContainer = view.findViewById(R.id.card_statistik);
+        llProfileInfo = view.findViewById(R.id.ll_profile_info);
+        llMenuContainer = view.findViewById(R.id.ll_menu_container);
 
         PreferenceManager pref = new PreferenceManager(requireContext());
         if (pref != null) {
@@ -179,6 +170,87 @@ public class BerandaFragment extends Fragment {
         }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (getActivity() != null) {
+            Window window = getActivity().getWindow();
+            window.getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+            );
+            window.setStatusBarColor(Color.TRANSPARENT);
+        }
+
+        MaterialToolbar toolbar = view.findViewById(R.id.toolbar_beranda);
+        AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout);
+        NestedScrollView scrollView = view.findViewById(R.id.nestedScrollView);
+
+        if (toolbar != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(toolbar, (v, insets) -> {
+                int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+                int navBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+
+                ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+                p.topMargin = statusBarHeight+360;
+                toolbar.setLayoutParams(p);
+                toolbar.requestLayout();
+
+                if (scrollView != null) {
+                    scrollView.setPadding(0, 0, 0, navBarHeight + 300);
+                }
+
+                return insets;
+            });
+
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.nav_about) {
+                    Toast.makeText(requireContext(), "Menu About Diklik!", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        if (appBarLayout != null) {
+            appBarLayout.addOnOffsetChangedListener((appBar, verticalOffset) -> {
+                int totalScroll = appBar.getTotalScrollRange();
+                float percentage = (float) Math.abs(verticalOffset) / (float) totalScroll;
+
+                if (llProfileInfo != null) {
+                    float profileAlpha = 1.0f - (percentage * 2.0f);
+                    if (profileAlpha < 0) profileAlpha = 0;
+                    llProfileInfo.setAlpha(profileAlpha);
+                }
+
+                if (cardContainer != null && llMenuContainer != null) {
+                    float startFade = 0.4f;
+                    float endFade = 0.8f;
+                    float alpha = 1.0f;
+
+                    if (percentage > startFade) {
+                        alpha = 1f - ((percentage - startFade) / (endFade - startFade));
+                        if (alpha < 0) alpha = 0;
+                    }
+                    cardContainer.setAlpha(alpha);
+
+                    if (alpha == 0) {
+                        cardContainer.setVisibility(View.INVISIBLE);
+                    } else {
+                        cardContainer.setVisibility(View.VISIBLE);
+                    }
+
+                    float cardHeight = cardContainer.getHeight();
+                    if (cardHeight > 0) {
+                        float translationY = -1 * percentage * (cardHeight * 0.2f);
+                        llMenuContainer.setTranslationY(translationY);
+                    }
+                }
+            });
+        }
     }
 
     public void refreshUserData() {
@@ -239,13 +311,14 @@ public class BerandaFragment extends Fragment {
                 }
             }
 
-            // Listeners
+            String finalJurusan_alias = jurusan_alias;
+
             View.OnClickListener clickListener_ll_menu1 = new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(requireContext(), KeterlambatanSiswaActivity.class);
                     startActivity(intent);
-                    requireActivity().overridePendingTransition(R.anim.activity_enter, R.anim.activity_none);;
+                    Helpers.overridePendingTransition_Enter_v1(requireActivity());
                 }
             };
             View.OnClickListener clickListener_ll_menu2 = new View.OnClickListener() {
@@ -253,11 +326,10 @@ public class BerandaFragment extends Fragment {
                 public void onClick(View view) {
                     Intent intent = new Intent(requireContext(), PerizinanSiswaActivity.class);
                     startActivity(intent);
-                    requireActivity().overridePendingTransition(R.anim.activity_enter, R.anim.activity_none);
+                    Helpers.overridePendingTransition_Enter_v1(requireActivity());
                 }
             };
 
-            // Menus
             if (role.equals("superadmin") || role.equals("kepsek")) {
                 setMenu(ll_menu1, "Keterlambatan Siswa", R.drawable.ic_access_time_24, clickListener_ll_menu1);
                 setMenu(ll_menu2, "Perizinan Siswa", R.drawable.ic_exit_to_app_24, clickListener_ll_menu2);
@@ -272,12 +344,26 @@ public class BerandaFragment extends Fragment {
                 ll_menu.setVisibility(View.VISIBLE);
                 shimmer2.setVisibility(View.GONE);
                 shimmer2.stopShimmer();
-            } else if (role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("guru")) {
+            } else if (role.equals("guru_piket") || role.equals("kesiswaan")) {
+                setMenu(ll_menu1, "Keterlambatan Siswa", R.drawable.ic_access_time_24, clickListener_ll_menu1);
+                setMenu(ll_menu2, "Perizinan Siswa", R.drawable.ic_exit_to_app_24, clickListener_ll_menu2);
+                setMenu(ll_menu3, "Siswa Terdaftar", R.drawable.ic_school_24, null);
+
+                ll_menu4.setVisibility(View.INVISIBLE);
+                ll_menu5.setVisibility(View.GONE);
+                ll_menu6.setVisibility(View.GONE);
+                ll_menu7.setVisibility(View.GONE);
+                ll_menu8.setVisibility(View.GONE);
+
+                ll_menu.setVisibility(View.VISIBLE);
+                shimmer2.setVisibility(View.GONE);
+                shimmer2.stopShimmer();
+            } else if (role.equals("guru")) {
                 setMenu(ll_menu1, "Keterlambatan Siswa" + (jurusan_alias.isEmpty() ? "" : " " + jurusan_alias), R.drawable.ic_access_time_24, clickListener_ll_menu1);
                 setMenu(ll_menu2, "Perizinan Siswa" + (jurusan_alias.isEmpty() ? "" : " " + jurusan_alias), R.drawable.ic_exit_to_app_24, clickListener_ll_menu2);
                 setMenu(ll_menu3, "Siswa" + (jurusan_alias.isEmpty() ? "" : " " + jurusan_alias) + " Terdaftar", R.drawable.ic_school_24, null);
 
-                ll_menu4.setVisibility(View.INVISIBLE);
+                ll_menu4.setVisibility(View.GONE);
                 ll_menu5.setVisibility(View.GONE);
                 ll_menu6.setVisibility(View.GONE);
                 ll_menu7.setVisibility(View.GONE);
@@ -298,13 +384,11 @@ public class BerandaFragment extends Fragment {
                 ll_menu8.setVisibility(View.GONE);
 
                 ll_menu.setVisibility(View.VISIBLE);
-                shimmer2.setVisibility(View.GONE);
-                shimmer2.stopShimmer();
+                shimmer1.setVisibility(View.GONE);
+                shimmer1.stopShimmer();
             }
 
-            // Counters
             if (NetworkUtil.isConnected(requireContext())) {
-                String finalJurusan_alias = jurusan_alias;
                 apiService.info().enqueue(new Callback<JsonObject>() {
                     @Override
                     public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {

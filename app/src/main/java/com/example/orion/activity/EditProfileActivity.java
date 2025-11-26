@@ -244,4 +244,9 @@ public class EditProfileActivity extends AppCompatActivity {
         pickImageLauncher.launch(intent);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        Helpers.overridePendingTransition_Exit_v1(this);
+    }
 }
