@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
     public void openEditProfile() {
         Intent intent = new Intent(this, EditProfileActivity.class);
         editProfileLauncher.launch(intent);
+        Helpers.overridePendingTransition_Enter_v1(this);
     }
 
     @Override
