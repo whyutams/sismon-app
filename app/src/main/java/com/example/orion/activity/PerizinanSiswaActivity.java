@@ -89,6 +89,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
                 fab_tambah.setOnClickListener(view -> {
                     Intent intent = new Intent(PerizinanSiswaActivity.this, TambahPerizinanSiswaActivity.class);
                     addDataLauncher.launch(intent);
+                    Helpers.overridePendingTransition_Enter_v1(PerizinanSiswaActivity.this);
                 });
             }
         }
@@ -346,6 +347,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
             intent.putExtra("index", tvIndex.getText());
             intent.putExtra("status", status);
             startActivity(intent);
+            Helpers.overridePendingTransition_Enter_v1(PerizinanSiswaActivity.this);
         });
 
         ll_countainer_list.addView(itemView);
@@ -435,6 +437,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
             intent.putExtra("index", tvIndex.getText());
             intent.putExtra("status", status);
             startActivity(intent);
+            Helpers.overridePendingTransition_Enter_v1(PerizinanSiswaActivity.this);
         });
 
         ll_countainer_list.addView(itemView);
