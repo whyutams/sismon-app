@@ -115,6 +115,7 @@ public class ProfileFragment extends Fragment {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 pref.clear();
                 startActivity(intent);
+                Helpers.overridePendingTransition_Enter_v1(requireActivity());
                 requireActivity().finish();
             });
         });

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.example.orion.R;
+import com.example.orion.utils.Helpers;
 
 public class WelcomeActivity extends AppCompatActivity {
 

@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                             pref.clear();
                                             startActivity(intent);
+                                            Helpers.overridePendingTransition_Enter_v1(MainActivity.this);
                                             finish();
                                         });
                                         return;
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             pref.clear();
                             startActivity(intent);
+                            Helpers.overridePendingTransition_Enter_v1(MainActivity.this);
                             finish();
                         });
                     }
@@ -144,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         pref.clear();
                         startActivity(intent);
+                        Helpers.overridePendingTransition_Enter_v1(MainActivity.this);
                         finish();
                     });
                 }
@@ -190,5 +193,11 @@ public class MainActivity extends AppCompatActivity {
     public void openEditProfile() {
         Intent intent = new Intent(this, EditProfileActivity.class);
         editProfileLauncher.launch(intent);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        Helpers.overridePendingTransition_Exit_v1(this);
     }
 }

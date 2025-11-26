@@ -70,6 +70,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Nama akun"
+                        android:textAlignment="center"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -78,6 +79,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
+                        android:textAlignment="center"
                         android:text="Jurusan Alias"
                         android:textSize="16sp" />
 
@@ -85,6 +87,7 @@
                         android:id="@+id/top_tv_jurusan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAlignment="center"
                         android:text="Jurusan"
                         android:textSize="14sp" />
 

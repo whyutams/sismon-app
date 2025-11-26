@@ -79,7 +79,9 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="Rezaldy S. Umar, S.Pd." />
+                        android:maxLines="1"
+                        android:autoSizeTextType="uniform"
+                        tools:text="ADMIN SMK N 1 KOTA GORONTALO ADMIN " />
 
                     <TextView
                         android:id="@+id/user_jurusan_alias"
@@ -113,7 +115,7 @@
                 app:layout_collapseMode="pin"
                 app:menu="@menu/menu_top_nav"
                 app:popupTheme="@style/ThemeOverlay.Material3.Light"
-                app:title="Selamat datang Username!"
+                app:title="Selamat Datang"
                 app:titleTextColor="@color/white" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>

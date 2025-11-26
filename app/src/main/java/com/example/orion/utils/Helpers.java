@@ -171,7 +171,6 @@ public class Helpers {
         dialog.show();
     }
 
-
     public static String getRealPathFromURI(Context context, Uri uri) {
         String[] proj = {MediaStore.Images.Media.DATA};
         Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
@@ -184,7 +183,6 @@ public class Helpers {
         }
         return uri.getPath();
     }
-
 
     public static String formatRole(String role) {
         if (role == null || role.trim().isEmpty()) {
@@ -212,7 +210,6 @@ public class Helpers {
 
         return formattedRole.toString().trim();
     }
-
 
     public static String formatCreatedAt(String isoString, int format) {
         try {
@@ -278,5 +275,11 @@ public class Helpers {
                 .start();
     }
 
+    public static void overridePendingTransition_Enter_v1(Activity activity) {
+        activity.overridePendingTransition(R.anim.activity_enter, R.anim.activity_none);
+    }
 
+    public static void overridePendingTransition_Exit_v1(Activity activity) {
+        activity.overridePendingTransition(R.anim.activity_none, R.anim.activity_exit);
+    }
 }
