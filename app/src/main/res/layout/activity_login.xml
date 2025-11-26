@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="24dp"
-        android:text="Made with ❤️ by Orion Team"
+        android:text="Made with ❤️ by ORION Team"
         android:textColor="@color/primary" />
 
 </LinearLayout>

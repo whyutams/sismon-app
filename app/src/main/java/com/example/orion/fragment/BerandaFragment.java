@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ import com.google.gson.JsonObject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
 
@@ -269,6 +271,7 @@ public class BerandaFragment extends Fragment {
             });
         }
     }
+
     public void refreshUserData() {
         PreferenceManager pref = new PreferenceManager(requireContext());
         JsonObject user = pref.getUserData();
@@ -498,7 +501,7 @@ public class BerandaFragment extends Fragment {
             ((TextView) child1).setText(title);
         }
 
-        if(listener != null) ll.setOnClickListener(listener);
+        if (listener != null) ll.setOnClickListener(listener);
     }
 
     private void setCount(LinearLayout ll, String count, String title) {
@@ -513,10 +516,21 @@ public class BerandaFragment extends Fragment {
         }
     }
 
-    private void showDialogTentang () {
+    private void showDialogTentang() {
         Dialog dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_tentang);
         dialog.setCancelable(true);
+
+        Button btnOK=dialog.findViewById(R.id.btnOK);
+        btnOK.setOnClickListener(v -> dialog.dismiss());
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+        }
+
         dialog.show();
     }
 

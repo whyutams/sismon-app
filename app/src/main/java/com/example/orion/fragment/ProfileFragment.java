@@ -101,12 +101,12 @@ public class ProfileFragment extends Fragment {
         Button btn_edit_profil = view.findViewById(R.id.btn_editProfile);
 
         MaterialToolbar toolbar = view.findViewById(R.id.toolbar_profile);
-        if(toolbar != null) {
+        if (toolbar != null) {
             toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.nav_about) {
                     showDialogTentang();
                     return true;
-                }else if (item.getItemId() == R.id.nav_logout) {
+                } else if (item.getItemId() == R.id.nav_logout) {
                     Helpers.showConfirm(requireActivity(), "Konfirmasi", "Apakah Anda yakin ingin keluar?", (dialogInterface, i) -> {
                         Intent intent = new Intent(requireContext(), WelcomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -225,10 +225,21 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void showDialogTentang () {
+    private void showDialogTentang() {
         Dialog dialog = new Dialog(requireContext());
         dialog.setContentView(R.layout.dialog_tentang);
         dialog.setCancelable(true);
+
+        Button btnOK=dialog.findViewById(R.id.btnOK);
+        btnOK.setOnClickListener(v -> dialog.dismiss());
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setLayout(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+        }
+
         dialog.show();
     }
 }

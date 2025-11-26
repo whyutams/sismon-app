@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment profileFragment;
     private Fragment activeFragment;
     private ActivityResultLauncher<Intent> editProfileLauncher;
+    private long backPressedTime = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,5 +202,17 @@ public class MainActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         Helpers.overridePendingTransition_Exit_v1(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+            super.onBackPressed();
+            Helpers.overridePendingTransition_Exit_v1(this);
+            return;
+        }
+
+        Toast.makeText(this, "Tekan sekali lagi untuk keluar", Toast.LENGTH_SHORT).show();
+        backPressedTime = System.currentTimeMillis();
     }
 }
