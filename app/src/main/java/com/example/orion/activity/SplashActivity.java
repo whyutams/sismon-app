@@ -38,6 +38,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
+                overridePendingTransition(R.anim.activity_enter_splash, R.anim.activity_none);
                 finish();
             }
         });
