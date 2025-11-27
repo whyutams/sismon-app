@@ -26,7 +26,7 @@
                 android:theme="@style/ThemeOverlay.Material3.ActionBar"
                 app:menu="@menu/menu_top_nav_list_activity"
                 app:navigationIconTint="@color/white"
-                app:title="Akun Guru"
+                app:title="Siswa Terdaftar"
                 app:titleTextColor="@color/white" />
         </com.google.android.material.appbar.AppBarLayout>
 
