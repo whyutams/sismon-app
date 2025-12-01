@@ -1,5 +1,6 @@
 package com.example.orion.fragment;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -51,6 +52,9 @@ import retrofit2.Response;
 
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 
 public class BerandaFragment extends Fragment {
@@ -569,13 +573,58 @@ public class BerandaFragment extends Fragment {
         View child0 = ll.getChildAt(0);
         View child1 = ll.getChildAt(1);
 
-        if (child0 instanceof TextView) {
-            ((TextView) child0).setText(count);
-        }
         if (child1 instanceof TextView) {
             ((TextView) child1).setText(title);
         }
+
+        if (child0 instanceof TextView) {
+            TextView tvCount = (TextView) child0;
+
+            int target = 0;
+            boolean parsed = false;
+            try {
+                String sanitized = count == null ? "0" : count.replaceAll("[^0-9-]", "");
+                if (sanitized.isEmpty()) sanitized = "0";
+                target = Integer.parseInt(sanitized);
+                parsed = true;
+            } catch (NumberFormatException e) {
+                parsed = false;
+            }
+
+            if (!parsed) {
+                tvCount.setText(count != null ? count : "0");
+                return;
+            }
+
+            if (target <= 0) {
+                tvCount.setText("0");
+                return;
+            }
+
+            long duration = Math.min(2000L, Math.max(800L, target * 10L)); // contoh: tiap unit ~10ms, max 2000ms
+
+
+            NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
+
+            Object tag = tvCount.getTag();
+            if (tag instanceof ValueAnimator) {
+                ValueAnimator prev = (ValueAnimator) tag;
+                if (prev.isRunning()) prev.cancel();
+            }
+
+            ValueAnimator animator = ValueAnimator.ofInt(0, target);
+            animator.setDuration(duration);
+            animator.addUpdateListener(animation -> {
+                int animatedValue = (int) animation.getAnimatedValue();
+                tvCount.setText(nf.format(animatedValue));
+            });
+
+            tvCount.setTag(animator);
+
+            animator.start();
+        }
     }
+
 
     private void showDialogTentang() {
         Dialog dialog = new Dialog(requireContext());
