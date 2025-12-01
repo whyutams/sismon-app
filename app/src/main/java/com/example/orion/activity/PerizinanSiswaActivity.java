@@ -49,7 +49,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     LinearLayout ll_progress, ll_countainer_list, ll_notfound;
     ArrayList<HashMap<String, String>> dataList = new ArrayList<>();
-    private ActivityResultLauncher<Intent> addDataLauncher;
+    private ActivityResultLauncher<Intent> addDataLauncher, detailDataLauncher;
     private FloatingActionButton fab_tambah;
     private boolean fab_tambah_showed = false;
 
@@ -82,7 +82,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
                 }
             }
 
-            if (role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("guru") && user.has("jurusan")) {
+            if (role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("bimbingan_konseling") || role.equals("guru") && user.has("jurusan")) {
                 fab_tambah = findViewById(R.id.fab_add);
                 fab_tambah_showed = true;
 
@@ -111,6 +111,17 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
         });
 
         addDataLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        ll_progress.setVisibility(View.VISIBLE);
+                        swipeRefreshLayout.setVisibility(View.GONE);
+                        Helpers.delay(1000, this::loadData);
+                    }
+                }
+        );
+
+        detailDataLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
@@ -346,7 +357,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
             intent.putExtra("id", data.get("id").getAsString());
             intent.putExtra("index", tvIndex.getText());
             intent.putExtra("status", status);
-            startActivity(intent);
+            detailDataLauncher.launch(intent);
             Helpers.overridePendingTransition_Enter_v1(PerizinanSiswaActivity.this);
         });
 
@@ -436,7 +447,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
             intent.putExtra("id", item.get("id"));
             intent.putExtra("index", tvIndex.getText());
             intent.putExtra("status", status);
-            startActivity(intent);
+            detailDataLauncher.launch(intent);
             Helpers.overridePendingTransition_Enter_v1(PerizinanSiswaActivity.this);
         });
 

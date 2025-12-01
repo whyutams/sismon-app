@@ -30,6 +30,11 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.io.File;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,6 +46,7 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
     private LinearLayout ll_progress;
     private ScrollView sv_main;
     private boolean isPending = false;
+    private String id;
     private JsonObject user;
 
     @Override
@@ -81,7 +87,7 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
         PreferenceManager pref = new PreferenceManager(this);
         user = pref.getUserData();
 
-        String id = getIntent().getStringExtra("id");
+        id = getIntent().getStringExtra("id");
         String index = getIntent().getStringExtra("index");
         String status = getIntent().getStringExtra("status");
         if (status.equals("pending")) isPending = true;
@@ -209,7 +215,7 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        if (isPending && (user.get("role").getAsString().equals("kesiswaan")||user.get("role").getAsString().equals("piket"))) {
+        if (isPending && (user.get("role").getAsString().equals("kesiswaan")||user.get("role").getAsString().equals("piket")||user.get("role").getAsString().equals("bimbingan_konseling"))) {
             inflater.inflate(R.menu.menu_top_nav_detail_perizinan, menu);
 
             for (int i = 0; i < menu.size(); i++) {
@@ -224,13 +230,110 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.nav_approve) {
-            Toast.makeText(this, "Approve clicked", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (item.getItemId() == R.id.nav_decline) {
-            Toast.makeText(this, "Decline clicked", Toast.LENGTH_SHORT).show();
-            return true;
+        if(isPending && (user.get("role").getAsString().equals("kesiswaan")||user.get("role").getAsString().equals("piket")||user.get("role").getAsString().equals("bimbingan_konseling"))) {
+            if (item.getItemId() == R.id.nav_approve) {
+                Helpers.showConfirm(this, "Konfirmasi", "Apakah Anda yakin ingin menyetujui perizinan ini?", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        RequestBody _method = RequestBody.create(MultipartBody.FORM, "put");
+                        RequestBody statusBaru = RequestBody.create(MultipartBody.FORM, "approved");
+
+                        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(DetailPerizinanSiswaActivity.this);
+                        loading.show();
+
+                        if (NetworkUtil.isConnected(DetailPerizinanSiswaActivity.this)) {
+                            ApiService apiService = ApiClient.getClient(DetailPerizinanSiswaActivity.this).create(ApiService.class);
+                            Call<JsonObject> call = apiService.setStatus(id, _method, statusBaru);
+
+                            call.enqueue(new Callback<JsonObject>() {
+                                @Override
+                                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        PreferenceManager pref = new PreferenceManager(DetailPerizinanSiswaActivity.this);
+                                        JsonObject updatedUser = response.body().getAsJsonObject("user");
+                                        if (updatedUser != null) {
+                                            pref.saveUserData(updatedUser);
+                                        }
+
+                                        setResult(RESULT_OK);
+                                        finish();
+                                        Toast.makeText(getApplicationContext(), "Perizinan berhasil disetujui!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Gagal update status perizinan.", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    loading.dismiss();
+                                }
+
+                                @Override
+                                public void onFailure(Call<JsonObject> call, Throwable t) {
+                                    Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                                    loading.dismiss();
+                                }
+                            });
+
+                        } else {
+                            Toast.makeText(DetailPerizinanSiswaActivity.this, "Koneksi internet tidak stabil.", Toast.LENGTH_SHORT).show();
+
+                            loading.dismiss();
+                        }
+                    }
+                });
+                return true;
+            } else if (item.getItemId() == R.id.nav_decline) {
+                Helpers.showConfirm(this, "Konfirmasi", "Apakah Anda yakin ingin menolak perizinan ini?", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        RequestBody _method = RequestBody.create(MultipartBody.FORM, "put");
+                        RequestBody statusBaru = RequestBody.create(MultipartBody.FORM, "rejected");
+
+                        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(DetailPerizinanSiswaActivity.this);
+                        loading.show();
+
+                        if (NetworkUtil.isConnected(DetailPerizinanSiswaActivity.this)) {
+                            ApiService apiService = ApiClient.getClient(DetailPerizinanSiswaActivity.this).create(ApiService.class);
+                            Call<JsonObject> call = apiService.setStatus(id, _method, statusBaru);
+
+                            call.enqueue(new Callback<JsonObject>() {
+                                @Override
+                                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        PreferenceManager pref = new PreferenceManager(DetailPerizinanSiswaActivity.this);
+                                        JsonObject updatedUser = response.body().getAsJsonObject("user");
+                                        if (updatedUser != null) {
+                                            pref.saveUserData(updatedUser);
+                                        }
+
+                                        setResult(RESULT_OK);
+                                        finish();
+                                        Toast.makeText(getApplicationContext(), "Perizinan berhasil ditolak!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Gagal update status perizinan.", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    loading.dismiss();
+                                }
+
+                                @Override
+                                public void onFailure(Call<JsonObject> call, Throwable t) {
+                                    Toast.makeText(getApplicationContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
+                                    loading.dismiss();
+                                }
+                            });
+
+                        } else {
+                            Toast.makeText(DetailPerizinanSiswaActivity.this, "Koneksi internet tidak stabil.", Toast.LENGTH_SHORT).show();
+
+                            loading.dismiss();
+                        }
+                    }
+                });
+                return true;
+            }
         }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -302,7 +302,7 @@ public class BerandaFragment extends Fragment {
             } else {
                 String role = user.get("role").getAsString();
 
-                tv_user_jurusan_alias.setText(role.substring(0,1).toUpperCase()+role.substring(1).toLowerCase());
+                tv_user_jurusan_alias.setText(Helpers.formatRole(role));
                 tv_user_jurusan.setVisibility(View.GONE);
                 tv_user_jurusan.setText("");
             }
@@ -428,7 +428,7 @@ public class BerandaFragment extends Fragment {
                 ll_menu.setVisibility(View.VISIBLE);
                 shimmer2.setVisibility(View.GONE);
                 shimmer2.stopShimmer();
-            } else if (role.equals("guru_piket") || role.equals("kesiswaan")) {
+            } else if (role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("bimbingan_konseling")) {
                 setMenu(ll_menu1, "Keterlambatan Siswa", R.drawable.ic_access_time_24, clickListener_ll_menu1);
                 setMenu(ll_menu2, "Perizinan Siswa", R.drawable.ic_exit_to_app_24, clickListener_ll_menu2);
                 setMenu(ll_menu3, "Siswa Terdaftar", R.drawable.ic_school_24, clickListener_ll_menu3);
@@ -468,8 +468,22 @@ public class BerandaFragment extends Fragment {
                 ll_menu8.setVisibility(View.GONE);
 
                 ll_menu.setVisibility(View.VISIBLE);
-                shimmer1.setVisibility(View.GONE);
-                shimmer1.stopShimmer();
+                shimmer2.setVisibility(View.GONE);
+                shimmer2.stopShimmer();
+            } else if (role.equals("satpam")) {
+                setMenu(ll_menu1, "Perizinan Siswa", R.drawable.ic_exit_to_app_24, clickListener_ll_menu2);
+
+                ll_menu2.setVisibility(View.INVISIBLE);
+                ll_menu3.setVisibility(View.GONE);
+                ll_menu4.setVisibility(View.GONE);
+                ll_menu5.setVisibility(View.GONE);
+                ll_menu6.setVisibility(View.GONE);
+                ll_menu7.setVisibility(View.GONE);
+                ll_menu8.setVisibility(View.GONE);
+
+                ll_menu.setVisibility(View.VISIBLE);
+                shimmer2.setVisibility(View.GONE);
+                shimmer2.stopShimmer();
             }
 
             if (NetworkUtil.isConnected(requireContext())) {
@@ -497,7 +511,7 @@ public class BerandaFragment extends Fragment {
                                             ll_count.setVisibility(View.VISIBLE);
                                             shimmer1.setVisibility(View.GONE);
                                             shimmer1.stopShimmer();
-                                        } else if (role.equals("guru_piket") || role.equals("kesiswaan")) {
+                                        } else if (role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("bimbingan_konseling")) {
                                             setCount(ll_count1, counts.get("total_keterlambatan").getAsString(), "Total Keterlambatan Siswa");
                                             setCount(ll_count2, counts.get("total_perizinan").getAsString(), "Total Perizinan Siswa");
                                             setCount(ll_count3, counts.get("total_siswa").getAsString(), "Total Siswa Terdaftar");
@@ -523,6 +537,19 @@ public class BerandaFragment extends Fragment {
                                             setCount(ll_count1, counts.get("total_keterlambatan").getAsString(), "Total Keterlambatan Siswa");
                                             setCount(ll_count2, counts.get("total_perizinan").getAsString(), "Total Perizinan Siswa");
 
+                                            ll_count3.setVisibility(View.GONE);
+                                            ll_count_div2.setVisibility(View.GONE);
+                                            ll_count4.setVisibility(View.GONE);
+                                            ll_count_div3.setVisibility(View.GONE);
+
+                                            ll_count.setVisibility(View.VISIBLE);
+                                            shimmer1.setVisibility(View.GONE);
+                                            shimmer1.stopShimmer();
+                                        } else if (role.equals("satpam")) {
+                                            setCount(ll_count1, counts.get("total_perizinan").getAsString(), "Total Perizinan Siswa");
+
+                                            ll_count2.setVisibility(View.GONE);
+                                            ll_count_div1.setVisibility(View.GONE);
                                             ll_count3.setVisibility(View.GONE);
                                             ll_count_div2.setVisibility(View.GONE);
                                             ll_count4.setVisibility(View.GONE);

@@ -84,7 +84,7 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
                 }
             }
 
-            if (role.equals("guru_piket") || role.equals("kesiswaan")) {
+            if (role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("bimbingan_konseling")) {
                 fab_tambah = findViewById(R.id.fab_add);
                 fab_tambah_allowed = true;
 

@@ -17,10 +17,13 @@ import retrofit2.http.Path;
 public interface ApiService {
     @POST("login")
     Call<JsonObject> login(@Body JsonObject request);
+
     @POST("whoami")
     Call<JsonObject> whoami();
+
     @GET("info")
     Call<JsonObject> info();
+
     @Multipart
     @POST("profile/edit")
     Call<JsonObject> editProfile(
@@ -31,8 +34,10 @@ public interface ApiService {
             @Part("alamat") RequestBody alamat,
             @Part MultipartBody.Part foto_profil
     );
+
     @GET("siswa")
     Call<JsonObject> siswa();
+
     @Multipart
     @POST("keterlambatan")
     Call<JsonObject> keterlambatan(
@@ -40,9 +45,11 @@ public interface ApiService {
             @Part("siswa_id") RequestBody siswa_id,
             @Part MultipartBody.Part gambar,
             @Part("date") RequestBody date
-            );
+    );
+
     @GET("keterlambatan/{id}")
     Call<JsonObject> keterlambatanShow(@Path("id") String id);
+
     @Multipart
     @POST("perizinan")
     Call<JsonObject> perizinan(
@@ -50,9 +57,18 @@ public interface ApiService {
             @Part("siswa_id") RequestBody siswa_id,
             @Part MultipartBody.Part gambar,
             @Part("date") RequestBody date
-            );
+    );
+
     @GET("perizinan/{id}")
     Call<JsonObject> perizinanShow(@Path("id") String id);
+
+    @Multipart
+    @POST("perizinan/status/{id}")
+    Call<JsonObject> setStatus(
+            @Path("id") String id,
+            @Part("_method") RequestBody method,
+            @Part("status") RequestBody statusBaru
+            );
 
 }
 
