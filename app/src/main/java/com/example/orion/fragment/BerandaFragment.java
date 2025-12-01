@@ -144,7 +144,7 @@ public class BerandaFragment extends Fragment {
                 if (user.has("jurusan")) {
                     JsonObject jurusan = user.get("jurusan").getAsJsonObject();
                     tv_user_jurusan_alias.setText(jurusan.has("alias") && !jurusan.get("alias").isJsonNull()
-                            ? jurusan.get("alias").getAsString() : "-");
+                            ? "Guru "+jurusan.get("alias").getAsString() : "-");
                     tv_user_jurusan.setText(jurusan.has("nama") && !jurusan.get("nama").isJsonNull()
                             ? jurusan.get("nama").getAsString() : "");
                     tv_user_jurusan.setVisibility(View.VISIBLE);
@@ -291,7 +291,7 @@ public class BerandaFragment extends Fragment {
             if (user.get("jurusan") != null && !user.get("jurusan").isJsonNull()) {
                 JsonObject jurusan = user.get("jurusan").getAsJsonObject();
                 tv_user_jurusan_alias.setText(jurusan.has("alias") && !jurusan.get("alias").isJsonNull()
-                        ? jurusan.get("alias").getAsString() : "-");
+                        ? "Guru "+jurusan.get("alias").getAsString() : "-");
                 tv_user_jurusan.setText(jurusan.has("nama") && !jurusan.get("nama").isJsonNull()
                         ? jurusan.get("nama").getAsString() : "");
                 tv_user_jurusan.setVisibility(View.VISIBLE);
@@ -443,7 +443,7 @@ public class BerandaFragment extends Fragment {
                 setMenu(ll_menu2, "Perizinan Siswa" + (jurusan_alias.isEmpty() ? "" : " " + jurusan_alias), R.drawable.ic_exit_to_app_24, clickListener_ll_menu2);
                 setMenu(ll_menu3, "Siswa" + (jurusan_alias.isEmpty() ? "" : " " + jurusan_alias) + " Terdaftar", R.drawable.ic_school_24, clickListener_ll_menu3);
 
-                ll_menu4.setVisibility(View.GONE);
+                ll_menu4.setVisibility(View.INVISIBLE);
                 ll_menu5.setVisibility(View.GONE);
                 ll_menu6.setVisibility(View.GONE);
                 ll_menu7.setVisibility(View.GONE);

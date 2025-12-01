@@ -142,6 +142,7 @@ public class ProfileFragment extends Fragment {
         btn_changePassword.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), UbahPasswordActivity.class);
             startActivity(intent);
+            Helpers.overridePendingTransition_Enter_v1(requireActivity());
         });
 
 
@@ -193,7 +194,7 @@ public class ProfileFragment extends Fragment {
                 if (jurusan.has("alias") && !jurusan.get("alias").isJsonNull()) {
                     jurusan_alias = jurusan.get("alias").getAsString();
                 }
-                top_tv_jurusan_alias.setText((!jurusan_alias.isEmpty() ? jurusan_alias : "-"));
+                top_tv_jurusan_alias.setText((!jurusan_alias.isEmpty() ? "Guru "+jurusan_alias : "-"));
                 if (jurusan.has("nama")) {
                     top_tv_jurusan.setText(jurusan.get("nama").getAsString());
                     tv_jurusan.setText(jurusan.get("nama").getAsString());
