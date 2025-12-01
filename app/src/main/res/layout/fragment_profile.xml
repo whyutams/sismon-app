@@ -11,8 +11,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="36dp"
-        android:background="@color/primary">
+        android:background="@color/primary"
+        android:paddingTop="36dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar_profile"
@@ -79,16 +79,16 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:textAlignment="center"
                         android:text="Jurusan Alias"
+                        android:textAlignment="center"
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/top_tv_jurusan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
                         android:text="Jurusan"
+                        android:textAlignment="center"
                         android:textSize="14sp" />
 
                     <Button
@@ -634,13 +634,13 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:layout_marginTop="16dp"
                     android:id="@+id/btn_logout"
                     style="@style/Widget.MaterialComponents.Button"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="32dp"
+                    android:layout_weight="1"
                     android:backgroundTint="@color/merah"
                     android:drawableLeft="@drawable/ic_logout_20"
                     android:drawableTint="@color/white"
@@ -651,18 +651,18 @@
                 <Button
                     android:id="@+id/btn_changePassword"
                     style="@style/Widget.MaterialComponents.Button"
-                    android:layout_width="0dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="32dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="1"
                     android:backgroundTint="@color/primary"
+                    android:drawableLeft="@drawable/ic_password_20"
+                    android:drawableTint="@color/white"
                     android:text="Ubah Password"
                     android:textAllCaps="false"
                     android:textStyle="bold" />
             </LinearLayout>
-
-
 
 
         </LinearLayout>

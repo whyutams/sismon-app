@@ -24,8 +24,13 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
+import com.example.orion.activity.AkunGuruActivity;
+import com.example.orion.activity.AkunOrangtuaActivity;
+import com.example.orion.activity.AkunSatpamActivity;
+import com.example.orion.activity.JurusanTerdaftarActivity;
 import com.example.orion.activity.KeterlambatanSiswaActivity;
 import com.example.orion.activity.LoginActivity;
+import com.example.orion.activity.PengaturanKelasActivity;
 import com.example.orion.activity.PerizinanSiswaActivity;
 import com.example.orion.activity.SiswaTerdaftarActivity;
 import com.example.orion.activity.WelcomeActivity;
@@ -357,17 +362,56 @@ public class BerandaFragment extends Fragment {
                     Helpers.overridePendingTransition_Enter_v1(requireActivity());
                 }
             };
+            View.OnClickListener clickListener_ll_menu4 = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(requireContext(), PengaturanKelasActivity.class);
+                    startActivity(intent);
+                    Helpers.overridePendingTransition_Enter_v1(requireActivity());
+                }
+            };
+            View.OnClickListener clickListener_ll_menu5 = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(requireContext(), AkunGuruActivity.class);
+                    startActivity(intent);
+                    Helpers.overridePendingTransition_Enter_v1(requireActivity());
+                }
+            };
+            View.OnClickListener clickListener_ll_menu6 = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(requireContext(), AkunOrangtuaActivity.class);
+                    startActivity(intent);
+                    Helpers.overridePendingTransition_Enter_v1(requireActivity());
+                }
+            };
+            View.OnClickListener clickListener_ll_menu7 = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(requireContext(), AkunSatpamActivity.class);
+                    startActivity(intent);
+                    Helpers.overridePendingTransition_Enter_v1(requireActivity());
+                }
+            };
+            View.OnClickListener clickListener_ll_menu8 = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(requireContext(), JurusanTerdaftarActivity.class);
+                    startActivity(intent);
+                    Helpers.overridePendingTransition_Enter_v1(requireActivity());
+                }
+            };
 
             if (role.equals("superadmin") || role.equals("kepsek")) {
                 setMenu(ll_menu1, "Keterlambatan Siswa", R.drawable.ic_access_time_24, clickListener_ll_menu1);
                 setMenu(ll_menu2, "Perizinan Siswa", R.drawable.ic_exit_to_app_24, clickListener_ll_menu2);
                 setMenu(ll_menu3, "Siswa Terdaftar", R.drawable.ic_groups_24, clickListener_ll_menu3);
-                setMenu(ll_menu4, "Pengaturan Kelas", R.drawable.ic_apartment_24, null);
-                setMenu(ll_menu5, "Akun Guru", R.drawable.ic_group_24, null);
-                setMenu(ll_menu6, "Akun Orangtua", R.drawable.ic_group_24, null);
-                setMenu(ll_menu7, "Jurusan Terdaftar", R.drawable.ic_school_24, null);
-
-                ll_menu8.setVisibility(View.INVISIBLE);
+                setMenu(ll_menu4, "Pengaturan Kelas", R.drawable.ic_apartment_24, clickListener_ll_menu4);
+                setMenu(ll_menu5, "Akun Guru", R.drawable.ic_group_24, clickListener_ll_menu5);
+                setMenu(ll_menu6, "Akun Orangtua", R.drawable.ic_group_24, clickListener_ll_menu6);
+                setMenu(ll_menu7, "Akun Satpam", R.drawable.ic_group_24, clickListener_ll_menu7);
+                setMenu(ll_menu8, "Jurusan Terdaftar", R.drawable.ic_school_24, clickListener_ll_menu8);
 
                 ll_menu.setVisibility(View.VISIBLE);
                 shimmer2.setVisibility(View.GONE);

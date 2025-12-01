@@ -36,19 +36,11 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/descText"
+                    android:id="@+id/jumlahKelasText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="Deskripsi"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp" />
-                <TextView
-                    android:id="@+id/DescText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="Aturan maks kelas"
+                    android:text="Jumlah kelas: 3"
                     android:textColor="@android:color/darker_gray"
                     android:textSize="14sp" />
 
@@ -70,6 +62,18 @@
                         android:textColor="@color/primary"
                         android:textSize="12sp" />
 
+                    <TextView
+                        android:id="@+id/jurusanText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginTop="4dp"
+                        android:drawableStart="@drawable/ic_school_16"
+                        android:drawablePadding="4dp"
+                        android:drawableTint="@color/primary"
+                        android:text="Jurusan"
+                        android:textColor="@color/primary"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
             </LinearLayout>

@@ -25,7 +25,7 @@
         android:textSize="16sp"
         android:lineSpacingExtra="4dp"
         android:justificationMode="inter_word"
-        android:text="SISMON (Sistem Monitoring Siswa) adalah aplikasi untuk membantu sekolah dalam mengelola keterlambatan, perizinan, dan aktivitas keluar-masuk siswa.\n\nDikembangkan oleh: Tim ORION\nVersi: 1.0.0" />
+        android:text="SISMON (Sistem Monitoring Siswa) adalah aplikasi untuk membantu sekolah dalam mengelola keterlambatan, perizinan, dan aktivitas siswa lainnya.\n\nDikembangkan oleh: Tim ORION\nVersi: 1.0.0" />
 
 
     <Button

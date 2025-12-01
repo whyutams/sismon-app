@@ -22,10 +22,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".activity.AkunSatpamActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.UbahPasswordActivity"
             android:exported="false"
             android:screenOrientation="portrait"
-            tools:ignore="DiscouragedApi"/>
+            tools:ignore="DiscouragedApi" />
         <activity
             android:name=".activity.TambahJurusanTerdaftarActivity"
             android:exported="false"
