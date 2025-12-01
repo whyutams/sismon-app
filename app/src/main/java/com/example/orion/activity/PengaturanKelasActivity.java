@@ -57,7 +57,7 @@ public class PengaturanKelasActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_siswa_terdaftar);
+        setContentView(R.layout.activity_pengaturan_kelas);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

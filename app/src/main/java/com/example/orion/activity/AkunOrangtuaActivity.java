@@ -57,7 +57,7 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_akun_guru);
+        setContentView(R.layout.activity_akun_orangtua);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

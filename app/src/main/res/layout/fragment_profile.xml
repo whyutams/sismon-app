@@ -66,13 +66,19 @@
 
                     <TextView
                         android:id="@+id/top_tv_nama"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Nama akun"
                         android:textAlignment="center"
                         android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:maxLines="1"
+                        android:autoSizeTextType="uniform"
+                        android:autoSizeMinTextSize="12sp"
+                        android:autoSizeMaxTextSize="20sp"
+                        android:autoSizeStepGranularity="1sp" />
+
 
                     <TextView
                         android:id="@+id/top_tv_jurusan_alias"
