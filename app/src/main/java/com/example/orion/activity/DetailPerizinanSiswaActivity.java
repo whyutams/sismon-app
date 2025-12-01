@@ -41,6 +41,7 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
     private LinearLayout ll_progress;
     private ScrollView sv_main;
     private boolean isPending = false;
+    private JsonObject user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,7 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
         tv_status = findViewById(R.id.tv_status);
 
         PreferenceManager pref = new PreferenceManager(this);
-        JsonObject user = pref.getUserData();
+        user = pref.getUserData();
 
         String id = getIntent().getStringExtra("id");
         String index = getIntent().getStringExtra("index");
@@ -208,7 +209,7 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        if (isPending) {
+        if (isPending && (user.get("role").getAsString().equals("kesiswaan")||user.get("role").getAsString().equals("piket"))) {
             inflater.inflate(R.menu.menu_top_nav_detail_perizinan, menu);
 
             for (int i = 0; i < menu.size(); i++) {

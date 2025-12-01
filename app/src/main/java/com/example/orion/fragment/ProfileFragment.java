@@ -197,12 +197,15 @@ public class ProfileFragment extends Fragment {
                 if (jurusan.has("nama")) {
                     top_tv_jurusan.setText(jurusan.get("nama").getAsString());
                     tv_jurusan.setText(jurusan.get("nama").getAsString());
+                    top_tv_jurusan.setVisibility(View.VISIBLE);
                 } else {
+                    top_tv_jurusan.setVisibility(View.GONE);
                     top_tv_jurusan.setText("");
                     tv_jurusan.setText("-");
                 }
             } else {
-                top_tv_jurusan_alias.setText("-");
+                top_tv_jurusan_alias.setText(Helpers.formatRole(role));
+                top_tv_jurusan.setVisibility(View.GONE);
                 top_tv_jurusan.setText("");
                 tv_jurusan.setText("-");
             }

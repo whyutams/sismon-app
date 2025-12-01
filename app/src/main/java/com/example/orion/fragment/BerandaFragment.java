@@ -147,8 +147,12 @@ public class BerandaFragment extends Fragment {
                             ? jurusan.get("alias").getAsString() : "-");
                     tv_user_jurusan.setText(jurusan.has("nama") && !jurusan.get("nama").isJsonNull()
                             ? jurusan.get("nama").getAsString() : "");
+                    tv_user_jurusan.setVisibility(View.VISIBLE);
                 } else {
-                    tv_user_jurusan_alias.setText("-");
+                    String role = user.get("role").getAsString();
+
+                    tv_user_jurusan_alias.setText(Helpers.formatRole(role));
+                    tv_user_jurusan.setVisibility(View.GONE);
                     tv_user_jurusan.setText("");
                 }
 
@@ -290,8 +294,12 @@ public class BerandaFragment extends Fragment {
                         ? jurusan.get("alias").getAsString() : "-");
                 tv_user_jurusan.setText(jurusan.has("nama") && !jurusan.get("nama").isJsonNull()
                         ? jurusan.get("nama").getAsString() : "");
+                tv_user_jurusan.setVisibility(View.VISIBLE);
             } else {
-                tv_user_jurusan_alias.setText("-");
+                String role = user.get("role").getAsString();
+
+                tv_user_jurusan_alias.setText(role.substring(0,1).toUpperCase()+role.substring(1).toLowerCase());
+                tv_user_jurusan.setVisibility(View.GONE);
                 tv_user_jurusan.setText("");
             }
 
