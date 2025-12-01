@@ -77,16 +77,24 @@
 
                     <TextView
                         android:id="@+id/usernameText"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="4dp"
                         android:drawableStart="@drawable/ic_account_circle_16"
-                        android:drawablePadding="4dp"
+                        android:drawablePadding="6dp"
                         android:drawableTint="@color/primary"
                         android:text="username"
                         android:textColor="@color/primary"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:maxLines="1"
+                        android:includeFontPadding="false"
+                        android:gravity="center_vertical"
+                        android:baselineAligned="true"
+                        android:lineSpacingExtra="4dp"
+                        android:minHeight="20dp"/>
+
+
 
                 </LinearLayout>
             </LinearLayout>
