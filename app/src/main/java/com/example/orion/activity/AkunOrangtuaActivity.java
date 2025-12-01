@@ -91,9 +91,9 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
                 fab_tambah.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        Intent intent = new Intent(AkunOrangtuaActivity.this, TambahAkunOrangtuaActivity.class);
-//                        addDataLauncher.launch(intent);
-//                        Helpers.overridePendingTransition_Enter_v1(AkunOrangtuaActivity.this);
+                        Intent intent = new Intent(AkunOrangtuaActivity.this, TambahAkunOrangtuaActivity.class);
+                        addDataLauncher.launch(intent);
+                        Helpers.overridePendingTransition_Enter_v1(AkunOrangtuaActivity.this);
                     }
                 });
             }

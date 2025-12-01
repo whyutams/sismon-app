@@ -83,9 +83,9 @@ public class PengaturanKelasActivity extends AppCompatActivity {
                 fab_tambah.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        Intent intent = new Intent(PengaturanKelasActivity.this, TambahPengaturanKelasActivity.class);
-//                        addDataLauncher.launch(intent);
-//                        Helpers.overridePendingTransition_Enter_v1(PengaturanKelasActivity.this);
+                        Intent intent = new Intent(PengaturanKelasActivity.this, TambahPengaturanKelasActivity.class);
+                        addDataLauncher.launch(intent);
+                        Helpers.overridePendingTransition_Enter_v1(PengaturanKelasActivity.this);
                     }
                 });
             }

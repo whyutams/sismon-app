@@ -64,12 +64,16 @@ public class LoginActivity extends AppCompatActivity {
         btn_masuk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                hideKeyboard(); // <<< Tambahkan ini di awal saat tombol ditekan
+
                 if (Helpers.validateRequired(til_username) && Helpers.validateRequired(til_password)) {
                     loading.show();
 
                     JsonObject request = new JsonObject();
                     request.addProperty("username", tiet_username.getText().toString().trim());
                     request.addProperty("password", tiet_password.getText().toString().trim());
+
 
                     ApiService apiService = ApiClient.getClient(LoginActivity.this).create(ApiService.class);
                     apiService.login(request).enqueue(new Callback<JsonObject>() {
@@ -126,4 +130,13 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            android.view.inputmethod.InputMethodManager imm =
+                    (android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 }

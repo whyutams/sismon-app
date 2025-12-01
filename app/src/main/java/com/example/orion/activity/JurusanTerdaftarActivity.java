@@ -83,9 +83,9 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
                 fab_tambah.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        Intent intent = new Intent(JurusanTerdaftarActivity.this, TambahJurusanTerdaftarActivity.class);
-//                        addDataLauncher.launch(intent);
-//                        Helpers.overridePendingTransition_Enter_v1(JurusanTerdaftarActivity.this);
+                        Intent intent = new Intent(JurusanTerdaftarActivity.this, TambahJurusanTerdaftarActivity.class);
+                        addDataLauncher.launch(intent);
+                        Helpers.overridePendingTransition_Enter_v1(JurusanTerdaftarActivity.this);
                     }
                 });
             }

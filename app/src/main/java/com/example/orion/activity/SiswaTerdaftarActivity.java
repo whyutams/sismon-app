@@ -91,9 +91,9 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
                 fab_tambah.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        Intent intent = new Intent(SiswaTerdaftarActivity.this, TambahSiswaTerdaftarActivity.class);
-//                        addDataLauncher.launch(intent);
-//                        Helpers.overridePendingTransition_Enter_v1(SiswaTerdaftarActivity.this);
+                        Intent intent = new Intent(SiswaTerdaftarActivity.this, TambahSiswaTerdaftarActivity.class);
+                        addDataLauncher.launch(intent);
+                        Helpers.overridePendingTransition_Enter_v1(SiswaTerdaftarActivity.this);
                     }
                 });
             }

@@ -1,5 +1,9 @@
 package com.example.orion.activity;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -9,18 +13,29 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.orion.R;
+import com.example.orion.utils.PreferenceManager;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.gson.JsonObject;
 
 public class TambahPengaturanKelasActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_tambah_pengaturan_kelas);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+        Drawable navIcon = toolbar.getNavigationIcon();
+        if (navIcon != null)
+            navIcon.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP));
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+
+        PreferenceManager pref = new PreferenceManager(this);
+        JsonObject user = pref.getUserData();
     }
 }
