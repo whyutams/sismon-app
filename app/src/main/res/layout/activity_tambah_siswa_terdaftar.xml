@@ -8,6 +8,7 @@
     android:background="@color/background"
     tools:context=".activity.TambahSiswaTerdaftarActivity">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,133 +37,152 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="16dp">
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="@drawable/rounded_outline"
+                    android:orientation="vertical">
 
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_tambah_siswa"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginVertical="4dp"
+                        android:orientation="vertical"
+                        android:padding="16dp">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_tambah_siswa"
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Tambah Siswa" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_NIS"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_NIS"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="NIS"
-                            android:inputType="none" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_marginBottom="4dp"
+                            android:orientation="vertical">
 
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_nomerHP"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_tambah_siswa"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_nomerHP"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="top|left"
-                            android:hint="Nomer HP" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_tambah_siswa"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="Tambah Siswa" />
+                            </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_kelas"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:enabled="false"
-                        app:endIconDrawable="@drawable/ic_apartment_24"
-                        app:endIconMode="custom">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_NIS"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_kelas"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:hint="Kelas"
-                            android:inputType="none" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_NIS"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:hint="NIS"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_jurusan"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:enabled="false"
-                        app:endIconDrawable="@drawable/ic_school_24"
-                        app:endIconMode="custom">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_jurusan"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:hint="Jurusan"
-                            android:inputType="none" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_nomerHP"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_orangtua"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:enabled="false"
-                        app:endIconDrawable="@drawable/ic_person_24"
-                        app:endIconMode="custom">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_nomerHP"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="top|left"
+                                    android:hint="Nomer HP" />
+                            </com.google.android.material.textfield.TextInputLayout>
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_orangtua"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:hint="Orang Tua"
-                            android:inputType="none" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_kelas"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:enabled="false"
+                                app:endIconDrawable="@drawable/ic_apartment_24"
+                                app:endIconMode="custom">
 
-                    <Button
-                        android:id="@+id/btn_simpan"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:backgroundTint="@color/primary"
-                        android:paddingVertical="12dp"
-                        android:text="Simpan"
-                        android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_kelas"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:enabled="false"
+                                    android:focusable="false"
+                                    android:hint="Kelas"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_jurusan"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:enabled="false"
+                                app:endIconDrawable="@drawable/ic_school_24"
+                                app:endIconMode="custom">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_jurusan"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:enabled="false"
+                                    android:focusable="false"
+                                    android:hint="Jurusan"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_orangtua"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:enabled="false"
+                                app:endIconDrawable="@drawable/ic_person_24"
+                                app:endIconMode="custom">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_orangtua"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:enabled="false"
+                                    android:focusable="false"
+                                    android:hint="Orang Tua"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/btn_simpan"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:backgroundTint="@color/primary"
+                    android:paddingVertical="12dp"
+                    android:text="Simpan"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

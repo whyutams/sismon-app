@@ -36,128 +36,144 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingHorizontal="16dp">
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="8dp"
+                    android:background="@drawable/rounded_outline"
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/rounded_outline_3"
+                        android:layout_marginVertical="4dp"
                         android:orientation="vertical"
-                        android:padding="8dp">
+                        android:padding="16dp">
 
                         <LinearLayout
-                            android:layout_width="250dp"
-                            android:layout_height="250dp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="8dp"
-                            android:gravity="center">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:orientation="vertical">
 
-                            <ImageView
-                                android:id="@+id/iv_gambar"
+                            <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:src="@drawable/ic_image_24"
-                                android:tintMode="src_in"
-                                app:tint="@android:color/darker_gray" />
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:background="@drawable/rounded_outline_3"
+                                android:orientation="vertical"
+                                android:padding="8dp">
+
+                                <LinearLayout
+                                    android:layout_width="250dp"
+                                    android:layout_height="250dp"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="center">
+
+                                    <ImageView
+                                        android:id="@+id/iv_gambar"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:src="@drawable/ic_image_24"
+                                        android:tintMode="src_in"
+                                        app:tint="@android:color/darker_gray" />
+
+                                </LinearLayout>
+
+                                <Button
+                                    android:id="@+id/btn_pilih"
+                                    style="@style/Widget.MaterialComponents.Button"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:layout_marginTop="8dp"
+                                    android:backgroundTint="@color/primary"
+                                    android:drawableLeft="@drawable/ic_camera_alt_24"
+                                    android:drawableTint="@color/white"
+                                    android:paddingVertical="8dp"
+                                    android:text="Ambil Gambar"
+                                    android:textAllCaps="false"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+
+                            </LinearLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_siswa"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:enabled="false"
+                                app:endIconDrawable="@drawable/ic_person_20"
+                                app:endIconMode="custom">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_siswa"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:enabled="false"
+                                    android:focusable="false"
+                                    android:hint="Siswa"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_tanggal"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:enabled="false"
+                                app:endIconDrawable="@drawable/ic_calendar_today_16"
+                                app:endIconMode="custom">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_tanggal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:focusable="false"
+                                    android:hint="Tanggal dan waktu"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_keterangan"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_keterangan"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="top|left"
+                                    android:hint="Keterangan"
+                                    android:lines="3"
+                                    android:singleLine="false" />
+                            </com.google.android.material.textfield.TextInputLayout>
 
                         </LinearLayout>
-
-                        <Button
-                            android:id="@+id/btn_pilih"
-                            style="@style/Widget.MaterialComponents.Button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="8dp"
-                            android:backgroundTint="@color/primary"
-                            android:drawableLeft="@drawable/ic_camera_alt_24"
-                            android:drawableTint="@color/white"
-                            android:paddingVertical="8dp"
-                            android:text="Ambil Gambar"
-                            android:textAllCaps="false"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
                     </LinearLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_siswa"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:enabled="false"
-                        app:endIconDrawable="@drawable/ic_person_20"
-                        app:endIconMode="custom">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_siswa"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:enabled="false"
-                            android:focusable="false"
-                            android:hint="Siswa"
-                            android:inputType="none" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_tanggal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:enabled="false"
-                        app:endIconDrawable="@drawable/ic_calendar_today_16"
-                        app:endIconMode="custom">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_tanggal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:clickable="true"
-                            android:focusable="false"
-                            android:hint="Tanggal dan waktu"
-                            android:inputType="none" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/til_keterangan"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/et_keterangan"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="top|left"
-                            android:hint="Keterangan"
-                            android:lines="3"
-                            android:singleLine="false" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <Button
-                        android:id="@+id/btn_simpan"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="24dp"
-                        android:backgroundTint="@color/primary"
-                        android:paddingVertical="12dp"
-                        android:text="Simpan"
-                        android:textAllCaps="false"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/btn_simpan"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:backgroundTint="@color/primary"
+                    android:paddingVertical="12dp"
+                    android:text="Simpan"
+                    android:textAllCaps="false"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
