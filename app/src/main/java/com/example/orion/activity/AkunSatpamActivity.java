@@ -91,9 +91,9 @@ public class AkunSatpamActivity extends AppCompatActivity {
                 fab_tambah.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-//                        Intent intent = new Intent(AkunSatpamActivity.this, TambahAkunSatpamActivity.class);
-//                        addDataLauncher.launch(intent);
-//                        Helpers.overridePendingTransition_Enter_v1(AkunSatpamActivity.this);
+                        Intent intent = new Intent(AkunSatpamActivity.this, TambahAkunSatpamActivity.class);
+                        addDataLauncher.launch(intent);
+                        Helpers.overridePendingTransition_Enter_v1(AkunSatpamActivity.this);
                     }
                 });
             }

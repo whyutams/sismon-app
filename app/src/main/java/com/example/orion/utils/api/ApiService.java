@@ -83,10 +83,10 @@ public interface ApiService {
     @Multipart
     @POST("users")
     Call<JsonObject> userSatpamAdd(
-            @Part("nip") @Nullable RequestBody nip,
             @Part("nama") RequestBody nama,
             @Part("nomor_hp") @Nullable RequestBody nomor_hp,
             @Part("email") @Nullable RequestBody email,
+            @Part("alamat") @Nullable RequestBody alamat,
             @Part("username") RequestBody username,
             @Part("password") RequestBody password,
             @Part("role") RequestBody role

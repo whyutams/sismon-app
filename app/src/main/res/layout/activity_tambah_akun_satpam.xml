@@ -73,13 +73,13 @@
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_nomerHP"
+                                android:id="@+id/til_nomorHp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp">
 
                                 <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/et_nomerHP"
+                                    android:id="@+id/et_nomorHp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:hint="Nomer HP (bisa dikosongkan)" />
@@ -115,7 +115,7 @@
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_Username"
+                                android:id="@+id/til_username"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp">

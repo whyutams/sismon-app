@@ -67,16 +67,16 @@ import retrofit2.Response;
 
 public class TambahAkunSatpamActivity extends AppCompatActivity {
 
-    private TextInputEditText et_jurusan, et_alias, et_deskripsi;
-    private TextInputLayout til_jurusan, til_alias, til_deskripsi;
+    private TextInputEditText et_nama, et_nomorHp, et_email, et_alamat, et_username, et_password;
+    private TextInputLayout til_nama, til_nomorHp, til_email, til_alamat, til_username, til_password;
     private Button btn_simpan;
-    private List<Map<String, @Nullable Object>> jurusanList = new ArrayList<>();
+    private List<Map<String, @Nullable Object>> userList = new ArrayList<>();
     private JsonObject user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tambah_jurusan_terdaftar);
+        setContentView(R.layout.activity_tambah_akun_satpam);
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -92,15 +92,21 @@ public class TambahAkunSatpamActivity extends AppCompatActivity {
         PreferenceManager pref = new PreferenceManager(this);
         user = pref.getUserData();
 
-        til_jurusan = findViewById(R.id.til_jurusan);
-        til_alias = findViewById(R.id.til_alias);
-        til_deskripsi = findViewById(R.id.til_deskripsi);
-        et_jurusan = findViewById(R.id.et_jurusan);
-        et_alias = findViewById(R.id.et_alias);
-        et_deskripsi = findViewById(R.id.et_deskripsi);
+        til_nama = findViewById(R.id.til_nama);
+        til_nomorHp = findViewById(R.id.til_nomorHp);
+        til_email = findViewById(R.id.til_email);
+        til_alamat = findViewById(R.id.til_alamat);
+        til_username = findViewById(R.id.til_username);
+        til_password = findViewById(R.id.til_password);
+        et_nama = findViewById(R.id.et_nama);
+        et_nomorHp = findViewById(R.id.et_nomorHp);
+        et_email = findViewById(R.id.et_email);
+        et_alamat = findViewById(R.id.et_alamat);
+        et_username = findViewById(R.id.et_username);
+        et_password = findViewById(R.id.et_password);
         btn_simpan = findViewById(R.id.btn_simpan);
 
-        loadJurusan();
+        loadUsers();
 
         Helpers.LoadingHelper loading = new Helpers.LoadingHelper(this);
 
@@ -112,47 +118,60 @@ public class TambahAkunSatpamActivity extends AppCompatActivity {
                 Helpers.delay(250, new Runnable() {
                     @Override
                     public void run() {
-                        if (Helpers.validateRequired(til_jurusan) && Helpers.validateRequired(til_alias) && Helpers.validateRequired(til_deskripsi)) {
-                            boolean is_sim_jurusan = false, is_sim_alias = false;
+                        if (Helpers.validateRequired(til_nama) && Helpers.validateRequired(til_username) && Helpers.validateRequired(til_password)) {
+                            boolean is_nomorHp = false, is_email = false, is_username = false;
 
-                            for (Map<String, @Nullable Object> jurusan : jurusanList) {
-                                String nama = jurusan.get("nama").toString();
-                                String alias = jurusan.get("alias").toString();
+                            for (Map<String, @Nullable Object> _d : userList) {
+                                String nomorHp = _d.get("nomor_hp").toString();
+                                String email = _d.get("email").toString();
+                                String username = _d.get("username").toString();
 
-                                if (nama.equalsIgnoreCase(et_jurusan.getText().toString()))
-                                    is_sim_jurusan = true;
-                                if (alias.equalsIgnoreCase(et_alias.getText().toString()))
-                                    is_sim_alias = true;
+                                if (!et_nomorHp.getText().toString().isEmpty() && nomorHp.equalsIgnoreCase(et_nomorHp.getText().toString()))
+                                    is_nomorHp = true;
+                                if (!et_email.getText().toString().isEmpty() && email.equalsIgnoreCase(et_email.getText().toString()))
+                                    is_email = true;
+                                if (username.equalsIgnoreCase(et_username.getText().toString()))
+                                    is_username = true;
                             }
 
-                            if(is_sim_jurusan || is_sim_alias) {
-                                if(is_sim_jurusan) {
-                                    til_jurusan.setErrorEnabled(true);
-                                    til_jurusan.setError("Nama jurusan sudah digunakan.");
+                            if (is_nomorHp || is_email || is_username) {
+                                if (is_nomorHp) {
+                                    til_nomorHp.setErrorEnabled(true);
+                                    til_nomorHp.setError("Nomor HP sudah digunakan.");
                                 }
-                                if(is_sim_alias) {
-                                    til_alias.setErrorEnabled(true);
-                                    til_alias.setError("Alias jurusan sudah digunakan.");
+                                if (is_email) {
+                                    til_email.setErrorEnabled(true);
+                                    til_email.setError("Email sudah digunakan.");
+                                }
+                                if (is_username) {
+                                    til_username.setErrorEnabled(true);
+                                    til_username.setError("Username sudah digunakan.");
                                 }
 
                                 loading.dismiss();
 
                                 return;
                             } else {
-                                til_jurusan.setErrorEnabled(true);
-                                til_jurusan.setError(null);
-                                til_alias.setErrorEnabled(true);
-                                til_alias.setError(null);
+                                til_nomorHp.setErrorEnabled(false);
+                                til_nomorHp.setError(null);
+                                til_email.setErrorEnabled(false);
+                                til_email.setError(null);
+                                til_username.setErrorEnabled(false);
+                                til_username.setError(null);
                             }
 
                             if (NetworkUtil.isConnected(TambahAkunSatpamActivity.this)) {
-                                RequestBody jurusan = RequestBody.create(MultipartBody.FORM, et_jurusan.getText().toString());
-                                RequestBody alias = RequestBody.create(MultipartBody.FORM, et_alias.getText().toString());
-                                RequestBody deskripsi = RequestBody.create(MultipartBody.FORM, et_deskripsi.getText().toString());
+                                RequestBody nama = RequestBody.create(MultipartBody.FORM, et_nama.getText().toString());
+                                RequestBody nomor_hp = RequestBody.create(MultipartBody.FORM, et_nomorHp.getText().toString());
+                                RequestBody email = RequestBody.create(MultipartBody.FORM, et_email.getText().toString());
+                                RequestBody alamat = RequestBody.create(MultipartBody.FORM, et_alamat.getText().toString());
+                                RequestBody username = RequestBody.create(MultipartBody.FORM, et_username.getText().toString());
+                                RequestBody password = RequestBody.create(MultipartBody.FORM, "12345678");
+                                RequestBody role = RequestBody.create(MultipartBody.FORM, "satpam");
 
                                 if (NetworkUtil.isConnected(TambahAkunSatpamActivity.this)) {
                                     ApiService apiService = ApiClient.getClient(TambahAkunSatpamActivity.this).create(ApiService.class);
-                                    Call<JsonObject> call = apiService.jurusanAdd(jurusan, alias, deskripsi);
+                                    Call<JsonObject> call = apiService.userSatpamAdd(nama, nomor_hp, email, alamat, username, password, role);
 
                                     call.enqueue(new Callback<JsonObject>() {
                                         @Override
@@ -199,9 +218,9 @@ public class TambahAkunSatpamActivity extends AppCompatActivity {
 
     }
 
-    private void loadJurusan() {
+    private void loadUsers() {
         if (NetworkUtil.isConnected(this)) {
-            jurusanList.clear();
+            userList.clear();
             ApiService apiService = ApiClient.getClient(TambahAkunSatpamActivity.this).create(ApiService.class);
             apiService.info().enqueue(new Callback<JsonObject>() {
                 @Override
@@ -214,18 +233,19 @@ public class TambahAkunSatpamActivity extends AppCompatActivity {
                         if (status.equals("success")) {
                             JsonObject main_data = json.has("data") ? json.get("data").getAsJsonObject() : null;
                             JsonObject data = main_data.has("data") ? main_data.get("data").getAsJsonObject() : null;
-                            JsonArray jurusans = data.has("jurusan") ? data.get("jurusan").getAsJsonArray() : null;
+                            JsonArray users = data.has("user") ? data.get("user").getAsJsonArray() : null;
 
-                            if (jurusans != null || jurusans.size() != 0) {
-                                for (int i = 0; i < jurusans.size(); i++) {
-                                    JsonObject d = jurusans.get(i).getAsJsonObject();
+                            if (users != null || users.size() != 0) {
+                                for (int i = 0; i < users.size(); i++) {
+                                    JsonObject d = users.get(i).getAsJsonObject();
 
-                                    Map<String, Object> jurusan = new HashMap<>();
-                                    jurusan.put("id", d.get("id").getAsString());
-                                    jurusan.put("nama", d.get("nama").getAsString());
-                                    jurusan.put("alias", d.get("alias").getAsString());
-                                    jurusan.put("deskripsi", d.get("deskripsi").getAsString());
+                                    Map<String, Object> hashMap = new HashMap<>();
+                                    hashMap.put("nama", d.get("nama").getAsString());
+                                    hashMap.put("nomor_hp", !d.get("nomor_hp").isJsonNull() && d.has("nomor_hp") ? d.get("nomor_hp").getAsString() : "");
+                                    hashMap.put("email", !d.get("email").isJsonNull() && d.has("email") ? d.get("email").getAsString() : "");
+                                    hashMap.put("username", d.get("username").getAsString());
 
+                                    userList.add(hashMap);
                                 }
                             }
                         } else {
