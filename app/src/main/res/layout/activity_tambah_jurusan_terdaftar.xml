@@ -70,6 +70,8 @@
                                     android:id="@+id/et_jurusan"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:singleLine="true"
                                     android:hint="Nama Jurusan" />
                             </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,6 +86,8 @@
                                     android:id="@+id/et_alias"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:singleLine="true"
                                     android:hint="Alias" />
                             </com.google.android.material.textfield.TextInputLayout>
 

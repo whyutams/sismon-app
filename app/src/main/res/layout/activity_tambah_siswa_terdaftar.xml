@@ -69,6 +69,8 @@
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_tambah_siswa"
+                                    android:maxLines="1"
+                                    android:singleLine="true"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:hint="Tambah Siswa" />
@@ -84,6 +86,8 @@
                                     android:id="@+id/et_NIS"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:singleLine="true"
                                     android:hint="NIS"
                                     android:inputType="none" />
                             </com.google.android.material.textfield.TextInputLayout>
@@ -99,6 +103,8 @@
                                     android:id="@+id/et_nomerHP"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:maxLines="1"
+                                    android:singleLine="true"
                                     android:gravity="top|left"
                                     android:hint="Nomer HP" />
                             </com.google.android.material.textfield.TextInputLayout>
