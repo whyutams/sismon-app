@@ -180,6 +180,47 @@ public class BerandaFragment extends Fragment {
                             ContextCompat.getColorStateList(requireContext(), R.color.white)
                     );
                 }
+
+
+                siv_profile.setOnClickListener(v -> {
+                    Dialog dialog = new Dialog(requireContext());
+                    dialog.setContentView(R.layout.dialog_foto);
+                    dialog.setCancelable(true);
+                    ImageView popupFoto = dialog.findViewById(R.id.popupfoto);
+
+                    if (user.has("foto_profil") && !user.get("foto_profil").isJsonNull()) {
+                        String fotoUrl = user.get("foto_profil").getAsString();
+                        if (!fotoUrl.startsWith("http")) {
+                            fotoUrl = ApiClient.base_url + fotoUrl;
+                        }
+
+                        popupFoto.setImageTintList(null);
+
+                        if (dialog.getWindow() != null) {
+                            dialog.getWindow().setLayout(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT
+                            );
+                            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                        }
+
+                        Glide.with(requireContext())
+                                .load(fotoUrl)
+                                .placeholder(R.drawable.ic_account_circle_24)
+                                .error(R.drawable.ic_account_circle_24)
+                                .into(popupFoto);
+
+                        dialog.show();
+                    } else {
+                        popupFoto.setImageResource(R.drawable.ic_account_circle_24);
+                        popupFoto.setImageTintList(
+                                ContextCompat.getColorStateList(requireContext(), R.color.primary)
+                        );
+
+                        Toast.makeText(requireContext(), "Foto profil tidak ada", Toast.LENGTH_SHORT).show();
+                    }
+
+                });
             } else {
                 startActivity(new Intent(requireActivity(), LoginActivity.class));
                 requireActivity().finish();

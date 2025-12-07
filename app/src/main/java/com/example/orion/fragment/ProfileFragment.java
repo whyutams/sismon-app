@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,10 +83,10 @@ public class ProfileFragment extends Fragment {
         ll_bio = view.findViewById(R.id.ll_bio);
         ll_top = view.findViewById(R.id.ll_top);
 
-        top_siv_profile = view.findViewById(R.id.top_imgProfile);
         top_tv_nama = view.findViewById(R.id.top_tv_nama);
         top_tv_jurusan = view.findViewById(R.id.top_tv_jurusan);
         top_tv_jurusan_alias = view.findViewById(R.id.top_tv_jurusan_alias);
+        top_siv_profile = view.findViewById(R.id.top_imgProfile);
         tv_role = view.findViewById(R.id.tv_role);
         tv_username = view.findViewById(R.id.tv_username);
         tv_nip = view.findViewById(R.id.tv_nip);
@@ -96,6 +97,7 @@ public class ProfileFragment extends Fragment {
         tv_alamat = view.findViewById(R.id.tv_alamat);
 
         PreferenceManager pref = new PreferenceManager(requireContext());
+        JsonObject user = pref.getUserData();
 
         Button btn_keluar = view.findViewById(R.id.btn_logout);
         Button btn_edit_profil = view.findViewById(R.id.btn_editProfile);
@@ -119,6 +121,46 @@ public class ProfileFragment extends Fragment {
                 return false;
             });
         }
+
+        top_siv_profile.setOnClickListener(v -> {
+            Dialog dialog = new Dialog(requireContext());
+            dialog.setContentView(R.layout.dialog_foto);
+            dialog.setCancelable(true);
+            ImageView popupFoto = dialog.findViewById(R.id.popupfoto);
+
+            if (user.has("foto_profil") && !user.get("foto_profil").isJsonNull()) {
+                String fotoUrl = user.get("foto_profil").getAsString();
+                if (!fotoUrl.startsWith("http")) {
+                    fotoUrl = ApiClient.base_url + fotoUrl;
+                }
+
+                popupFoto.setImageTintList(null);
+
+                if (dialog.getWindow() != null) {
+                    dialog.getWindow().setLayout(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                    );
+                    dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+                }
+
+                Glide.with(requireContext())
+                        .load(fotoUrl)
+                        .placeholder(R.drawable.ic_account_circle_24)
+                        .error(R.drawable.ic_account_circle_24)
+                        .into(popupFoto);
+
+                dialog.show();
+            } else {
+                popupFoto.setImageResource(R.drawable.ic_account_circle_24);
+                popupFoto.setImageTintList(
+                        ContextCompat.getColorStateList(requireContext(), R.color.primary)
+                );
+
+                Toast.makeText(requireContext(), "Foto profil tidak ada", Toast.LENGTH_SHORT).show();
+            }
+
+        });
 
         btn_keluar.setOnClickListener(view1 -> {
             Helpers.showConfirm(requireActivity(), "Konfirmasi", "Apakah Anda yakin ingin keluar?", (dialogInterface, i) -> {
@@ -144,7 +186,6 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
             Helpers.overridePendingTransition_Enter_v1(requireActivity());
         });
-
 
         return view;
     }
@@ -194,7 +235,7 @@ public class ProfileFragment extends Fragment {
                 if (jurusan.has("alias") && !jurusan.get("alias").isJsonNull()) {
                     jurusan_alias = jurusan.get("alias").getAsString();
                 }
-                top_tv_jurusan_alias.setText((!jurusan_alias.isEmpty() ? "Guru "+jurusan_alias : "-"));
+                top_tv_jurusan_alias.setText((!jurusan_alias.isEmpty() ? "Guru " + jurusan_alias : "-"));
                 if (jurusan.has("nama")) {
                     top_tv_jurusan.setText(jurusan.get("nama").getAsString());
                     tv_jurusan.setText(jurusan.get("nama").getAsString());
@@ -234,7 +275,7 @@ public class ProfileFragment extends Fragment {
         dialog.setContentView(R.layout.dialog_tentang);
         dialog.setCancelable(true);
 
-        Button btnOK=dialog.findViewById(R.id.btnOK);
+        Button btnOK = dialog.findViewById(R.id.btnOK);
         btnOK.setOnClickListener(v -> dialog.dismiss());
 
         if (dialog.getWindow() != null) {
