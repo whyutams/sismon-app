@@ -235,12 +235,22 @@ public class BerandaFragment extends Fragment {
                     return true;
                 } else if (item.getItemId() == R.id.nav_logout) {
                     Helpers.showConfirm(requireActivity(), "Konfirmasi", "Apakah Anda yakin ingin keluar?", (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(requireActivity());
+                        loading.show();
                         Intent intent = new Intent(requireContext(), WelcomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         pref.clear();
-                        startActivity(intent);
-                        Helpers.overridePendingTransition_Enter_v1(requireActivity());
-                        requireActivity().finish();
+                        Helpers.delay(500, new Runnable() {
+                            @Override
+                            public void run() {
+                                loading.dismiss();
+                                startActivity(intent);
+                                Helpers.overridePendingTransition_Enter_v1(requireActivity());
+                                Toast.makeText(requireContext(), "Berhasil keluar", Toast.LENGTH_SHORT).show();
+                                requireActivity().finish();
+                            }
+                        });
                     });
                 }
                 return false;

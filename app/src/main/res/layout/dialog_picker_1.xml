@@ -10,7 +10,7 @@
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:defaultQueryHint="Cari siswa..."
+        app:defaultQueryHint="Cari ..."
         app:iconifiedByDefault="false"
         android:background="@drawable/rounded_outline_3"
         android:layout_marginBottom="8dp" />

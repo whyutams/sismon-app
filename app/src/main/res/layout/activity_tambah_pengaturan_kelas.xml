@@ -82,42 +82,36 @@
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_kelas"
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:enabled="false"
-                                app:endIconDrawable="@drawable/ic_apartment_24"
-                                app:endIconMode="custom">
+                                android:hint="Kelas">
 
-                                <com.google.android.material.textfield.TextInputEditText
+                                <AutoCompleteTextView
                                     android:id="@+id/et_kelas"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:clickable="true"
                                     android:enabled="false"
-                                    android:focusable="false"
-                                    android:hint="Kelas"
                                     android:inputType="none" />
                             </com.google.android.material.textfield.TextInputLayout>
 
 
                             <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_jumlahkelas"
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:enabled="false"
-                                app:endIconDrawable="@drawable/ic_123_24"
-                                app:endIconMode="custom">
+                                android:hint="Jumlah Kelas">
 
-                                <com.google.android.material.textfield.TextInputEditText
+                                <AutoCompleteTextView
                                     android:id="@+id/et_jumlahkelas"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:clickable="true"
                                     android:enabled="false"
-                                    android:focusable="false"
-                                    android:hint="Jumlah Kelas"
                                     android:inputType="none" />
                             </com.google.android.material.textfield.TextInputLayout>
 

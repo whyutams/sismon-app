@@ -1,5 +1,7 @@
 package com.example.orion.activity;
 
+import static com.example.orion.utils.Helpers.hideKeyboard;
+
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                hideKeyboard(); // <<< Tambahkan ini di awal saat tombol ditekan
+                hideKeyboard(LoginActivity.this);
 
                 if (Helpers.validateRequired(til_username) && Helpers.validateRequired(til_password)) {
                     loading.show();
@@ -113,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
 
                             } else {
-                                Toast.makeText(LoginActivity.this, "Gagal login", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Username atau Password salah", Toast.LENGTH_SHORT).show();
                             }
 
                             loading.dismiss();
@@ -129,14 +131,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-    private void hideKeyboard() {
-        View view = this.getCurrentFocus();
-        if (view != null) {
-            android.view.inputmethod.InputMethodManager imm =
-                    (android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
     }
 
 }

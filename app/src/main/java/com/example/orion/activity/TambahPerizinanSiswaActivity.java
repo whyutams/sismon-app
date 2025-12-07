@@ -1,5 +1,7 @@
 package com.example.orion.activity;
 
+import static com.example.orion.utils.Helpers.hideKeyboard;
+
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -188,6 +190,8 @@ public class TambahPerizinanSiswaActivity extends AppCompatActivity {
                         } else {
                             loading.dismiss();
                         }
+
+                        hideKeyboard(TambahPerizinanSiswaActivity.this);
                     }
                 });
             }
@@ -306,7 +310,7 @@ public class TambahPerizinanSiswaActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Pilih Siswa");
 
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_siswa_picker, null);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_picker_1, null);
         builder.setView(dialogView);
 
         SearchView searchView = dialogView.findViewById(R.id.searchView);

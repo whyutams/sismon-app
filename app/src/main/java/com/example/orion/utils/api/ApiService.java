@@ -1,5 +1,7 @@
 package com.example.orion.utils.api;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.JsonObject;
 
 import okhttp3.MultipartBody;
@@ -68,7 +70,35 @@ public interface ApiService {
             @Path("id") String id,
             @Part("_method") RequestBody method,
             @Part("status") RequestBody statusBaru
-            );
+    );
+
+    @Multipart
+    @POST("jurusan")
+    Call<JsonObject> jurusanAdd(
+            @Part("nama") RequestBody jurusan,
+            @Part("alias") RequestBody alias,
+            @Part("deskripsi") RequestBody deskripsi
+    );
+
+    @Multipart
+    @POST("users")
+    Call<JsonObject> userSatpamAdd(
+            @Part("nip") @Nullable RequestBody nip,
+            @Part("nama") RequestBody nama,
+            @Part("nomor_hp") @Nullable RequestBody nomor_hp,
+            @Part("email") @Nullable RequestBody email,
+            @Part("username") RequestBody username,
+            @Part("password") RequestBody password,
+            @Part("role") RequestBody role
+    );
+
+    @Multipart
+    @POST("kelas")
+    Call<JsonObject> kelasAdd(
+            @Part("kelas") RequestBody kelas,
+            @Part("jumlah_kelas") RequestBody jumlah_kelas,
+            @Part("jurusan_id") RequestBody jurusan_id
+    );
 
 }
 
