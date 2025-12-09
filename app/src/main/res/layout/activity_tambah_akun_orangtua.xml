@@ -75,18 +75,18 @@
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_nomerHP"
+                                android:id="@+id/til_nomorHp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp">
 
                                 <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/et_nomerHP"
+                                    android:id="@+id/et_nomorHp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:maxLines="1"
                                     android:singleLine="true"
-                                    android:hint="Nomer HP" />
+                                    android:hint="Nomer HP (bisa dikosongkan)" />
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
@@ -101,7 +101,7 @@
                                     android:layout_height="wrap_content"
                                     android:maxLines="1"
                                     android:singleLine="true"
-                                    android:hint="Email" />
+                                    android:hint="Email (bisa dikosongkan)" />
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
@@ -115,13 +115,13 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="top|left"
-                                    android:hint="Alamat"
+                                    android:hint="Alamat (bisa dikosongkan)"
                                     android:lines="3" />
 
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_Username"
+                                android:id="@+id/til_username"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp">
@@ -139,15 +139,18 @@
                                 android:id="@+id/til_password"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp">
+                                android:layout_marginTop="8dp"
+                                app:helperText="Password sementara, bisa diganti ketika user login ke akun.">
 
                                 <com.google.android.material.textfield.TextInputEditText
                                     android:id="@+id/et_password"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:editable="false"
                                     android:maxLines="1"
                                     android:singleLine="true"
-                                    android:hint="Password" />
+                                    android:hint="Password"
+                                    android:text="12345678" />
                             </com.google.android.material.textfield.TextInputLayout>
 
                         </LinearLayout>
@@ -160,6 +163,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="8dp"
                     android:backgroundTint="@color/primary"
                     android:paddingVertical="12dp"
                     android:text="Simpan"

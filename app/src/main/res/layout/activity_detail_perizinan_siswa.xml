@@ -78,7 +78,8 @@
                             android:layout_width="250dp"
                             android:layout_height="250dp"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginVertical="8dp"
+                            android:layout_marginTop="8dp"
+                            android:layout_marginBottom="4dp"
                             android:gravity="center">
 
                             <ImageView
@@ -90,6 +91,20 @@
                                 app:tint="@android:color/darker_gray" />
 
                         </LinearLayout>
+
+                        <Button
+                            android:id="@+id/btn_editProfile"
+                            style="@style/Widget.MaterialComponents.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="16dp"
+                            android:backgroundTint="@color/primary"
+                            android:drawableLeft="@drawable/ic_share_20"
+                            android:drawableTint="@color/white"
+                            android:text="Bagikan"
+                            android:textAllCaps="false"
+                            android:textStyle="bold" />
 
                         <LinearLayout
                             android:id="@+id/ll_bio"

@@ -239,7 +239,6 @@ public class TambahKeterlambatanSiswaActivity extends AppCompatActivity {
         timePicker.show(getSupportFragmentManager(), "TIME_PICKER");
     }
 
-
     private void loadSiswa() {
         if (NetworkUtil.isConnected(this)) {
             siswaList.clear();
@@ -296,7 +295,6 @@ public class TambahKeterlambatanSiswaActivity extends AppCompatActivity {
             });
         }
     }
-
 
     private void showSiswaPicker() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -369,7 +367,6 @@ public class TambahKeterlambatanSiswaActivity extends AppCompatActivity {
 
         dialog.show();
     }
-
 
     private void showImagePickerDialog() {
         String[] options = {"Kamera", "Galeri"};

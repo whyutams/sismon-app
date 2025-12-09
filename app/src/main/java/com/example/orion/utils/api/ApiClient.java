@@ -19,7 +19,7 @@ public class ApiClient {
     private static Retrofit retrofit = null;
 //    public static String base_url = "http://36.94.61.28:1106/";
 //    public static String base_url = "http://192.168.137.1:8000/";
-    public static String base_url = "http://192.168.8.100:8000/";
+    public static String base_url = "http://192.168.8.101:8000/";
     public static String base_api = base_url + "api/";
 
     public static Retrofit getClient(Context context) {

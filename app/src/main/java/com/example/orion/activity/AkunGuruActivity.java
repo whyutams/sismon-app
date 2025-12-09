@@ -368,11 +368,11 @@ public class AkunGuruActivity extends AppCompatActivity {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(AkunGuruActivity.this, DetailAkunGuruActivity.class);
-//                intent.putExtra("id", data.get("id").getAsString());
-//                intent.putExtra("index", tvIndex.getText());
-//                startActivity(intent);
-//                Helpers.overridePendingTransition_Enter_v1(AkunGuruActivity.this);
+                Intent intent = new Intent(AkunGuruActivity.this, DetailAkunGuruActivity.class);
+                intent.putExtra("id", data.get("id").getAsString());
+                intent.putExtra("index", tvIndexText.getText());
+                startActivity(intent);
+                Helpers.overridePendingTransition_Enter_v1(AkunGuruActivity.this);
             }
         });
 

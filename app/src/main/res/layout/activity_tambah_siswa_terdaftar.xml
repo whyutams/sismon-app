@@ -26,7 +26,7 @@
                 android:elevation="4dp"
                 android:theme="@style/ThemeOverlay.Material3.ActionBar"
                 app:navigationIconTint="@color/white"
-                app:title="Tambah Siswa Terdaftar"
+                app:title="Tambah Siswa"
                 app:titleTextColor="@color/white" />
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -62,71 +62,51 @@
 
 
                             <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_tambah_siswa"
+                                android:id="@+id/til_nama"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp">
 
                                 <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/et_tambah_siswa"
+                                    android:id="@+id/et_nama"
                                     android:maxLines="1"
                                     android:singleLine="true"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:hint="Tambah Siswa" />
+                                    android:hint="Nama Lengkap" />
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_NIS"
+                                android:id="@+id/til_nis"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp">
 
                                 <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/et_NIS"
+                                    android:id="@+id/et_nis"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:maxLines="1"
                                     android:singleLine="true"
-                                    android:hint="NIS"
+                                    android:hint="NIS (boleh dikosongkan)"
                                     android:inputType="none" />
                             </com.google.android.material.textfield.TextInputLayout>
 
 
                             <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_nomerHP"
+                                android:id="@+id/til_nomorHp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp">
 
                                 <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/et_nomerHP"
+                                    android:id="@+id/et_nomorHp"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:maxLines="1"
                                     android:singleLine="true"
                                     android:gravity="top|left"
-                                    android:hint="Nomer HP" />
-                            </com.google.android.material.textfield.TextInputLayout>
-
-                            <com.google.android.material.textfield.TextInputLayout
-                                android:id="@+id/til_kelas"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:enabled="false"
-                                app:endIconDrawable="@drawable/ic_apartment_24"
-                                app:endIconMode="custom">
-
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/et_kelas"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:clickable="true"
-                                    android:enabled="false"
-                                    android:focusable="false"
-                                    android:hint="Kelas"
-                                    android:inputType="none" />
+                                    android:hint="Nomor HP (boleh dikosongkan)" />
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
@@ -150,6 +130,26 @@
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_kelas"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:enabled="false"
+                                app:endIconDrawable="@drawable/ic_apartment_24"
+                                app:endIconMode="custom">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_kelas"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:enabled="false"
+                                    android:focusable="false"
+                                    android:hint="Kelas"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_orangtua"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -165,7 +165,7 @@
                                     android:clickable="true"
                                     android:enabled="false"
                                     android:focusable="false"
-                                    android:hint="Orang Tua"
+                                    android:hint="Orangtua Siswa (boleh dikosongkan)"
                                     android:inputType="none" />
                             </com.google.android.material.textfield.TextInputLayout>
 

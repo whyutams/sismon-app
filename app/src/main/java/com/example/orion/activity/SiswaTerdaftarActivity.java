@@ -174,7 +174,7 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
 
         // Set icon color
         ImageView searchButton = searchView.findViewById(androidx.appcompat.R.id.search_button);
-        if(searchButton != null) {
+        if (searchButton != null) {
             searchButton.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP));
         }
 
@@ -309,11 +309,18 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
         View itemView = LayoutInflater.from(this).inflate(R.layout.item_siswa_terdaftar, ll_countainer_list, false);
 
         TextView tvTitle = itemView.findViewById(R.id.titleText);
+        TextView tvOrtuText = itemView.findViewById(R.id.ortuText);
         TextView tvNisText = itemView.findViewById(R.id.nisText);
         TextView tvKelasText = itemView.findViewById(R.id.kelasText);
         TextView tvIndex = itemView.findViewById(R.id.indexText);
 
-        String nama = data.get("nama").getAsString(), nis = data.get("nis").getAsString(), kelas = data.get("kelas").getAsString();
+        String nama = data.get("nama").getAsString(), nis = (!data.get("nis").isJsonNull() && data.has("nis") ? data.get("nis").getAsString() : "-"), kelas = data.get("kelas").getAsString();
+        JsonObject orangtua = null;
+        if (!data.get("orangtua").isJsonNull()) {
+            orangtua = data.get("orangtua").getAsJsonObject();
+
+            tvOrtuText.setText("Orangtua siswa: " + orangtua.get("nama").getAsString() + " (" + orangtua.get("username").getAsString() + ")");
+        }
 
         tvTitle.setText(nama);
         tvNisText.setText(nis);
@@ -323,6 +330,7 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
         HashMap<String, String> map = new HashMap<>();
         map.put("index", (total - index) + "");
         map.put("nama", nama);
+        map.put("orangtua", orangtua != null ? (orangtua.get("nama").getAsString() + " (" + orangtua.get("username").getAsString() + ")") : "-");
         map.put("nis", nis);
         map.put("kelas", kelas);
         map.put("id", data.get("id").getAsString());
@@ -331,11 +339,11 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(SiswaTerdaftarActivity.this, DetailSiswaTerdaftarActivity.class);
-//                intent.putExtra("id", data.get("id").getAsString());
-//                intent.putExtra("index", tvIndex.getText());
-//                startActivity(intent);
-//                Helpers.overridePendingTransition_Enter_v1(SiswaTerdaftarActivity.this);
+                Intent intent = new Intent(SiswaTerdaftarActivity.this, DetailSiswaTerdaftarActivity.class);
+                intent.putExtra("id", data.get("id").getAsString());
+                intent.putExtra("index", tvIndex.getText());
+                startActivity(intent);
+                Helpers.overridePendingTransition_Enter_v1(SiswaTerdaftarActivity.this);
             }
         });
 
@@ -362,6 +370,7 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
         for (HashMap<String, String> item : dataList) {
             String allText = String.join(" ",
                     item.get("nama"),
+                    item.get("orangtua"),
                     item.get("nis"),
                     item.get("kelas")
             ).toLowerCase();
@@ -375,6 +384,7 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
         for (HashMap<String, String> item : dataList) {
             String allText = String.join(" ",
                     item.get("nama"),
+                    item.get("orangtua"),
                     item.get("nis"),
                     item.get("kelas")
             ).toLowerCase();
@@ -397,11 +407,14 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
         View itemView = LayoutInflater.from(this).inflate(R.layout.item_siswa_terdaftar, ll_countainer_list, false);
 
         TextView tvTitle = itemView.findViewById(R.id.titleText);
+        TextView tvOrtuText = itemView.findViewById(R.id.ortuText);
         TextView tvNisText = itemView.findViewById(R.id.nisText);
         TextView tvKelasText = itemView.findViewById(R.id.kelasText);
         TextView tvIndex = itemView.findViewById(R.id.indexText);
 
-        String nama = item.get("nama"), nis = item.get("nis"), kelas = item.get("kelas");
+        String nama = item.get("nama"), nis = item.get("nis"), kelas = item.get("kelas"), orangtua = item.get("orangtua");
+
+        tvOrtuText.setText("Orangtua siswa: " + orangtua);
 
         tvTitle.setText(nama);
         tvNisText.setText(nis);

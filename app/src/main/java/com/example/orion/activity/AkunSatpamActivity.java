@@ -354,11 +354,11 @@ public class AkunSatpamActivity extends AppCompatActivity {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(AkunSatpamActivity.this, DetailAkunSatpamActivity.class);
-//                intent.putExtra("id", data.get("id").getAsString());
-//                intent.putExtra("index", tvIndex.getText());
-//                startActivity(intent);
-//                Helpers.overridePendingTransition_Enter_v1(AkunSatpamActivity.this);
+                Intent intent = new Intent(AkunSatpamActivity.this, DetailAkunSatpamActivity.class);
+                intent.putExtra("id", data.get("id").getAsString());
+                intent.putExtra("index", tvIndexText.getText());
+                startActivity(intent);
+                Helpers.overridePendingTransition_Enter_v1(AkunSatpamActivity.this);
             }
         });
 

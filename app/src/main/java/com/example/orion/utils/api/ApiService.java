@@ -93,6 +93,48 @@ public interface ApiService {
     );
 
     @Multipart
+    @POST("users")
+    Call<JsonObject> userGuruAdd(
+            @Part("nip") RequestBody nip,
+            @Part("nama") RequestBody nama,
+            @Part("nomor_hp") @Nullable RequestBody nomor_hp,
+            @Part("email") @Nullable RequestBody email,
+            @Part("alamat") @Nullable RequestBody alamat,
+            @Part("username") RequestBody username,
+            @Part("password") RequestBody password,
+            @Part("jurusan_id") RequestBody jurusan_id,
+            @Part("role") RequestBody role
+    );
+
+    @Multipart
+    @POST("users")
+    Call<JsonObject> userOrangtuaAdd(
+            @Part("nama") RequestBody nama,
+            @Part("nomor_hp") @Nullable RequestBody nomor_hp,
+            @Part("email") @Nullable RequestBody email,
+            @Part("alamat") @Nullable RequestBody alamat,
+            @Part("username") RequestBody username,
+            @Part("password") RequestBody password,
+            @Part("role") RequestBody role
+    );
+
+    @GET("users/{id}")
+    Call<JsonObject> userShow(@Path("id") String id);
+
+    @Multipart
+    @POST("siswa")
+    Call<JsonObject> siswaAdd(
+            @Part("nis") @Nullable RequestBody nis,
+            @Part("nama") RequestBody nama,
+            @Part("nomor_hp") @Nullable RequestBody nomor_hp,
+            @Part("jurusan_id") RequestBody jurusan_id,
+            @Part("kelas") RequestBody kelas,
+            @Part("orangtua_id") @Nullable RequestBody orangtua_id
+    );
+
+    @GET("list/kelas")
+    Call<JsonObject> kelasList();
+    @Multipart
     @POST("kelas")
     Call<JsonObject> kelasAdd(
             @Part("kelas") RequestBody kelas,

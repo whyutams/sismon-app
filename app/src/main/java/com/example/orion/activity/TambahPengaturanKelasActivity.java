@@ -120,7 +120,6 @@ public class TambahPengaturanKelasActivity extends AppCompatActivity {
                                 RequestBody jumlah_kelas = RequestBody.create(MultipartBody.FORM, jumlahKelasString);
                                 RequestBody jurusan_id = RequestBody.create(MultipartBody.FORM, selectedJurusanId);
 
-
                                 if (NetworkUtil.isConnected(TambahPengaturanKelasActivity.this)) {
                                     ApiService apiService = ApiClient.getClient(TambahPengaturanKelasActivity.this).create(ApiService.class);
                                     Call<JsonObject> call = apiService.kelasAdd(kelas, jumlah_kelas, jurusan_id);
