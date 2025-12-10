@@ -154,6 +154,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
 
 
         MenuItem searchItem = menu.findItem(R.id.nav_search);
+        MenuItem articleItem = menu.findItem(R.id.nav_export);
         androidx.appcompat.widget.SearchView searchView =
                 (androidx.appcompat.widget.SearchView) searchItem.getActionView();
 
@@ -185,6 +186,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
                 }
             }
 
+
             LinearLayout ll = (LinearLayout) searchView.getChildAt(0);
             if (ll != null) {
                 for (int i = 0; i < ll.getChildCount(); i++) {
@@ -193,6 +195,10 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
                         ((ImageView) v).setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
                     }
                 }
+            }
+
+            if (articleItem != null) {
+                articleItem.setVisible(false);
             }
         });
 
@@ -215,13 +221,18 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 if (fab_tambah_showed) Helpers.animateZoomIn_v1(fab_tambah);
-
+                if (articleItem != null) {
+                    articleItem.setVisible(false);
+                }
                 return true;
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                if (fab_tambah_showed) Helpers.animateZoomIn_v1(fab_tambah);
+                if (fab_tambah_showed){ Helpers.animateZoomIn_v1(fab_tambah);}
+                if (articleItem != null) {
+                    articleItem.setVisible(true);
+                }
                 reloadAllItems();
                 return true;
             }

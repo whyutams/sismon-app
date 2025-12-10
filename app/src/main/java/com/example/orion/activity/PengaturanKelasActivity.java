@@ -152,6 +152,7 @@ public class PengaturanKelasActivity extends AppCompatActivity {
         }
 
         MenuItem searchItem = menu.findItem(R.id.nav_search);
+        MenuItem articleItem = menu.findItem(R.id.nav_export);
         androidx.appcompat.widget.SearchView searchView =
                 (androidx.appcompat.widget.SearchView) searchItem.getActionView();
 
@@ -193,6 +194,9 @@ public class PengaturanKelasActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (fab_tambah_allowed) Helpers.animateZoomOut_v1(fab_tambah);
 
+                if (articleItem != null) {
+                    articleItem.setVisible(false);
+                }
             }
         });
 
@@ -225,6 +229,11 @@ public class PengaturanKelasActivity extends AppCompatActivity {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
                 reloadAllItems(); // tampilkan semua
+                if (articleItem != null) {
+                    articleItem.setVisible(true);
+                }
+
+                reloadAllItems();
                 return true;
             }
         });
@@ -245,6 +254,7 @@ public class PengaturanKelasActivity extends AppCompatActivity {
                         String status = json.has("status") ? json.get("status").getAsString() : "";
 
                         if (status.equals("success")) {
+                            dataList.clear();
                             ll_countainer_list.removeAllViews();
 
                             JsonObject main_data = json.has("data") ? json.get("data").getAsJsonObject() : null;
