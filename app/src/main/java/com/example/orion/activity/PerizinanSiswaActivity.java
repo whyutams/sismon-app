@@ -1,12 +1,23 @@
 package com.example.orion.activity;
 
+import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,7 +30,11 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
@@ -33,12 +48,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.os.Handler;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,10 +72,18 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
     private FloatingActionButton fab_tambah;
     private boolean fab_tambah_showed = false;
 
+    // Untuk export CSV
+    private static final String CHANNEL_ID = "download_channel_perizinan";
+    private static final int NOTIFICATION_PERMISSION_CODE = 100;
+    private static final int STORAGE_PERMISSION_CODE = 101;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perizinan_siswa);
+
+        // Buat notification channel
+        createNotificationChannel();
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -152,7 +179,6 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
             }
         }
 
-
         MenuItem searchItem = menu.findItem(R.id.nav_search);
         MenuItem articleItem = menu.findItem(R.id.nav_export);
         androidx.appcompat.widget.SearchView searchView =
@@ -185,7 +211,6 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
                     iv.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
                 }
             }
-
 
             LinearLayout ll = (LinearLayout) searchView.getChildAt(0);
             if (ll != null) {
@@ -243,9 +268,20 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.nav_search) return true;
+        int id = item.getItemId();
+
+        if (id == R.id.nav_search) {
+            return true;
+        } else if (id == R.id.nav_export) {
+            // Handle export CSV (sesuai dengan kode yang berhasil)
+            checkPermissionsAndExport();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
+
+    // ========== FUNGSI LOAD DATA (SAMA DENGAN YANG LAMA) ==========
 
     private void loadData() {
         if (!NetworkUtil.isConnected(this)) {
@@ -303,6 +339,8 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
         });
     }
 
+    // ========== MODIFIKASI addItem() UNTUK MENYIMPAN DATA LENGKAP ==========
+
     private void addItem(JsonObject data, int index, int total) {
         if (isFinishing() || isDestroyed()) return;
 
@@ -352,6 +390,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
             ivIcon.setImageTintList(ContextCompat.getColorStateList(this, android.R.color.darker_gray));
         }
 
+        // SIMPAN DATA LENGKAP UNTUK EXPORT CSV
         HashMap<String, String> map = new HashMap<>();
         map.put("index", String.valueOf(total - index));
         map.put("nama", nama);
@@ -359,8 +398,16 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
         map.put("date", data.get("date").getAsString());
         map.put("id", data.get("id").getAsString());
         map.put("status", status);
+
+        // Tambahkan data siswa lengkap (sama seperti di KeterlambatanSiswaActivity)
+        map.put("nis", siswa.has("nis") && !siswa.get("nis").isJsonNull() ?
+                siswa.get("nis").getAsString() : "-");
+        map.put("kelas", siswa.has("kelas") && !siswa.get("kelas").isJsonNull() ?
+                siswa.get("kelas").getAsString() : "-");
+
         if (data.has("gambar") && !data.get("gambar").isJsonNull())
             map.put("gambar", data.get("gambar").getAsString());
+
         dataList.add(map);
 
         itemView.setOnClickListener(v -> {
@@ -376,6 +423,8 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
 
         if (total == index + 1 && fab_tambah_showed) Helpers.animateZoomIn_v1(fab_tambah);
     }
+
+    // ========== FUNGSI FILTER DATA (SAMA) ==========
 
     private void filterData(String query) {
         ll_countainer_list.removeAllViews();
@@ -472,10 +521,301 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
         ll_notfound.setVisibility(View.GONE);
     }
 
+    // ========== FUNGSI EXPORT CSV (DIAMBIL DARI KETERLAMBATANSISWAACTIVITY) ==========
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Download File Perizinan";
+            String description = "Notifikasi untuk file perizinan yang didownload";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    private void checkPermissionsAndExport() {
+        if (dataList == null || dataList.isEmpty()) {
+            Toast.makeText(this, "Tidak ada data untuk diekspor", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13+ butuh permission notifikasi
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE);
+            } else {
+                exportToCsv();
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            // Android 6-9 butuh permission storage
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+            } else {
+                exportToCsv();
+            }
+        } else {
+            // Android lain tidak butuh permission khusus
+            exportToCsv();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_CODE || requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportToCsv();
+            } else {
+                Toast.makeText(this, "Permission diperlukan untuk export dan notifikasi", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void exportToCsv() {
+        // Tampilkan progress
+        ll_progress.setVisibility(View.VISIBLE);
+
+        // Jalankan di background thread
+        new Thread(() -> {
+            try {
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                String fileName = "Perizinan_Siswa_" + timeStamp + ".csv";
+
+                // Header untuk CSV Perizinan (disesuaikan dengan data perizinan)
+                String[] headers = {"No", "NIS", "Nama Siswa", "Kelas", "Keterangan",
+                        "Tanggal", "Waktu", "Status", "Jenis Izin"};
+
+                StringBuilder csvContent = new StringBuilder();
+                csvContent.append(String.join(",", headers)).append("\n");
+
+                for (int i = 0; i < dataList.size(); i++) {
+                    HashMap<String, String> item = dataList.get(i);
+
+                    String no = String.valueOf(i + 1);
+                    String nis = item.getOrDefault("nis", "-");
+                    String nama = escapeCsv(item.getOrDefault("nama", "-"));
+                    String kelas = item.getOrDefault("kelas", "-");
+                    String keterangan = escapeCsv(item.getOrDefault("keterangan", "-"));
+                    String date = item.getOrDefault("date", "-");
+
+                    // Pisahkan tanggal dan waktu
+                    String tanggal = date;
+                    String waktu = "";
+                    if (date != null && date.contains(" ")) {
+                        int sp = date.indexOf(" ");
+                        tanggal = date.substring(0, sp);
+                        waktu = date.substring(sp + 1);
+                    }
+
+                    // Status dengan format yang lebih baik
+                    String status = item.getOrDefault("status", "-");
+                    String statusText = "";
+                    if (status.equals("approved")) {
+                        statusText = "DISETUJUI";
+                    } else if (status.equals("rejected")) {
+                        statusText = "DITOLAK";
+                    } else {
+                        statusText = "MENUNGGU";
+                    }
+
+                    // Deteksi jenis izin dari keterangan
+                    String jenisIzin = tentukanJenisIzin(keterangan);
+
+                    String[] row = {no, nis, nama, kelas, keterangan,
+                            tanggal, waktu, statusText, jenisIzin};
+                    csvContent.append(String.join(",", row)).append("\n");
+                }
+
+                Uri fileUri = null;
+                String filePath = "";
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    // Untuk Android 10+ gunakan MediaStore
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+                    values.put(MediaStore.Downloads.MIME_TYPE, "text/csv");
+                    values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                    fileUri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                    if (fileUri != null) {
+                        OutputStream outputStream = getContentResolver().openOutputStream(fileUri);
+                        outputStream.write(csvContent.toString().getBytes());
+                        outputStream.close();
+
+                        // Dapatkan path file
+                        Cursor cursor = getContentResolver().query(fileUri,
+                                new String[]{MediaStore.Downloads.DATA}, null, null, null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                            filePath = cursor.getString(0);
+                            cursor.close();
+                        }
+                        if (filePath.isEmpty()) {
+                            filePath = "Download/" + fileName;
+                        }
+                    }
+                } else {
+                    // Untuk Android < 10 gunakan FileOutputStream
+                    File downloadDir = Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS);
+                    if (!downloadDir.exists()) downloadDir.mkdirs();
+
+                    File file = new File(downloadDir, fileName);
+                    FileOutputStream fos = new FileOutputStream(file);
+                    fos.write(csvContent.toString().getBytes());
+                    fos.close();
+
+                    fileUri = Uri.fromFile(file);
+                    filePath = file.getAbsolutePath();
+                }
+
+                final Uri finalUri = fileUri;
+                final String finalPath = filePath;
+
+                runOnUiThread(() -> {
+                    ll_progress.setVisibility(View.GONE);
+                    showSuccessDialog(fileName, finalPath, finalUri);
+                    showDownloadNotification(fileName, finalUri);
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    ll_progress.setVisibility(View.GONE);
+                    Toast.makeText(this, "Gagal mengekspor: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
+    }
+
+    private void showSuccessDialog(String fileName, String filePath, Uri fileUri) {
+        androidx.appcompat.app.AlertDialog.Builder builder =
+                new androidx.appcompat.app.AlertDialog.Builder(this);
+
+        builder.setTitle("✅ Export Berhasil");
+        builder.setMessage(
+                "File Perizinan berhasil disimpan:\n\n" +
+                        "📁 " + filePath + "\n\n" +
+                        "Total: " + dataList.size() + " data"
+        );
+
+        // Tidak ada tombol
+        builder.setCancelable(true);
+
+        builder.show();
+    }
+
+
+    private void openFile(Uri fileUri) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(fileUri, "text/csv");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(Intent.createChooser(intent, "Buka dengan"));
+        } catch (Exception e) {
+            Toast.makeText(this, "Tidak ada aplikasi untuk membuka file CSV", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void shareFile(Uri fileUri) {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/csv");
+            shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(shareIntent, "Bagikan File"));
+        } catch (Exception e) {
+            Toast.makeText(this, "Gagal membagikan file", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showDownloadNotification(String fileName, Uri fileUri) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(fileUri, "text/csv");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
+                            PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                            PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                    .setContentTitle("Download Perizinan Selesai")
+                    .setContentText(fileName)
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText("File " + fileName + " berhasil didownload.\nKlik untuk membuka."))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL);
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                notificationManager.notify(1002, builder.build());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) return "";
+        boolean hasSpecial = value.contains(",") || value.contains("\"") ||
+                value.contains("\n") || value.contains("\r");
+        String v = value.replace("\"", "\"\"");
+        if (hasSpecial) v = "\"" + v + "\"";
+        return v;
+    }
+
+    // Fungsi untuk menentukan jenis izin dari keterangan
+    private String tentukanJenisIzin(String keterangan) {
+        if (keterangan == null || keterangan.isEmpty()) {
+            return "LAINNYA";
+        }
+
+        String keteranganLower = keterangan.toLowerCase();
+
+        if (keteranganLower.contains("sakit") ||
+                keteranganLower.contains("demam") ||
+                keteranganLower.contains("kesehatan") ||
+                keteranganLower.contains("dokter")) {
+            return "SAKIT";
+        } else if (keteranganLower.contains("izin") ||
+                keteranganLower.contains("perlu") ||
+                keteranganLower.contains("keluar") ||
+                keteranganLower.contains("urusan")) {
+            return "IZIN";
+        } else if (keteranganLower.contains("acara") ||
+                keteranganLower.contains("keluarga") ||
+                keteranganLower.contains("pernikahan") ||
+                keteranganLower.contains("sunatan")) {
+            return "KELUARGA";
+        } else if (keteranganLower.contains("alpha") ||
+                keteranganLower.contains("alfa") ||
+                keteranganLower.contains("tidak hadir")) {
+            return "ALPHA";
+        } else {
+            return "LAINNYA";
+        }
+    }
+
     @Override
     public void finish() {
         super.finish();
         Helpers.overridePendingTransition_Exit_v1(this);
     }
-
 }

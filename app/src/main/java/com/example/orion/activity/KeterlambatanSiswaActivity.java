@@ -1,15 +1,28 @@
 package com.example.orion.activity;
 
+import android.Manifest;
+import android.app.DownloadManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,8 +32,14 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
@@ -34,12 +53,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.os.Handler;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,11 +76,16 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> addDataLauncher;
     private FloatingActionButton fab_tambah;
     private boolean fab_tambah_allowed = false;
+    private static final String CHANNEL_ID = "download_channel";
+    private static final int NOTIFICATION_PERMISSION_CODE = 100;
+    private static final int STORAGE_PERMISSION_CODE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keterlambatan_siswa);
+
+        createNotificationChannel();
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -144,6 +172,9 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.nav_search) {
             return true;
+        } else if (item.getItemId() == R.id.nav_export) {
+            checkPermissionsAndExport();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -173,7 +204,6 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
             searchText.setHintTextColor(Color.parseColor("#80FFFFFF"));
         }
 
-        // Set icon color
         ImageView searchButton = searchView.findViewById(androidx.appcompat.R.id.search_button);
         if(searchButton != null) {
             searchButton.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP));
@@ -201,10 +231,7 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (fab_tambah_allowed) Helpers.animateZoomOut_v1(fab_tambah);
-
-                if (articleItem != null) {
-                    articleItem.setVisible(false);
-                }
+                if (articleItem != null) articleItem.setVisible(false);
             }
         });
 
@@ -217,11 +244,8 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    reloadAllItems();
-                } else {
-                    filterData(newText);
-                }
+                if (newText.isEmpty()) reloadAllItems();
+                else filterData(newText);
                 return true;
             }
         });
@@ -230,19 +254,13 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
-                if (articleItem != null) {
-                    articleItem.setVisible(false);
-                }
+                if (articleItem != null) articleItem.setVisible(false);
                 return true;
             }
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
-                reloadAllItems(); // tampilkan semua
-                if (articleItem != null) {
-                    articleItem.setVisible(true);
-                }
-
+                if (articleItem != null) articleItem.setVisible(true);
                 reloadAllItems();
                 return true;
             }
@@ -250,7 +268,6 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
 
         return true;
     }
-
 
     private void loadData() {
         if (NetworkUtil.isConnected(this)) {
@@ -260,13 +277,11 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
                 public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         JsonObject json = response.body();
-
                         String status = json.has("status") ? json.get("status").getAsString() : "";
 
                         if (status.equals("success")) {
                             dataList.clear();
                             ll_countainer_list.removeAllViews();
-
 
                             JsonObject main_data = json.has("data") ? json.get("data").getAsJsonObject() : null;
                             JsonObject data = main_data.has("data") ? main_data.get("data").getAsJsonObject() : null;
@@ -277,7 +292,6 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
                                     JsonObject d = keterlambatan.get(i).getAsJsonObject();
                                     addItem(d, i, keterlambatan.size());
                                 }
-
                                 ll_progress.setVisibility(View.GONE);
                                 swipeRefreshLayout.setVisibility(View.VISIBLE);
                             } else {
@@ -285,13 +299,11 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         if (isFinishing() || isDestroyed()) return;
-
                                         ll_progress.setVisibility(View.GONE);
                                         ll_notfound.setVisibility(View.VISIBLE);
                                     }
                                 });
                             }
-
                         } else {
                             Toast.makeText(KeterlambatanSiswaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
                         }
@@ -329,7 +341,6 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
         ImageView ivIcon = itemView.findViewById(R.id.iconImage);
 
         JsonObject siswa = data.get("siswa").getAsJsonObject();
-
         String nama = siswa.get("nama").getAsString(), keterangan = data.get("keterangan").getAsString();
 
         tvTitle.setText(nama);
@@ -340,23 +351,12 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
 
         if (data.has("gambar") && !data.get("gambar").isJsonNull()) {
             String gambar = data.get("gambar").getAsString();
-
-            if (!gambar.startsWith("http")) {
-                gambar = ApiClient.base_url + gambar;
-            }
-
+            if (!gambar.startsWith("http")) gambar = ApiClient.base_url + gambar;
             ivIcon.setImageTintList(null);
-
-            Glide.with(this)
-                    .load(gambar)
-                    .placeholder(R.drawable.ic_image_24)
-                    .error(R.drawable.ic_image_24)
-                    .into(ivIcon);
+            Glide.with(this).load(gambar).placeholder(R.drawable.ic_image_24).error(R.drawable.ic_image_24).into(ivIcon);
         } else {
             ivIcon.setImageResource(R.drawable.ic_image_24);
-            ivIcon.setImageTintList(
-                    ContextCompat.getColorStateList(this, android.R.color.darker_gray)
-            );
+            ivIcon.setImageTintList(ContextCompat.getColorStateList(this, android.R.color.darker_gray));
         }
 
         HashMap<String, String> map = new HashMap<>();
@@ -365,8 +365,9 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
         map.put("keterangan", keterangan);
         map.put("date", data.get("date").getAsString());
         map.put("id", data.get("id").getAsString());
-        if (data.has("gambar") && !data.get("gambar").isJsonNull())
-            map.put("gambar", data.get("gambar").getAsString());
+        map.put("nis", siswa.has("nis") && !siswa.get("nis").isJsonNull() ? siswa.get("nis").getAsString() : "-");
+        map.put("kelas", siswa.has("kelas") && !siswa.get("kelas").isJsonNull() ? siswa.get("kelas").getAsString() : "-");
+        if (data.has("gambar") && !data.get("gambar").isJsonNull()) map.put("gambar", data.get("gambar").getAsString());
         dataList.add(map);
 
         itemView.setOnClickListener(new View.OnClickListener() {
@@ -396,43 +397,26 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
 
     private void filterData(String query) {
         ll_countainer_list.removeAllViews();
-
         query = query.toLowerCase();
         int totalMatches = 0;
 
         for (HashMap<String, String> item : dataList) {
-            String allText = String.join(" ",
-                    item.get("nama"),
-                    item.get("keterangan"),
-                    item.get("date")
-            ).toLowerCase();
-
-            if (allText.contains(query)) {
-                totalMatches++;
-            }
+            String allText = String.join(" ", item.get("nama"), item.get("keterangan"), item.get("date")).toLowerCase();
+            if (allText.contains(query)) totalMatches++;
         }
 
         int currentIndex = 0;
         for (HashMap<String, String> item : dataList) {
-            String allText = String.join(" ",
-                    item.get("nama"),
-                    item.get("keterangan"),
-                    item.get("date")
-            ).toLowerCase();
-
+            String allText = String.join(" ", item.get("nama"), item.get("keterangan"), item.get("date")).toLowerCase();
             if (allText.contains(query)) {
                 addFilteredItem(item, currentIndex, totalMatches);
                 currentIndex++;
             }
         }
 
-        if (totalMatches == 0) {
-            ll_notfound.setVisibility(View.VISIBLE);
-        } else {
-            ll_notfound.setVisibility(View.GONE);
-        }
+        if (totalMatches == 0) ll_notfound.setVisibility(View.VISIBLE);
+        else ll_notfound.setVisibility(View.GONE);
     }
-
 
     private void addFilteredItem(HashMap<String, String> item, int index, int total) {
         View itemView = LayoutInflater.from(this).inflate(R.layout.item_keterlambatan, ll_countainer_list, false);
@@ -453,20 +437,12 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
 
         if (item.containsKey("gambar") && item.get("gambar") != null && !item.get("gambar").isEmpty()) {
             String gambar = item.get("gambar");
-            if (!gambar.startsWith("http")) {
-                gambar = ApiClient.base_url + gambar;
-            }
+            if (!gambar.startsWith("http")) gambar = ApiClient.base_url + gambar;
             ivIcon.setImageTintList(null);
-            Glide.with(this)
-                    .load(gambar)
-                    .placeholder(R.drawable.ic_image_24)
-                    .error(R.drawable.ic_image_24)
-                    .into(ivIcon);
+            Glide.with(this).load(gambar).placeholder(R.drawable.ic_image_24).error(R.drawable.ic_image_24).into(ivIcon);
         } else {
             ivIcon.setImageResource(R.drawable.ic_image_24);
-            ivIcon.setImageTintList(
-                    ContextCompat.getColorStateList(this, android.R.color.darker_gray)
-            );
+            ivIcon.setImageTintList(ContextCompat.getColorStateList(this, android.R.color.darker_gray));
         }
 
         itemView.setOnClickListener(v -> {
@@ -480,16 +456,216 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
         ll_countainer_list.addView(itemView);
     }
 
-
     private void reloadAllItems() {
         ll_countainer_list.removeAllViews();
         int total = dataList.size();
-
         for (int i = 0; i < dataList.size(); i++) {
             addFilteredItem(dataList.get(i), i, total);
         }
-
         ll_notfound.setVisibility(View.GONE);
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Download File";
+            String description = "Notifikasi untuk file yang didownload";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            channel.enableLights(true);
+            channel.enableVibration(true);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+    }
+
+    private void checkPermissionsAndExport() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE);
+            } else {
+                exportToCsv();
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+            } else {
+                exportToCsv();
+            }
+        } else {
+            exportToCsv();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_CODE || requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportToCsv();
+            } else {
+                Toast.makeText(this, "Permission diperlukan untuk export dan notifikasi", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void exportToCsv() {
+        if (dataList == null || dataList.isEmpty()) {
+            Toast.makeText(this, "Tidak ada data untuk diekspor", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new Thread(() -> {
+            try {
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+                String fileName = "Keterlambatan_" + timeStamp + ".csv";
+
+                String[] headers = {"No", "NIS", "Nama Siswa", "Kelas", "Keterangan", "Tanggal", "Waktu"};
+                StringBuilder csvContent = new StringBuilder();
+                csvContent.append(String.join(",", headers)).append("\n");
+
+                for (int i = 0; i < dataList.size(); i++) {
+                    HashMap<String, String> item = dataList.get(i);
+                    String no = String.valueOf(i + 1);
+                    String nis = item.getOrDefault("nis", "-");
+                    String nama = escapeCsv(item.getOrDefault("nama", "-"));
+                    String kelas = item.getOrDefault("kelas", "-");
+                    String keterangan = escapeCsv(item.getOrDefault("keterangan", "-"));
+                    String date = item.getOrDefault("date", "-");
+
+                    String tanggal = date;
+                    String waktu = "";
+                    if (date != null && date.contains(" ")) {
+                        int sp = date.indexOf(" ");
+                        tanggal = date.substring(0, sp);
+                        waktu = date.substring(sp + 1);
+                    }
+
+                    String[] row = {no, nis, nama, kelas, keterangan, tanggal, waktu};
+                    csvContent.append(String.join(",", row)).append("\n");
+                }
+
+                Uri fileUri = null;
+                String filePath = "";
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+                    values.put(MediaStore.Downloads.MIME_TYPE, "text/csv");
+                    values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                    fileUri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                    if (fileUri != null) {
+                        OutputStream outputStream = getContentResolver().openOutputStream(fileUri);
+                        outputStream.write(csvContent.toString().getBytes());
+                        outputStream.close();
+
+                        Cursor cursor = getContentResolver().query(fileUri, new String[]{MediaStore.Downloads.DATA}, null, null, null);
+                        if (cursor != null && cursor.moveToFirst()) {
+                            filePath = cursor.getString(0);
+                            cursor.close();
+                        }
+                        if (filePath.isEmpty()) {
+                            filePath = "Download/" + fileName;
+                        }
+                    }
+                } else {
+                    File downloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                    if (!downloadDir.exists()) downloadDir.mkdirs();
+                    File file = new File(downloadDir, fileName);
+                    FileOutputStream fos = new FileOutputStream(file);
+                    fos.write(csvContent.toString().getBytes());
+                    fos.close();
+                    fileUri = Uri.fromFile(file);
+                    filePath = file.getAbsolutePath();
+                }
+
+                final Uri finalUri = fileUri;
+                final String finalPath = filePath;
+
+                runOnUiThread(() -> {
+                    showSuccessDialog(fileName, finalPath, finalUri);
+                    showDownloadNotification(fileName, finalUri);
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Gagal mengekspor: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        }).start();
+    }
+
+    private void showSuccessDialog(String fileName, String filePath, Uri fileUri) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("✅ Export Berhasil");
+        builder.setMessage("File Keterlambatan berhasil disimpan:\n\n" +
+                "📁 " + filePath + "\n\n" +
+                "Total: " + dataList.size() + " data");
+
+        // Tidak ada tombol — dialog hanya bisa ditutup dengan mengetuk di luar
+        builder.setCancelable(true);
+
+        builder.show();
+    }
+
+
+    private void openFile(Uri fileUri) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(fileUri, "text/csv");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(Intent.createChooser(intent, "Buka dengan"));
+        } catch (Exception e) {
+            Toast.makeText(this, "Tidak ada aplikasi untuk membuka file CSV", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showDownloadNotification(String fileName, Uri fileUri) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(fileUri, "text/csv");
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ?
+                            PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                            PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                    .setContentTitle("Download Selesai")
+                    .setContentText(fileName)
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText("File " + fileName + " berhasil didownload.\nKlik untuk membuka."))
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentIntent(pendingIntent)
+                    .setAutoCancel(true)
+                    .setDefaults(NotificationCompat.DEFAULT_ALL);
+
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                notificationManager.notify(1001, builder.build());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String escapeCsv(String value) {
+        if (value == null) return "";
+        boolean hasSpecial = value.contains(",") || value.contains("\"") || value.contains("\n") || value.contains("\r");
+        String v = value.replace("\"", "\"\"");
+        if (hasSpecial) v = "\"" + v + "\"";
+        return v;
     }
 
     @Override
@@ -497,5 +673,4 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
         super.finish();
         Helpers.overridePendingTransition_Exit_v1(this);
     }
-
 }
