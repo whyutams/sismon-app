@@ -142,5 +142,12 @@ public interface ApiService {
             @Part("jurusan_id") RequestBody jurusan_id
     );
 
+    @Multipart
+    @POST("reset-password")
+    Call<JsonObject> ubahPassword(
+            @Part("password_lama") RequestBody password_lama,
+            @Part("password_baru") RequestBody password_baru,
+            @Part("password_baru_confirmation") RequestBody konfirmasi_password
+    );
 }
 

@@ -92,7 +92,7 @@
                         </LinearLayout>
 
                         <Button
-                            android:id="@+id/btn_editProfile"
+                            android:id="@+id/btn_bagikan"
                             style="@style/Widget.MaterialComponents.Button"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

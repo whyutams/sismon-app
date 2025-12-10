@@ -262,9 +262,9 @@ public class TambahKeterlambatanSiswaActivity extends AppCompatActivity {
 
                                     Map<String, Object> siswa = new HashMap<>();
                                     siswa.put("id", d.get("id").getAsString());
-                                    siswa.put("nis", d.get("nis").getAsString());
+                                    siswa.put("nis", d.get("nis").isJsonNull() ? "-" : d.get("nis").getAsString());
                                     siswa.put("nama", d.get("nama").getAsString());
-                                    siswa.put("nomor_hp", d.get("nomor_hp").getAsString());
+                                    siswa.put("nomor_hp", (d.get("nomor_hp").isJsonNull() ? "-" : d.get("nomor_hp").getAsString()));
                                     siswa.put("jurusan", d.get("jurusan").getAsJsonObject());
                                     siswa.put("orangtua", (!d.get("orangtua").isJsonNull() ? d.get("orangtua").getAsJsonObject() : null));
                                     siswa.put("kelas", d.get("kelas").getAsString());
