@@ -15,11 +15,12 @@
         android:background="@color/primary">
 
         <com.google.android.material.appbar.MaterialToolbar
+                app:collapseIcon="@drawable/ic_arrow_back_white_24"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.Material3.ActionBar"
+            android:theme="@style/OrionToolbarThemeOverlay"
             app:title="Ubah Profil"
             app:titleTextColor="@color/white" />
     </com.google.android.material.appbar.AppBarLayout>

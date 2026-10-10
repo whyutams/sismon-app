@@ -15,6 +15,7 @@
         android:paddingTop="36dp">
 
         <com.google.android.material.appbar.MaterialToolbar
+                app:collapseIcon="@drawable/ic_arrow_back_white_24"
             android:id="@+id/toolbar_profile"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"

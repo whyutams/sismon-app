@@ -103,6 +103,7 @@
             </LinearLayout>
 
             <com.google.android.material.appbar.MaterialToolbar
+                app:collapseIcon="@drawable/ic_arrow_back_white_24"
                 android:id="@+id/toolbar_beranda"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"

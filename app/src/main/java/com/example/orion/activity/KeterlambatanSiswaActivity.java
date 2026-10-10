@@ -89,6 +89,7 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setCollapseIcon(R.drawable.ic_arrow_back_white_24);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -253,12 +254,14 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                Helpers.tintToolbarButtons(toolbar);
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
                 if (articleItem != null) articleItem.setVisible(false);
                 return true;
             }
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                Helpers.tintToolbarButtons(toolbar);
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
                 if (articleItem != null) articleItem.setVisible(true);
                 reloadAllItems();

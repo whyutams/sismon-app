@@ -48,5 +48,19 @@
         <item name="cornerSizeBottomLeft">75dp</item>
         <item name="cornerSizeBottomRight">75dp</item>
     </style>
+
+    <style name="OrionToolbarThemeOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorOnSurfaceVariant">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/white</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <item name="toolbarNavigationButtonStyle">@style/OrionToolbarNavigationButtonStyle</item>
+    </style>
+
+    <style name="OrionToolbarNavigationButtonStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:tint">@color/white</item>
+    </style>
 </resources>
 

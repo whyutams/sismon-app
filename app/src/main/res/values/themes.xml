@@ -35,6 +35,7 @@
         <item name="colorError">@color/error</item>
 
         <item name="searchViewStyle">@style/SearchViewStyle.White</item>
+        <item name="toolbarNavigationButtonStyle">@style/OrionToolbarNavigationButtonStyle</item>
 
     </style>
 

@@ -61,6 +61,7 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
 
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setCollapseIcon(R.drawable.ic_arrow_back_white_24);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -221,12 +222,14 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                Helpers.tintToolbarButtons(toolbar);
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
                 return true; // allow expand
             }
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                Helpers.tintToolbarButtons(toolbar);
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
                 reloadAllItems(); // tampilkan semua
                 if (articleItem != null) {

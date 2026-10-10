@@ -330,4 +330,21 @@ public class Helpers {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+    public static void tintToolbarButtons(androidx.appcompat.widget.Toolbar toolbar) {
+        if (toolbar == null) return;
+        toolbar.post(() -> {
+            for (int i = 0; i < toolbar.getChildCount(); i++) {
+                View child = toolbar.getChildAt(i);
+                if (child instanceof android.widget.ImageButton) {
+                    android.widget.ImageButton btn = (android.widget.ImageButton) child;
+                    btn.setColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.SRC_IN);
+                    android.graphics.drawable.Drawable d = btn.getDrawable();
+                    if (d != null) {
+                        d.setColorFilter(new android.graphics.PorterDuffColorFilter(Color.WHITE, android.graphics.PorterDuff.Mode.SRC_IN));
+                    }
+                }
+            }
+        });
+    }
 }
