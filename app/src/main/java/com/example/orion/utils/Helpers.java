@@ -212,19 +212,37 @@ public class Helpers {
     }
 
     public static String formatCreatedAt(String isoString, int format) {
+        if (isoString == null || isoString.trim().isEmpty()) {
+            return "-";
+        }
+
         try {
-            // Parsing string ISO 8601 (Laravel timestamps)
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            inputFormat.setLenient(false);
-            inputFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC")); // karena ada Z (UTC)
+            SimpleDateFormat outputFormat = new SimpleDateFormat(
+                    (format == 0 ? "EEEE, d MMMM yyyy" : "HH:mm"),
+                    new Locale("id", "ID")
+            );
 
-            Date date = inputFormat.parse(isoString);
+            // Jika string merupakan ISO 8601 UTC (ada 'T' atau diakhiri 'Z')
+            if (isoString.contains("T") || isoString.endsWith("Z")) {
+                SimpleDateFormat inputFormat;
+                if (isoString.contains(".")) {
+                    inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault());
+                } else {
+                    inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
+                }
+                inputFormat.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+                outputFormat.setTimeZone(java.util.TimeZone.getDefault());
 
-            SimpleDateFormat outputFormat = new SimpleDateFormat((format == 0 ? "EEEE, d MMMM yyyy" : "HH:mm"), new Locale("id", "ID"));
-            outputFormat.setTimeZone(java.util.TimeZone.getDefault());
+                Date date = inputFormat.parse(isoString);
+                return outputFormat.format(date);
+            } else {
+                // String date biasa dari MySQL (misal: "2026-10-11 08:00:00") yang sudah merupakan waktu lokal
+                SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                inputFormat.setLenient(false);
 
-            return outputFormat.format(date);
-
+                Date date = inputFormat.parse(isoString);
+                return outputFormat.format(date);
+            }
         } catch (ParseException e) {
             e.printStackTrace();
             return isoString;

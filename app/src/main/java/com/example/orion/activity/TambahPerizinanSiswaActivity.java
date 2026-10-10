@@ -209,7 +209,13 @@ public class TambahPerizinanSiswaActivity extends AppCompatActivity {
                         .build();
 
         datePicker.addOnPositiveButtonClickListener(selection -> {
-            calendar.setTimeInMillis(selection);
+            Calendar utcCalendar = Calendar.getInstance(java.util.TimeZone.getTimeZone("UTC"));
+            utcCalendar.setTimeInMillis(selection);
+
+            calendar.set(Calendar.YEAR, utcCalendar.get(Calendar.YEAR));
+            calendar.set(Calendar.MONTH, utcCalendar.get(Calendar.MONTH));
+            calendar.set(Calendar.DAY_OF_MONTH, utcCalendar.get(Calendar.DAY_OF_MONTH));
+
             showMaterialTimePicker();
         });
 
@@ -227,6 +233,7 @@ public class TambahPerizinanSiswaActivity extends AppCompatActivity {
         timePicker.addOnPositiveButtonClickListener(v -> {
             calendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
             calendar.set(Calendar.MINUTE, timePicker.getMinute());
+            calendar.set(Calendar.SECOND, 0);
 
             SimpleDateFormat displayFormat =
                     new SimpleDateFormat("EEEE, dd MMM yyyy (HH:mm)", new Locale("id", "ID"));
