@@ -8,6 +8,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
@@ -149,5 +150,22 @@ public interface ApiService {
             @Part("password_baru") RequestBody password_baru,
             @Part("password_baru_confirmation") RequestBody konfirmasi_password
     );
-}
 
+    @DELETE("keterlambatan/{id}")
+    Call<JsonObject> keterlambatanDelete(@Path("id") String id);
+
+    @DELETE("perizinan/{id}")
+    Call<JsonObject> perizinanDelete(@Path("id") String id);
+
+    @DELETE("siswa/{id}")
+    Call<JsonObject> siswaDelete(@Path("id") String id);
+
+    @DELETE("users/{id}")
+    Call<JsonObject> userDelete(@Path("id") String id);
+
+    @DELETE("jurusan/{id}")
+    Call<JsonObject> jurusanDelete(@Path("id") String id);
+
+    @DELETE("kelas/{id}")
+    Call<JsonObject> kelasDelete(@Path("id") String id);
+}

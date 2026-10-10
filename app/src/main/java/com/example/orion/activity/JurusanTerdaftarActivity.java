@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -336,11 +337,19 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(JurusanTerdaftarActivity.this, DetailJurusanTerdaftarActivity.class);
-//                intent.putExtra("id", data.get("id").getAsString());
-//                intent.putExtra("index", tvIndex.getText());
-//                startActivity(intent);
-//                Helpers.overridePendingTransition_Enter_v1(JurusanTerdaftarActivity.this);
+                PreferenceManager pref = new PreferenceManager(JurusanTerdaftarActivity.this);
+                JsonObject currentUser = pref.getUserData();
+                String role = currentUser != null && currentUser.has("role") ? currentUser.get("role").getAsString() : "";
+                if (role.equals("superadmin") || role.equals("kepsek")) {
+                    String jurusanId = data.get("id").getAsString();
+                    String namaJurusan = data.has("nama") ? data.get("nama").getAsString() : "jurusan ini";
+                    new AlertDialog.Builder(JurusanTerdaftarActivity.this)
+                            .setTitle("Hapus Jurusan")
+                            .setMessage("Apakah Anda yakin ingin menghapus jurusan \"" + namaJurusan + "\"? Tindakan ini tidak dapat dibatalkan.")
+                            .setPositiveButton("Hapus", (dialog, which) -> deleteJurusan(jurusanId))
+                            .setNegativeButton("Batal", null)
+                            .show();
+                }
             }
         });
 
@@ -414,11 +423,19 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
         tvIndex.setText(String.valueOf(total - index));
 
         itemView.setOnClickListener(v -> {
-//            Intent intent = new Intent(JurusanTerdaftarActivity.this, DetailJurusanTerdaftarActivity.class);
-//            intent.putExtra("id", item.get("id"));
-//            intent.putExtra("index", tvIndex.getText());
-//            startActivity(intent);
-//            Helpers.overridePendingTransition_Enter_v1(JurusanTerdaftarActivity.this);
+            PreferenceManager pref = new PreferenceManager(JurusanTerdaftarActivity.this);
+            JsonObject currentUser = pref.getUserData();
+            String role = currentUser != null && currentUser.has("role") ? currentUser.get("role").getAsString() : "";
+            if (role.equals("superadmin") || role.equals("kepsek")) {
+                String jurusanId = item.get("id");
+                String namaJurusan = item.containsKey("nama") ? item.get("nama") : "jurusan ini";
+                new AlertDialog.Builder(JurusanTerdaftarActivity.this)
+                        .setTitle("Hapus Jurusan")
+                        .setMessage("Apakah Anda yakin ingin menghapus jurusan \"" + namaJurusan + "\"? Tindakan ini tidak dapat dibatalkan.")
+                        .setPositiveButton("Hapus", (dialog, which) -> deleteJurusan(jurusanId))
+                        .setNegativeButton("Batal", null)
+                        .show();
+            }
         });
 
         ll_countainer_list.addView(itemView);

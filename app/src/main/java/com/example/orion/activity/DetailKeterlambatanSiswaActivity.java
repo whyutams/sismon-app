@@ -17,7 +17,10 @@ import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import androidx.appcompat.app.AlertDialog;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -61,6 +64,7 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
     LinearLayout ll_progress;
     ScrollView sv_main;
     private static final int PERMISSION_REQUEST_CODE = 100;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +99,7 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
         PreferenceManager pref = new PreferenceManager(this);
         JsonObject user = pref.getUserData();
 
-        String id = getIntent().getStringExtra("id");
+        id = getIntent().getStringExtra("id");
         String index = getIntent().getStringExtra("index");
         loadData(id, index);
     }
@@ -454,5 +458,67 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         Helpers.overridePendingTransition_Exit_v1(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        PreferenceManager pref = new PreferenceManager(this);
+        JsonObject user = pref.getUserData();
+        String role = user != null && user.has("role") ? user.get("role").getAsString() : "";
+        if (role.equals("superadmin") || role.equals("kesiswaan") || role.equals("guru_piket") || role.equals("piket") || role.equals("bimbingan_konseling")) {
+            getMenuInflater().inflate(R.menu.menu_top_nav_detail_delete, menu);
+            for (int i = 0; i < menu.size(); i++) {
+                Drawable icon = menu.getItem(i).getIcon();
+                if (icon != null) {
+                    icon.setTint(ContextCompat.getColor(this, R.color.white));
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.nav_delete) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Hapus Data")
+                    .setMessage("Apakah Anda yakin ingin menghapus data keterlambatan ini? Tindakan ini tidak dapat dibatalkan.")
+                    .setPositiveButton("Hapus", (dialog, which) -> deleteKeterlambatan())
+                    .setNegativeButton("Batal", null)
+                    .show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteKeterlambatan() {
+        if (!NetworkUtil.isConnected(this)) {
+            Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ll_progress.setVisibility(View.VISIBLE);
+        sv_main.setVisibility(View.GONE);
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.keterlambatanDelete(id).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                ll_progress.setVisibility(View.GONE);
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(DetailKeterlambatanSiswaActivity.this, "Data berhasil dihapus", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    sv_main.setVisibility(View.VISIBLE);
+                    Toast.makeText(DetailKeterlambatanSiswaActivity.this, "Gagal menghapus data", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                ll_progress.setVisibility(View.GONE);
+                sv_main.setVisibility(View.VISIBLE);
+                Toast.makeText(DetailKeterlambatanSiswaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

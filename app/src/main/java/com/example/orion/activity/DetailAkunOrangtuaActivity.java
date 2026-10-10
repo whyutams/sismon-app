@@ -6,6 +6,9 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import androidx.appcompat.app.AlertDialog;
+import android.view.MenuItem;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -216,5 +219,67 @@ public class DetailAkunOrangtuaActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         Helpers.overridePendingTransition_Exit_v1(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        PreferenceManager pref = new PreferenceManager(this);
+        JsonObject user = pref.getUserData();
+        String role = user != null && user.has("role") ? user.get("role").getAsString() : "";
+        if (role.equals("superadmin")) {
+            getMenuInflater().inflate(R.menu.menu_top_nav_detail_delete, menu);
+            for (int i = 0; i < menu.size(); i++) {
+                Drawable icon = menu.getItem(i).getIcon();
+                if (icon != null) {
+                    icon.setTint(ContextCompat.getColor(this, R.color.white));
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.nav_delete) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Hapus Akun Orang Tua")
+                    .setMessage("Apakah Anda yakin ingin menghapus akun orang tua ini? Tindakan ini tidak dapat dibatalkan.")
+                    .setPositiveButton("Hapus", (dialog, which) -> deleteOrangtua())
+                    .setNegativeButton("Batal", null)
+                    .show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteOrangtua() {
+        if (!NetworkUtil.isConnected(this)) {
+            Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ll_progress.setVisibility(View.VISIBLE);
+        sv_main.setVisibility(View.GONE);
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.userDelete(ortu_id).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                ll_progress.setVisibility(View.GONE);
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(DetailAkunOrangtuaActivity.this, "Akun orang tua berhasil dihapus", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    sv_main.setVisibility(View.VISIBLE);
+                    Toast.makeText(DetailAkunOrangtuaActivity.this, "Gagal menghapus akun orang tua", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                ll_progress.setVisibility(View.GONE);
+                sv_main.setVisibility(View.VISIBLE);
+                Toast.makeText(DetailAkunOrangtuaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

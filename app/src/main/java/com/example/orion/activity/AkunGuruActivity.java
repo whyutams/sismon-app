@@ -384,7 +384,7 @@ public class AkunGuruActivity extends AppCompatActivity {
                 Intent intent = new Intent(AkunGuruActivity.this, DetailAkunGuruActivity.class);
                 intent.putExtra("id", data.get("id").getAsString());
                 intent.putExtra("index", tvIndexText.getText());
-                startActivity(intent);
+                addDataLauncher.launch(intent);
                 Helpers.overridePendingTransition_Enter_v1(AkunGuruActivity.this);
             }
         });
@@ -481,7 +481,7 @@ public class AkunGuruActivity extends AppCompatActivity {
 //            Intent intent = new Intent(AkunGuruActivity.this, DetailAkunGuruActivity.class);
 //            intent.putExtra("id", item.get("id"));
 //            intent.putExtra("index", tvIndex.getText());
-//            startActivity(intent);
+//            addDataLauncher.launch(intent);
 //            Helpers.overridePendingTransition_Enter_v1(AkunGuruActivity.this);
         });
 

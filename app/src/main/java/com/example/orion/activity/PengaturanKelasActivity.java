@@ -7,6 +7,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -353,11 +354,19 @@ public class PengaturanKelasActivity extends AppCompatActivity {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(PengaturanKelasActivity.this, DetailPengaturanKelasActivity.class);
-//                intent.putExtra("id", data.get("id").getAsString());
-//                intent.putExtra("index", tvIndex.getText());
-//                startActivity(intent);
-//                Helpers.overridePendingTransition_Enter_v1(PengaturanKelasActivity.this);
+                PreferenceManager pref = new PreferenceManager(PengaturanKelasActivity.this);
+                JsonObject currentUser = pref.getUserData();
+                String role = currentUser != null && currentUser.has("role") ? currentUser.get("role").getAsString() : "";
+                if (role.equals("superadmin") || role.equals("kepsek")) {
+                    String kelasId = data.get("id").getAsString();
+                    String namaKelas = data.has("kelas") ? data.get("kelas").getAsString() : "kelas ini";
+                    new AlertDialog.Builder(PengaturanKelasActivity.this)
+                            .setTitle("Hapus Kelas")
+                            .setMessage("Apakah Anda yakin ingin menghapus data aturan kelas \"" + namaKelas + "\"? Tindakan ini tidak dapat dibatalkan.")
+                            .setPositiveButton("Hapus", (dialog, which) -> deleteKelas(kelasId))
+                            .setNegativeButton("Batal", null)
+                            .show();
+                }
             }
         });
 
@@ -431,11 +440,19 @@ public class PengaturanKelasActivity extends AppCompatActivity {
         tvIndex.setText(String.valueOf(total - index));
 
         itemView.setOnClickListener(v -> {
-//            Intent intent = new Intent(PengaturanKelasActivity.this, DetailPengaturanKelasActivity.class);
-//            intent.putExtra("id", item.get("id"));
-//            intent.putExtra("index", tvIndex.getText());
-//            startActivity(intent);
-//            Helpers.overridePendingTransition_Enter_v1(PengaturanKelasActivity.this);
+            PreferenceManager pref = new PreferenceManager(PengaturanKelasActivity.this);
+            JsonObject currentUser = pref.getUserData();
+            String role = currentUser != null && currentUser.has("role") ? currentUser.get("role").getAsString() : "";
+            if (role.equals("superadmin") || role.equals("kepsek")) {
+                String kelasId = item.get("id");
+                String namaKelas = item.containsKey("kelas") ? item.get("kelas") : "kelas ini";
+                new AlertDialog.Builder(PengaturanKelasActivity.this)
+                        .setTitle("Hapus Kelas")
+                        .setMessage("Apakah Anda yakin ingin menghapus data aturan kelas \"" + namaKelas + "\"? Tindakan ini tidak dapat dibatalkan.")
+                        .setPositiveButton("Hapus", (dialog, which) -> deleteKelas(kelasId))
+                        .setNegativeButton("Batal", null)
+                        .show();
+            }
         });
 
         ll_countainer_list.addView(itemView);

@@ -13,4 +13,10 @@
         android:iconTint="@color/white"
         android:title="Setujui"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/nav_delete"
+        android:icon="@drawable/ic_delete_24"
+        android:iconTint="@color/white"
+        android:title="Hapus Data"
+        app:showAsAction="always" />
 </menu>

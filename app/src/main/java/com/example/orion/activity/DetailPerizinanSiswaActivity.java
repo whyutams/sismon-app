@@ -269,8 +269,19 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        if (isPending && (user.get("role").getAsString().equals("kesiswaan")||user.get("role").getAsString().equals("piket")||user.get("role").getAsString().equals("bimbingan_konseling"))) {
+        String role = user != null && user.has("role") ? user.get("role").getAsString() : "";
+        boolean canApprove = isPending && (role.equals("kesiswaan") || role.equals("piket") || role.equals("guru_piket") || role.equals("bimbingan_konseling") || role.equals("superadmin"));
+        boolean canDelete = role.equals("superadmin") || role.equals("kesiswaan") || role.equals("piket") || role.equals("guru_piket") || role.equals("bimbingan_konseling") || role.equals("guru");
+
+        if (canApprove || canDelete) {
             inflater.inflate(R.menu.menu_top_nav_detail_perizinan, menu);
+            MenuItem approveItem = menu.findItem(R.id.nav_approve);
+            MenuItem declineItem = menu.findItem(R.id.nav_decline);
+            MenuItem deleteItem = menu.findItem(R.id.nav_delete);
+
+            if (approveItem != null) approveItem.setVisible(canApprove);
+            if (declineItem != null) declineItem.setVisible(canApprove);
+            if (deleteItem != null) deleteItem.setVisible(canDelete);
 
             for (int i = 0; i < menu.size(); i++) {
                 Drawable icon = menu.getItem(i).getIcon();
@@ -284,6 +295,15 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.nav_delete) {
+            Helpers.showConfirm(this, "Hapus Data", "Apakah Anda yakin ingin menghapus data perizinan ini? Tindakan ini tidak dapat dibatalkan.", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    deletePerizinan();
+                }
+            });
+            return true;
+        }
         if(isPending && (user.get("role").getAsString().equals("kesiswaan")||user.get("role").getAsString().equals("piket")||user.get("role").getAsString().equals("bimbingan_konseling"))) {
             if (item.getItemId() == R.id.nav_approve) {
                 Helpers.showConfirm(this, "Konfirmasi", "Apakah Anda yakin ingin menyetujui perizinan ini?", new DialogInterface.OnClickListener() {
@@ -605,5 +625,34 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         Helpers.overridePendingTransition_Exit_v1(this);
+    }
+
+    private void deletePerizinan() {
+        if (!NetworkUtil.isConnected(this)) {
+            Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(this);
+        loading.show();
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.perizinanDelete(id).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                loading.dismiss();
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(DetailPerizinanSiswaActivity.this, "Data perizinan berhasil dihapus", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    Toast.makeText(DetailPerizinanSiswaActivity.this, "Gagal menghapus data perizinan", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                loading.dismiss();
+                Toast.makeText(DetailPerizinanSiswaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

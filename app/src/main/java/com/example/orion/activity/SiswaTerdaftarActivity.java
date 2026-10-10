@@ -355,7 +355,7 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
                 Intent intent = new Intent(SiswaTerdaftarActivity.this, DetailSiswaTerdaftarActivity.class);
                 intent.putExtra("id", data.get("id").getAsString());
                 intent.putExtra("index", tvIndex.getText());
-                startActivity(intent);
+                addDataLauncher.launch(intent);
                 Helpers.overridePendingTransition_Enter_v1(SiswaTerdaftarActivity.this);
             }
         });
@@ -438,7 +438,7 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
 //            Intent intent = new Intent(SiswaTerdaftarActivity.this, DetailSiswaTerdaftarActivity.class);
 //            intent.putExtra("id", item.get("id"));
 //            intent.putExtra("index", tvIndex.getText());
-//            startActivity(intent);
+//            addDataLauncher.launch(intent);
 //            Helpers.overridePendingTransition_Enter_v1(SiswaTerdaftarActivity.this);
         });
 
