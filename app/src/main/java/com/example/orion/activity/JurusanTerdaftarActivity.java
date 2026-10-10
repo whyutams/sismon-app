@@ -459,4 +459,40 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
         Helpers.overridePendingTransition_Exit_v1(this);
     }
 
+    private void deleteJurusan(String id) {
+        if (!NetworkUtil.isConnected(this)) {
+            Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ll_progress.setVisibility(View.VISIBLE);
+        swipeRefreshLayout.setVisibility(View.GONE);
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.jurusanDelete(id).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(JurusanTerdaftarActivity.this, "Data jurusan berhasil dihapus", Toast.LENGTH_SHORT).show();
+                    loadData();
+                } else {
+                    ll_progress.setVisibility(View.GONE);
+                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                    String msg = "Gagal menghapus data jurusan";
+                    try {
+                        if (response.errorBody() != null) {
+                            JsonObject err = new com.google.gson.JsonParser().parse(response.errorBody().string()).getAsJsonObject();
+                            if (err.has("message")) msg = err.get("message").getAsString();
+                        }
+                    } catch (Exception ignored) {}
+                    Toast.makeText(JurusanTerdaftarActivity.this, msg, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                ll_progress.setVisibility(View.GONE);
+                swipeRefreshLayout.setVisibility(View.VISIBLE);
+                Toast.makeText(JurusanTerdaftarActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
