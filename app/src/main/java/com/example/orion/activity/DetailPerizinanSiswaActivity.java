@@ -223,9 +223,10 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
                                         String dataJurusan = tv_jurusan.getText().toString();
                                         String dataKelas = tv_kelas.getText().toString();
                                         String dataOrtu = tv_ortu.getText().toString();
+                                        String dataTanggal = tv_tanggal.getText().toString();
                                         String dataKeterangan = tv_keterangan.getText().toString();
 
-                                        File pdf = createPdf(studentImage, dataNo, dataStatus, dataNis, dataNama, dataHP, dataJurusan, dataKelas, dataOrtu, dataKeterangan);
+                                        File pdf = createPdf(studentImage, dataNo, dataStatus, dataNis, dataNama, dataHP, dataJurusan, dataKelas, dataOrtu, dataTanggal, dataKeterangan);
                                         if (pdf != null) {
                                             sharePdfViaWhatsapp(pdf);
                                         }
@@ -420,10 +421,10 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
         }
     }
 
-    private File createPdf(Bitmap image, String dataNo, String dataStatus, String dataNis, String dataNama, String dataHP, String dataJurusan, String dataKelas, String dataOrtu, String dataKeterangan) {
+    private File createPdf(Bitmap image, String dataNo, String dataStatus, String dataNis, String dataNama, String dataHP, String dataJurusan, String dataKelas, String dataOrtu, String dataTanggal, String dataKeterangan) {
 
-        String[] labels = new String[]{"No", "Status", "NIS", "Nama", "Nomor HP", "Jurusan", "Kelas", "Orangtua"};
-        String[] data = new String[]{dataNo, dataStatus, dataNis, dataNama, dataHP, dataJurusan, dataKelas, dataOrtu};
+        String[] labels = new String[]{"No", "Status", "NIS", "Nama", "Nomor HP", "Jurusan", "Kelas", "Orangtua", "Tanggal dan Waktu"};
+        String[] data = new String[]{dataNo, dataStatus, dataNis, dataNama, dataHP, dataJurusan, dataKelas, dataOrtu, dataTanggal};
 
         int pageWidth = 595;
         int marginX = 50;
