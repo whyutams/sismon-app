@@ -150,7 +150,7 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_top_nav_list_activity, menu);
+        getMenuInflater().inflate(R.menu.menu_top_nav_search_only, menu);
 
         for (int i = 0; i < menu.size(); i++) {
             Drawable icon = menu.getItem(i).getIcon();
