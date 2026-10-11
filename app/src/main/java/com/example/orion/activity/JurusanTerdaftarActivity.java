@@ -365,7 +365,14 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
         TextView tvDescText = itemView.findViewById(R.id.descText);
         TextView tvIndex = itemView.findViewById(R.id.indexText);
 
-        String nama = data.get("nama").getAsString(), alias = data.get("alias").getAsString(), desc = data.get("deskripsi").getAsString();
+        String nama = (data.has("nama") && !data.get("nama").isJsonNull()) ? data.get("nama").getAsString().trim() : "-";
+        if (nama.isEmpty() || "null".equalsIgnoreCase(nama)) nama = "-";
+
+        String alias = (data.has("alias") && !data.get("alias").isJsonNull()) ? data.get("alias").getAsString().trim() : "-";
+        if (alias.isEmpty() || "null".equalsIgnoreCase(alias)) alias = "-";
+
+        String desc = (data.has("deskripsi") && !data.get("deskripsi").isJsonNull()) ? data.get("deskripsi").getAsString().trim() : "-";
+        if (desc.isEmpty() || "null".equalsIgnoreCase(desc)) desc = "-";
 
         tvNamaJurusan.setText(nama);
         tvAlias.setText(alias);
@@ -377,9 +384,10 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
         map.put("nama", nama);
         map.put("alias", alias);
         map.put("desc", desc);
-        map.put("id", data.get("id").getAsString());
+        map.put("id", data.has("id") && !data.get("id").isJsonNull() ? data.get("id").getAsString() : "");
         dataList.add(map);
 
+        final String finalNama = nama;
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -387,12 +395,24 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
                 JsonObject currentUser = pref.getUserData();
                 String role = currentUser != null && currentUser.has("role") ? currentUser.get("role").getAsString() : "";
                 if (role.equals("superadmin") || role.equals("kepsek")) {
-                    String jurusanId = data.get("id").getAsString();
-                    String namaJurusan = data.has("nama") ? data.get("nama").getAsString() : "jurusan ini";
-                    Helpers.showConfirm(JurusanTerdaftarActivity.this, "Konfirmasi", "Apakah Anda yakin ingin menghapus jurusan \"" + namaJurusan + "\"?", (dialogInterface, i) -> {
-                        dialogInterface.dismiss();
-                        deleteJurusan(jurusanId);
-                    });
+                    String jurusanId = data.has("id") && !data.get("id").isJsonNull() ? data.get("id").getAsString() : "";
+                    String[] options = {"Edit Data", "Hapus Data"};
+                    new com.google.android.material.dialog.MaterialAlertDialogBuilder(JurusanTerdaftarActivity.this)
+                            .setTitle(finalNama)
+                            .setItems(options, (dialog, which) -> {
+                                if (which == 0) {
+                                    Intent intent = new Intent(JurusanTerdaftarActivity.this, EditJurusanTerdaftarActivity.class);
+                                    intent.putExtra("id", jurusanId);
+                                    addDataLauncher.launch(intent);
+                                    Helpers.overridePendingTransition_Enter_v1(JurusanTerdaftarActivity.this);
+                                } else if (which == 1) {
+                                    Helpers.showConfirm(JurusanTerdaftarActivity.this, "Konfirmasi", "Apakah Anda yakin ingin menghapus jurusan \"" + finalNama + "\"?", (dialogInterface, i) -> {
+                                        dialogInterface.dismiss();
+                                        deleteJurusan(jurusanId);
+                                    });
+                                }
+                            })
+                            .show();
                 }
             }
         });

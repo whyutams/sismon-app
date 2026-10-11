@@ -117,7 +117,7 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
                 }
             }
 
-            if (role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("bimbingan_konseling") || role.equals("guru") && user.has("jurusan")) {
+            if (role.equals("superadmin") || role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("bimbingan_konseling") || (role.equals("guru") && user.has("jurusan"))) {
                 fab_tambah = findViewById(R.id.fab_add);
                 fab_tambah_showed = true;
 
@@ -413,17 +413,22 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
         TextView tvStatus = itemView.findViewById(R.id.statusText);
         ImageView ivIcon = itemView.findViewById(R.id.iconImage);
 
-        JsonObject siswa = data.getAsJsonObject("siswa");
-        String nama = siswa.get("nama").getAsString();
-        String keterangan = data.get("keterangan").getAsString();
+        JsonObject siswa = (data.has("siswa") && !data.get("siswa").isJsonNull() && data.get("siswa").isJsonObject()) ? data.getAsJsonObject("siswa") : null;
+        String nama = (siswa != null && siswa.has("nama") && !siswa.get("nama").isJsonNull()) ? siswa.get("nama").getAsString().trim() : "-";
+        if (nama.isEmpty() || "null".equalsIgnoreCase(nama)) nama = "-";
+
+        String keterangan = (data.has("keterangan") && !data.get("keterangan").isJsonNull()) ? data.get("keterangan").getAsString().trim() : "-";
+        if (keterangan.isEmpty() || "null".equalsIgnoreCase(keterangan)) keterangan = "-";
+
+        String dateRaw = (data.has("date") && !data.get("date").isJsonNull()) ? data.get("date").getAsString().trim() : "";
 
         tvTitle.setText(nama);
-        tvDesc.setText(keterangan.length() > 65 ? keterangan.substring(0, 65) + "..." : keterangan);
-        tvDate.setText(Helpers.formatCreatedAt(data.get("date").getAsString(), 0));
-        tvTime.setText(Helpers.formatCreatedAt(data.get("date").getAsString(), 1));
+        tvDesc.setText((!keterangan.equals("-") && keterangan.length() > 65 ? keterangan.substring(0, 65) + "..." : keterangan));
+        tvDate.setText(!dateRaw.isEmpty() ? Helpers.formatCreatedAt(dateRaw, 0) : "-");
+        tvTime.setText(!dateRaw.isEmpty() ? Helpers.formatCreatedAt(dateRaw, 1) : "-");
         tvIndex.setText(String.valueOf(total - index));
 
-        String status = data.get("status").getAsString();
+        String status = (data.has("status") && !data.get("status").isJsonNull()) ? data.get("status").getAsString().trim() : "";
         if (status.equals("approved")) {
             tvStatus.setText("Disetujui");
             tvStatus.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check_16, 0, 0, 0);

@@ -374,7 +374,14 @@ public class AkunGuruActivity extends AppCompatActivity {
         TextView tvIndexText = itemView.findViewById(R.id.indexText);
         ImageView ivIcon = itemView.findViewById(R.id.iconImage);
 
-        String nama = data.get("nama").getAsString(), username = data.get("username").getAsString(), nip = data.has("nip") && !data.get("nip").isJsonNull() ? data.get("nip").getAsString() : "-";
+        String nama = (data.has("nama") && !data.get("nama").isJsonNull()) ? data.get("nama").getAsString().trim() : "-";
+        if (nama.isEmpty() || "null".equalsIgnoreCase(nama)) nama = "-";
+
+        String username = (data.has("username") && !data.get("username").isJsonNull()) ? data.get("username").getAsString().trim() : "-";
+        if (username.isEmpty() || "null".equalsIgnoreCase(username)) username = "-";
+
+        String nip = (data.has("nip") && !data.get("nip").isJsonNull()) ? data.get("nip").getAsString().trim() : "-";
+        if (nip.isEmpty() || "null".equalsIgnoreCase(nip)) nip = "-";
 
         tvNamaText.setText(nama);
         tvUsernameText.setText(username);

@@ -41,7 +41,7 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
     private boolean isDataLoaded = false;
 
     ImageView iv_gambar;
-    TextView tv_no, tv_nip, tv_nama, tv_jurusan, tv_nomorHp, tv_email, tv_alamat, tv_username;
+    TextView tv_no, tv_nip, tv_nama, tv_jurusan, tv_nomorHp, tv_email, tv_alamat, tv_username, tv_dibuat_oleh, tv_dibuat_pada, tv_diperbarui_oleh, tv_diperbarui_pada;
     LinearLayout ll_progress;
     ScrollView sv_main;
     String ortuDariSiswa = "", ortu_id = null;
@@ -73,6 +73,10 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
         tv_nomorHp = findViewById(R.id.tv_nomorHp);
         tv_email = findViewById(R.id.tv_email);
         tv_alamat = findViewById(R.id.tv_alamat);
+        tv_dibuat_oleh = findViewById(R.id.tv_dibuat_oleh);
+        tv_dibuat_pada = findViewById(R.id.tv_dibuat_pada);
+        tv_diperbarui_oleh = findViewById(R.id.tv_diperbarui_oleh);
+        tv_diperbarui_pada = findViewById(R.id.tv_diperbarui_pada);
 
         PreferenceManager pref = new PreferenceManager(this);
         JsonObject user = pref.getUserData();
@@ -105,19 +109,36 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
 
                             if (isFinishing() || isDestroyed()) return;
 
-                            tv_no.setText(index);
-                            tv_username.setText(data.get("username").getAsString());
-                            tv_nip.setText(data.get("nip").isJsonNull() ? "-" : data.get("nip").getAsString());
-                            if (!data.get("jurusan_id").isJsonNull()) {
-                                JsonObject jurusan = data.get("jurusan").getAsJsonObject();
-                                String alias = jurusan.get("alias").isJsonNull() ? "" : jurusan.get("alias").getAsString();
+                            tv_no.setText(index != null && !index.trim().isEmpty() && !"null".equalsIgnoreCase(index.trim()) ? index.trim() : "-");
+                            tv_username.setText(data.has("username") && !data.get("username").isJsonNull() ? data.get("username").getAsString() : "-");
+                            String nip = data.has("nip") && !data.get("nip").isJsonNull() ? data.get("nip").getAsString().trim() : "";
+                            tv_nip.setText(!nip.isEmpty() && !"null".equalsIgnoreCase(nip) ? nip : "-");
 
-                                tv_jurusan.setText(jurusan.get("nama").getAsString() + (alias.equals("") ? "" : " (" + alias + ")"));
+                            if (data.has("jurusan_id") && !data.get("jurusan_id").isJsonNull() && data.has("jurusan") && !data.get("jurusan").isJsonNull() && data.get("jurusan").isJsonObject()) {
+                                JsonObject jurusan = data.get("jurusan").getAsJsonObject();
+                                String namaJ = (jurusan.has("nama") && !jurusan.get("nama").isJsonNull()) ? jurusan.get("nama").getAsString().trim() : "";
+                                String alias = (jurusan.has("alias") && !jurusan.get("alias").isJsonNull()) ? jurusan.get("alias").getAsString().trim() : "";
+                                if (!namaJ.isEmpty() && !alias.isEmpty()) tv_jurusan.setText(namaJ + " (" + alias + ")");
+                                else if (!namaJ.isEmpty()) tv_jurusan.setText(namaJ);
+                                else if (!alias.isEmpty()) tv_jurusan.setText(alias);
+                                else tv_jurusan.setText("-");
+                            } else {
+                                tv_jurusan.setText("-");
                             }
-                            tv_nama.setText(data.get("nama").getAsString());
-                            tv_nomorHp.setText(data.get("nomor_hp").isJsonNull() ? "-" : data.get("nomor_hp").getAsString());
-                            tv_email.setText(data.get("email").isJsonNull() ? "-" : data.get("email").getAsString());
-                            tv_alamat.setText(data.get("alamat").isJsonNull() ? "-" : data.get("alamat").getAsString());
+
+                            String nama = data.has("nama") && !data.get("nama").isJsonNull() ? data.get("nama").getAsString().trim() : "";
+                            tv_nama.setText(!nama.isEmpty() && !"null".equalsIgnoreCase(nama) ? nama : "-");
+                            String nomorHp = data.has("nomor_hp") && !data.get("nomor_hp").isJsonNull() ? data.get("nomor_hp").getAsString().trim() : "";
+                            tv_nomorHp.setText(!nomorHp.isEmpty() && !"null".equalsIgnoreCase(nomorHp) ? nomorHp : "-");
+                            String email = data.has("email") && !data.get("email").isJsonNull() ? data.get("email").getAsString().trim() : "";
+                            tv_email.setText(!email.isEmpty() && !"null".equalsIgnoreCase(email) ? email : "-");
+                            String alamat = data.has("alamat") && !data.get("alamat").isJsonNull() ? data.get("alamat").getAsString().trim() : "";
+                            tv_alamat.setText(!alamat.isEmpty() && !"null".equalsIgnoreCase(alamat) ? alamat : "-");
+
+                            tv_dibuat_oleh.setText(Helpers.formatUserAudit(data.has("created_by") && !data.get("created_by").isJsonNull() ? data.getAsJsonObject("created_by") : null));
+                            tv_dibuat_pada.setText(Helpers.formatDateTimeCombined(data.has("created_at") && !data.get("created_at").isJsonNull() ? data.get("created_at").getAsString() : null));
+                            tv_diperbarui_oleh.setText("-");
+                            tv_diperbarui_pada.setText(data.has("updated_at") && !data.get("updated_at").isJsonNull() ? Helpers.formatDateTimeCombined(data.get("updated_at").getAsString()) : "-");
 
                             if (data.has("gambar") && !data.get("gambar").isJsonNull()) {
                                 String gambar = data.get("gambar").getAsString();

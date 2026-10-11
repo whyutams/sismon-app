@@ -92,7 +92,7 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
                 }
             }
 
-            if (role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("guru") || role.equals("bimbingan_konseling")) {
+            if (role.equals("superadmin") || role.equals("guru_piket") || role.equals("kesiswaan") || role.equals("guru") || role.equals("bimbingan_konseling")) {
                 fab_tambah = findViewById(R.id.fab_add);
                 fab_tambah_allowed = true;
 
@@ -373,14 +373,31 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
         TextView tvKelasText = itemView.findViewById(R.id.kelasText);
         TextView tvIndex = itemView.findViewById(R.id.indexText);
 
-        String nama = data.get("nama").getAsString(), nis = (!data.get("nis").isJsonNull() && data.has("nis") ? data.get("nis").getAsString() : "-"), kelas = data.get("kelas").getAsString();
-        JsonObject orangtua = null;
-        if (!data.get("orangtua").isJsonNull()) {
-            orangtua = data.get("orangtua").getAsJsonObject();
+        String nama = (data.has("nama") && !data.get("nama").isJsonNull()) ? data.get("nama").getAsString().trim() : "-";
+        if (nama.isEmpty() || "null".equalsIgnoreCase(nama)) nama = "-";
 
-            tvOrtuText.setText("Orangtua siswa: " + orangtua.get("nama").getAsString() + " (" + orangtua.get("username").getAsString() + ")");
+        String nis = (data.has("nis") && !data.get("nis").isJsonNull()) ? data.get("nis").getAsString().trim() : "-";
+        if (nis.isEmpty() || "null".equalsIgnoreCase(nis)) nis = "-";
+
+        String kelas = (data.has("kelas") && !data.get("kelas").isJsonNull()) ? data.get("kelas").getAsString().trim() : "-";
+        if (kelas.isEmpty() || "null".equalsIgnoreCase(kelas)) kelas = "-";
+
+        JsonObject orangtua = null;
+        String ortuStr = "-";
+        if (data.has("orangtua") && !data.get("orangtua").isJsonNull() && data.get("orangtua").isJsonObject()) {
+            orangtua = data.get("orangtua").getAsJsonObject();
+            String ortuNama = (orangtua.has("nama") && !orangtua.get("nama").isJsonNull()) ? orangtua.get("nama").getAsString().trim() : "";
+            String ortuUser = (orangtua.has("username") && !orangtua.get("username").isJsonNull()) ? orangtua.get("username").getAsString().trim() : "";
+            if (!ortuNama.isEmpty() && !ortuUser.isEmpty() && !"null".equalsIgnoreCase(ortuNama) && !"null".equalsIgnoreCase(ortuUser)) {
+                ortuStr = ortuNama + " (" + ortuUser + ")";
+            } else if (!ortuNama.isEmpty() && !"null".equalsIgnoreCase(ortuNama)) {
+                ortuStr = ortuNama;
+            } else if (!ortuUser.isEmpty() && !"null".equalsIgnoreCase(ortuUser)) {
+                ortuStr = ortuUser;
+            }
         }
 
+        tvOrtuText.setText("Orang tua: " + ortuStr);
         tvTitle.setText(nama);
         tvNisText.setText(nis);
         tvKelasText.setText(kelas);
@@ -389,10 +406,10 @@ public class SiswaTerdaftarActivity extends AppCompatActivity {
         HashMap<String, String> map = new HashMap<>();
         map.put("index", (total - index) + "");
         map.put("nama", nama);
-        map.put("orangtua", orangtua != null ? (orangtua.get("nama").getAsString() + " (" + orangtua.get("username").getAsString() + ")") : "-");
+        map.put("orangtua", ortuStr);
         map.put("nis", nis);
         map.put("kelas", kelas);
-        map.put("id", data.get("id").getAsString());
+        map.put("id", data.has("id") && !data.get("id").isJsonNull() ? data.get("id").getAsString() : "");
         dataList.add(map);
 
         itemView.setOnClickListener(new View.OnClickListener() {

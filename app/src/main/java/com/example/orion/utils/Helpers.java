@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.example.orion.R;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -254,6 +255,34 @@ public class Helpers {
             e.printStackTrace();
             return isoString;
         }
+    }
+
+    public static String formatDateTimeCombined(String isoString) {
+        if (isoString == null || isoString.trim().isEmpty()) {
+            return "-";
+        }
+        String date = formatCreatedAt(isoString, 0);
+        String time = formatCreatedAt(isoString, 1);
+        if ("-".equals(date) || date == null) {
+            return "-";
+        }
+        return date + " (" + time + ")";
+    }
+
+    public static String formatUserAudit(JsonObject userObj) {
+        if (userObj == null || userObj.isJsonNull()) {
+            return "-";
+        }
+        String nama = userObj.has("nama") && !userObj.get("nama").isJsonNull() ? userObj.get("nama").getAsString().trim() : "";
+        String username = userObj.has("username") && !userObj.get("username").isJsonNull() ? userObj.get("username").getAsString().trim() : "";
+        if (!nama.isEmpty() && !username.isEmpty()) {
+            return nama + " (" + username + ")";
+        } else if (!nama.isEmpty()) {
+            return nama;
+        } else if (!username.isEmpty()) {
+            return username;
+        }
+        return "-";
     }
 
     public static File copyUriToCache(Context context, Uri uri) throws IOException {

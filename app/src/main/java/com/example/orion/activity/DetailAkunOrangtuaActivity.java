@@ -41,7 +41,7 @@ public class DetailAkunOrangtuaActivity extends AppCompatActivity {
     private boolean isDataLoaded = false;
 
     ImageView iv_gambar;
-    TextView tv_no, tv_siswa, tv_nama, tv_nomorHp, tv_email, tv_alamat, tv_username;
+    TextView tv_no, tv_siswa, tv_nama, tv_nomorHp, tv_email, tv_alamat, tv_username, tv_dibuat_oleh, tv_dibuat_pada, tv_diperbarui_oleh, tv_diperbarui_pada;
     LinearLayout ll_progress;
     ScrollView sv_main;
     String ortuDariSiswa = "", ortu_id = null;
@@ -67,6 +67,10 @@ public class DetailAkunOrangtuaActivity extends AppCompatActivity {
         iv_gambar = findViewById(R.id.iv_gambar);
         tv_no = findViewById(R.id.tv_no);
         tv_siswa = findViewById(R.id.tv_siswa);
+        tv_dibuat_oleh = findViewById(R.id.tv_dibuat_oleh);
+        tv_dibuat_pada = findViewById(R.id.tv_dibuat_pada);
+        tv_diperbarui_oleh = findViewById(R.id.tv_diperbarui_oleh);
+        tv_diperbarui_pada = findViewById(R.id.tv_diperbarui_pada);
         tv_username = findViewById(R.id.tv_username);
         tv_nama = findViewById(R.id.tv_nama);
         tv_nomorHp = findViewById(R.id.tv_nomorHp);
@@ -104,13 +108,22 @@ public class DetailAkunOrangtuaActivity extends AppCompatActivity {
 
                             if (isFinishing() || isDestroyed()) return;
 
-                            tv_no.setText(index);
-                            tv_siswa.setText((ortuDariSiswa.length() != 0 ? ortuDariSiswa : "-"));
-                            tv_username.setText(data.get("username").getAsString());
-                            tv_nama.setText(data.get("nama").getAsString());
-                            tv_nomorHp.setText(data.get("nomor_hp").isJsonNull() ? "-" : data.get("nomor_hp").getAsString());
-                            tv_email.setText(data.get("email").isJsonNull() ? "-" : data.get("email").getAsString());
-                            tv_alamat.setText(data.get("alamat").isJsonNull() ? "-" : data.get("alamat").getAsString());
+                            tv_no.setText(index != null && !index.trim().isEmpty() && !"null".equalsIgnoreCase(index.trim()) ? index.trim() : "-");
+                            tv_siswa.setText(ortuDariSiswa != null && !ortuDariSiswa.trim().isEmpty() && !"null".equalsIgnoreCase(ortuDariSiswa.trim()) ? ortuDariSiswa.trim() : "-");
+                            tv_username.setText(data.has("username") && !data.get("username").isJsonNull() ? data.get("username").getAsString() : "-");
+                            String nama = data.has("nama") && !data.get("nama").isJsonNull() ? data.get("nama").getAsString().trim() : "";
+                            tv_nama.setText(!nama.isEmpty() && !"null".equalsIgnoreCase(nama) ? nama : "-");
+                            String nomorHp = data.has("nomor_hp") && !data.get("nomor_hp").isJsonNull() ? data.get("nomor_hp").getAsString().trim() : "";
+                            tv_nomorHp.setText(!nomorHp.isEmpty() && !"null".equalsIgnoreCase(nomorHp) ? nomorHp : "-");
+                            String email = data.has("email") && !data.get("email").isJsonNull() ? data.get("email").getAsString().trim() : "";
+                            tv_email.setText(!email.isEmpty() && !"null".equalsIgnoreCase(email) ? email : "-");
+                            String alamat = data.has("alamat") && !data.get("alamat").isJsonNull() ? data.get("alamat").getAsString().trim() : "";
+                            tv_alamat.setText(!alamat.isEmpty() && !"null".equalsIgnoreCase(alamat) ? alamat : "-");
+
+                            tv_dibuat_oleh.setText(Helpers.formatUserAudit(data.has("created_by") && !data.get("created_by").isJsonNull() ? data.getAsJsonObject("created_by") : null));
+                            tv_dibuat_pada.setText(Helpers.formatDateTimeCombined(data.has("created_at") && !data.get("created_at").isJsonNull() ? data.get("created_at").getAsString() : null));
+                            tv_diperbarui_oleh.setText("-");
+                            tv_diperbarui_pada.setText(data.has("updated_at") && !data.get("updated_at").isJsonNull() ? Helpers.formatDateTimeCombined(data.get("updated_at").getAsString()) : "-");
 
                             if (data.has("gambar") && !data.get("gambar").isJsonNull()) {
                                 String gambar = data.get("gambar").getAsString();

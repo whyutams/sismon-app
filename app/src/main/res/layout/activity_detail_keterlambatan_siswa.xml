@@ -319,6 +319,106 @@
                                         tools:text="Hari, dd mm yyyy  (hh:mm)" />
                                 </LinearLayout>
 
+                                                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:text="Dibuat Oleh"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_dibuat_oleh"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:textAlignment="textEnd"
+                                        android:textColor="@android:color/darker_gray"
+                                        tools:text="-" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:text="Dibuat Pada"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_dibuat_pada"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:textAlignment="textEnd"
+                                        android:textColor="@android:color/darker_gray"
+                                        tools:text="-" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:text="Diperbarui Oleh"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_diperbarui_oleh"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:textAlignment="textEnd"
+                                        android:textColor="@android:color/darker_gray"
+                                        tools:text="-" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:text="Diperbarui Pada"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_diperbarui_pada"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:textAlignment="textEnd"
+                                        android:textColor="@android:color/darker_gray"
+                                        tools:text="-" />
+                                </LinearLayout>
+
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"

@@ -28,6 +28,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -60,7 +62,8 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
     private boolean isDataLoaded = false;
 
     ImageView iv_gambar;
-    TextView tv_no, tv_nis, tv_nama, tv_nomorHp, tv_jurusan, tv_kelas, tv_ortu, tv_terlambat, tv_keterangan;
+    TextView tv_no, tv_nis, tv_nama, tv_nomorHp, tv_jurusan, tv_kelas, tv_ortu, tv_terlambat, tv_keterangan, tv_dibuat_oleh, tv_dibuat_pada, tv_diperbarui_oleh, tv_diperbarui_pada;
+    private ActivityResultLauncher<Intent> editDataLauncher;
     Button btn_bagikan;
     LinearLayout ll_progress;
     ScrollView sv_main;
@@ -96,6 +99,20 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
         tv_terlambat = findViewById(R.id.tv_terlambat);
         tv_keterangan = findViewById(R.id.tv_keterangan);
         btn_bagikan = findViewById(R.id.btn_bagikan);
+        tv_dibuat_oleh = findViewById(R.id.tv_dibuat_oleh);
+        tv_dibuat_pada = findViewById(R.id.tv_dibuat_pada);
+        tv_diperbarui_oleh = findViewById(R.id.tv_diperbarui_oleh);
+        tv_diperbarui_pada = findViewById(R.id.tv_diperbarui_pada);
+
+        editDataLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK) {
+                        loadData(id, getIntent().getStringExtra("index"));
+                        setResult(RESULT_OK);
+                    }
+                }
+        );
 
         PreferenceManager pref = new PreferenceManager(this);
         JsonObject user = pref.getUserData();
@@ -127,44 +144,67 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
 
                             if (isFinishing() || isDestroyed()) return;
 
-                            if (data.has("siswa")) {
+                            if (data.has("siswa") && !data.get("siswa").isJsonNull() && data.get("siswa").isJsonObject()) {
                                 JsonObject siswa = data.get("siswa").getAsJsonObject();
 
-                                if (siswa.has("jurusan") && !siswa.get("jurusan").isJsonNull()) {
+                                if (siswa.has("jurusan") && !siswa.get("jurusan").isJsonNull() && siswa.get("jurusan").isJsonObject()) {
                                     JsonObject jurusan = siswa.get("jurusan").getAsJsonObject();
-                                    String alias = "";
-
-                                    if (jurusan.has("alias"))
-                                        alias = jurusan.get("alias").getAsString();
-
-                                    tv_jurusan.setText(jurusan.get("nama").getAsString() + (!alias.equals("") ? " (" + alias + ")" : ""));
+                                    String namaJ = (jurusan.has("nama") && !jurusan.get("nama").isJsonNull()) ? jurusan.get("nama").getAsString().trim() : "";
+                                    String alias = (jurusan.has("alias") && !jurusan.get("alias").isJsonNull()) ? jurusan.get("alias").getAsString().trim() : "";
+                                    if (!namaJ.isEmpty() && !alias.isEmpty()) tv_jurusan.setText(namaJ + " (" + alias + ")");
+                                    else if (!namaJ.isEmpty()) tv_jurusan.setText(namaJ);
+                                    else if (!alias.isEmpty()) tv_jurusan.setText(alias);
+                                    else tv_jurusan.setText("-");
+                                } else {
+                                    tv_jurusan.setText("-");
                                 }
 
-                                if (siswa.has("orangtua")
-                                        && !siswa.get("orangtua").isJsonNull()
-                                        && siswa.get("orangtua").isJsonObject()) {
-
+                                if (siswa.has("orangtua") && !siswa.get("orangtua").isJsonNull() && siswa.get("orangtua").isJsonObject()) {
                                     JsonObject orangtua = siswa.get("orangtua").getAsJsonObject();
-
-                                    if (orangtua.has("nama") && orangtua.has("username")) {
-                                        tv_ortu.setText(orangtua.get("nama").getAsString() + " (" + orangtua.get("username").getAsString() + ")");
-                                    }
+                                    String namaOrtu = (orangtua.has("nama") && !orangtua.get("nama").isJsonNull()) ? orangtua.get("nama").getAsString().trim() : "";
+                                    String userOrtu = (orangtua.has("username") && !orangtua.get("username").isJsonNull()) ? orangtua.get("username").getAsString().trim() : "";
+                                    if (!namaOrtu.isEmpty() && !userOrtu.isEmpty()) tv_ortu.setText(namaOrtu + " (" + userOrtu + ")");
+                                    else if (!namaOrtu.isEmpty()) tv_ortu.setText(namaOrtu);
+                                    else if (!userOrtu.isEmpty()) tv_ortu.setText(userOrtu);
+                                    else tv_ortu.setText("-");
                                 } else {
                                     tv_ortu.setText("-");
                                 }
 
-                                tv_nis.setText(siswa.has("nis") ? siswa.get("nis").getAsString() : "-");
-                                tv_nama.setText(siswa.get("nama").getAsString());
-                                tv_nomorHp.setText(siswa.has("nomor_hp") ? siswa.get("nomor_hp").getAsString() : "-");
-                                tv_kelas.setText(siswa.has("kelas") ? siswa.get("kelas").getAsString() : "-");
+                                String nis = (siswa.has("nis") && !siswa.get("nis").isJsonNull()) ? siswa.get("nis").getAsString().trim() : "";
+                                tv_nis.setText(!nis.isEmpty() && !"null".equalsIgnoreCase(nis) ? nis : "-");
+
+                                String nama = (siswa.has("nama") && !siswa.get("nama").isJsonNull()) ? siswa.get("nama").getAsString().trim() : "";
+                                tv_nama.setText(!nama.isEmpty() && !"null".equalsIgnoreCase(nama) ? nama : "-");
+
+                                String nomorHp = (siswa.has("nomor_hp") && !siswa.get("nomor_hp").isJsonNull()) ? siswa.get("nomor_hp").getAsString().trim() : "";
+                                tv_nomorHp.setText(!nomorHp.isEmpty() && !"null".equalsIgnoreCase(nomorHp) ? nomorHp : "-");
+
+                                String kelas = (siswa.has("kelas") && !siswa.get("kelas").isJsonNull()) ? siswa.get("kelas").getAsString().trim() : "";
+                                tv_kelas.setText(!kelas.isEmpty() && !"null".equalsIgnoreCase(kelas) ? kelas : "-");
                             } else {
                                 tv_ortu.setText("-");
                                 tv_jurusan.setText("-");
+                                tv_nis.setText("-");
+                                tv_nama.setText("-");
+                                tv_nomorHp.setText("-");
+                                tv_kelas.setText("-");
                             }
 
-                            tv_no.setText(index);
-                            tv_keterangan.setText(data.get("keterangan").getAsString());
-                            tv_terlambat.setText((Helpers.formatCreatedAt(data.get("date").getAsString(), 0)) + " (" + (Helpers.formatCreatedAt(data.get("date").getAsString(), 1)) + ")");
+                            tv_no.setText(index != null && !index.trim().isEmpty() && !"null".equalsIgnoreCase(index.trim()) ? index.trim() : "-");
+                            String ket = (data.has("keterangan") && !data.get("keterangan").isJsonNull()) ? data.get("keterangan").getAsString().trim() : "";
+                            tv_keterangan.setText(!ket.isEmpty() && !"null".equalsIgnoreCase(ket) ? ket : "-");
+
+                            String dateIso = (data.has("date") && !data.get("date").isJsonNull()) ? data.get("date").getAsString() : null;
+                            tv_terlambat.setText(Helpers.formatDateTimeCombined(dateIso));
+
+                            // Audit trail
+                            tv_dibuat_oleh.setText(Helpers.formatUserAudit(data.has("created_by") && !data.get("created_by").isJsonNull() ? data.getAsJsonObject("created_by") : null));
+                            tv_dibuat_pada.setText(Helpers.formatDateTimeCombined(data.has("created_at") && !data.get("created_at").isJsonNull() ? data.get("created_at").getAsString() : null));
+
+                            boolean hasUpdatedBy = data.has("updated_by") && !data.get("updated_by").isJsonNull();
+                            tv_diperbarui_oleh.setText(hasUpdatedBy ? Helpers.formatUserAudit(data.getAsJsonObject("updated_by")) : "-");
+                            tv_diperbarui_pada.setText(hasUpdatedBy && data.has("updated_at") && !data.get("updated_at").isJsonNull() ? Helpers.formatDateTimeCombined(data.get("updated_at").getAsString()) : "-");
 
                             if (data.has("gambar") && !data.get("gambar").isJsonNull()) {
                                 String gambar = data.get("gambar").getAsString();
@@ -475,7 +515,7 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
         JsonObject user = pref.getUserData();
         String role = user != null && user.has("role") ? user.get("role").getAsString() : "";
         if (role.equals("superadmin") || role.equals("kesiswaan") || role.equals("guru_piket") || role.equals("piket") || role.equals("bimbingan_konseling")) {
-            getMenuInflater().inflate(R.menu.menu_top_nav_detail_delete, menu);
+            getMenuInflater().inflate(R.menu.menu_top_nav_detail_edit_delete, menu);
             for (int i = 0; i < menu.size(); i++) {
                 Drawable icon = menu.getItem(i).getIcon();
                 if (icon != null) {
@@ -488,6 +528,14 @@ public class DetailKeterlambatanSiswaActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.nav_edit) {
+            Intent editIntent = new Intent(this, EditKeterlambatanSiswaActivity.class);
+            editIntent.putExtra("id", id);
+            editDataLauncher.launch(editIntent);
+            Helpers.overridePendingTransition_Enter_v1(this);
+            return true;
+        }
+
         if (item.getItemId() == R.id.nav_delete) {
             Helpers.showConfirm(this, "Konfirmasi", "Apakah Anda yakin ingin menghapus data keterlambatan ini?", (dialogInterface, i) -> {
             dialogInterface.dismiss();

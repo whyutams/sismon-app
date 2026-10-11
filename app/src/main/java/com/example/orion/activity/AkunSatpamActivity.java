@@ -372,7 +372,11 @@ public class AkunSatpamActivity extends AppCompatActivity {
         TextView tvIndexText = itemView.findViewById(R.id.indexText);
         ImageView ivIcon = itemView.findViewById(R.id.iconImage);
 
-        String nama = data.get("nama").getAsString(), username = data.get("username").getAsString();
+        String nama = (data.has("nama") && !data.get("nama").isJsonNull()) ? data.get("nama").getAsString().trim() : "-";
+        if (nama.isEmpty() || "null".equalsIgnoreCase(nama)) nama = "-";
+
+        String username = (data.has("username") && !data.get("username").isJsonNull()) ? data.get("username").getAsString().trim() : "-";
+        if (username.isEmpty() || "null".equalsIgnoreCase(username)) username = "-";
 
         tvNamaText.setText(nama);
         tvUsernameText.setText(username);

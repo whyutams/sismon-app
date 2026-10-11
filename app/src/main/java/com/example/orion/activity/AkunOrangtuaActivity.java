@@ -373,10 +373,33 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
         TextView tvIndexText = itemView.findViewById(R.id.indexText);
         ImageView ivIcon = itemView.findViewById(R.id.iconImage);
 
-        String nama = data.get("nama").getAsString(), username = data.get("username").getAsString();
+        String nama = (data.has("nama") && !data.get("nama").isJsonNull()) ? data.get("nama").getAsString().trim() : "-";
+        if (nama.isEmpty() || "null".equalsIgnoreCase(nama)) nama = "-";
+
+        String username = (data.has("username") && !data.get("username").isJsonNull()) ? data.get("username").getAsString().trim() : "-";
+        if (username.isEmpty() || "null".equalsIgnoreCase(username)) username = "-";
+
+        String anakNama = "-";
+        if (data.has("siswa") && !data.get("siswa").isJsonNull() && data.get("siswa").isJsonArray()) {
+            com.google.gson.JsonArray arr = data.getAsJsonArray("siswa");
+            if (arr.size() > 0) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < arr.size(); i++) {
+                    com.google.gson.JsonObject s = arr.get(i).getAsJsonObject();
+                    if (s.has("nama") && !s.get("nama").isJsonNull()) {
+                        String sn = s.get("nama").getAsString().trim();
+                        if (!sn.isEmpty() && !"null".equalsIgnoreCase(sn)) {
+                            if (sb.length() > 0) sb.append(", ");
+                            sb.append(sn);
+                        }
+                    }
+                }
+                if (sb.length() > 0) anakNama = sb.toString();
+            }
+        }
 
         tvNamaText.setText(nama);
-        tvDescText.setText("Orang tua dari siswa: -");
+        tvDescText.setText("Orang tua dari siswa: " + anakNama);
         tvUsernameText.setText(username);
 
         tvIndexText.setText((total - index) + "");

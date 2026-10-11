@@ -234,4 +234,68 @@ public interface ApiService {
             @retrofit2.http.Query("search") String search
     );
 
+    @GET("siswa/{id}")
+    Call<JsonObject> siswaShow(@Path("id") String id);
+
+    @GET("jurusan/{id}")
+    Call<JsonObject> jurusanShow(@Path("id") String id);
+
+    @GET("kelas/{id}")
+    Call<JsonObject> kelasShow(@Path("id") String id);
+
+    @Multipart
+    @POST("keterlambatan/{id}")
+    Call<JsonObject> keterlambatanUpdate(
+            @Path("id") String id,
+            @Part("_method") RequestBody method,
+            @Part("siswa_id") RequestBody siswa_id,
+            @Part("date") RequestBody date,
+            @Part("keterangan") RequestBody keterangan,
+            @Part MultipartBody.Part gambar
+    );
+
+    @Multipart
+    @POST("perizinan/{id}")
+    Call<JsonObject> perizinanUpdate(
+            @Path("id") String id,
+            @Part("_method") RequestBody method,
+            @Part("siswa_id") RequestBody siswa_id,
+            @Part("date") RequestBody date,
+            @Part("keterangan") RequestBody keterangan,
+            @Part MultipartBody.Part gambar
+    );
+
+    @Multipart
+    @POST("siswa/{id}")
+    Call<JsonObject> siswaUpdate(
+            @Path("id") String id,
+            @Part("_method") RequestBody method,
+            @Part("nis") @Nullable RequestBody nis,
+            @Part("nama") RequestBody nama,
+            @Part("nomor_hp") @Nullable RequestBody nomor_hp,
+            @Part("jurusan_id") RequestBody jurusan_id,
+            @Part("kelas") RequestBody kelas,
+            @Part("orangtua_id") @Nullable RequestBody orangtua_id
+    );
+
+    @Multipart
+    @POST("jurusan/{id}")
+    Call<JsonObject> jurusanUpdate(
+            @Path("id") String id,
+            @Part("_method") RequestBody method,
+            @Part("nama") RequestBody jurusan,
+            @Part("alias") RequestBody alias,
+            @Part("deskripsi") RequestBody deskripsi
+    );
+
+    @Multipart
+    @POST("kelas/{id}")
+    Call<JsonObject> kelasUpdate(
+            @Path("id") String id,
+            @Part("_method") RequestBody method,
+            @Part("kelas") RequestBody kelas,
+            @Part("jumlah_kelas") RequestBody jumlah_kelas,
+            @Part("jurusan_id") RequestBody jurusan_id
+    );
+
 }

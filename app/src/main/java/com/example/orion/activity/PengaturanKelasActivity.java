@@ -365,21 +365,30 @@ public class PengaturanKelasActivity extends AppCompatActivity {
         TextView tvJurusan = itemView.findViewById(R.id.jurusanText);
         TextView tvIndex = itemView.findViewById(R.id.indexText);
 
-        String kelas = data.get("kelas").getAsString(), jumlah_kelas = data.get("jumlah_kelas").getAsString();
+        String rawKelas = (data.has("kelas") && !data.get("kelas").isJsonNull()) ? data.get("kelas").getAsString().trim() : "";
+        String jumlah_kelas = (data.has("jumlah_kelas") && !data.get("jumlah_kelas").isJsonNull()) ? data.get("jumlah_kelas").getAsString().trim() : "-";
+        if (jumlah_kelas.isEmpty() || "null".equalsIgnoreCase(jumlah_kelas)) jumlah_kelas = "-";
 
-        kelas = Helpers.konversiKeRomawi(Integer.parseInt(kelas));
+        String kelas = "-";
+        try {
+            if (!rawKelas.isEmpty() && !"null".equalsIgnoreCase(rawKelas)) {
+                kelas = Helpers.konversiKeRomawi(Integer.parseInt(rawKelas));
+            }
+        } catch (Exception ignored) {
+            kelas = rawKelas.isEmpty() ? "-" : rawKelas;
+        }
 
         HashMap<String, String> map = new HashMap<>();
 
-        if (data.has("jurusan") && !data.get("jurusan").isJsonNull()) {
+        if (data.has("jurusan") && !data.get("jurusan").isJsonNull() && data.get("jurusan").isJsonObject()) {
             JsonObject jurusan = data.get("jurusan").getAsJsonObject();
-            String alias = "";
+            String alias = (jurusan.has("alias") && !jurusan.get("alias").isJsonNull()) ? jurusan.get("alias").getAsString().trim() : "";
+            String namaJ = (jurusan.has("nama") && !jurusan.get("nama").isJsonNull()) ? jurusan.get("nama").getAsString().trim() : "";
 
-            if (jurusan.has("alias"))
-                alias = jurusan.get("alias").getAsString();
-
-            String j = jurusan.get("nama").getAsString() + (!alias.equals("") ? " (" + alias + ")" : "");
-            kelas += " " + alias;
+            String j = (!namaJ.isEmpty() ? namaJ : "-") + (!alias.isEmpty() ? " (" + alias + ")" : "");
+            if (!alias.isEmpty() && !kelas.equals("-")) {
+                kelas += " " + alias;
+            }
             tvJurusan.setText(j);
             map.put("jurusan", j);
         } else {
@@ -388,15 +397,16 @@ public class PengaturanKelasActivity extends AppCompatActivity {
         }
 
         tvTitle.setText(kelas);
-        tvJumlahKelas.setText("Jumlah kelas: "+jumlah_kelas);
+        tvJumlahKelas.setText("Jumlah kelas: " + jumlah_kelas);
         tvIndex.setText((total - index) + "");
 
         map.put("index", (total - index) + "");
         map.put("kelas", kelas);
         map.put("jumlah_kelas", jumlah_kelas);
-        map.put("id", data.get("id").getAsString());
+        map.put("id", data.has("id") && !data.get("id").isJsonNull() ? data.get("id").getAsString() : "");
         dataList.add(map);
 
+        final String finalKelasTitle = kelas;
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -404,12 +414,24 @@ public class PengaturanKelasActivity extends AppCompatActivity {
                 JsonObject currentUser = pref.getUserData();
                 String role = currentUser != null && currentUser.has("role") ? currentUser.get("role").getAsString() : "";
                 if (role.equals("superadmin") || role.equals("kepsek")) {
-                    String kelasId = data.get("id").getAsString();
-                    String namaKelas = data.has("kelas") ? data.get("kelas").getAsString() : "kelas ini";
-                    Helpers.showConfirm(PengaturanKelasActivity.this, "Konfirmasi", "Apakah Anda yakin ingin menghapus data aturan kelas \"" + namaKelas + "\"?", (dialogInterface, i) -> {
-                        dialogInterface.dismiss();
-                        deleteKelas(kelasId);
-                    });
+                    String kelasId = data.has("id") && !data.get("id").isJsonNull() ? data.get("id").getAsString() : "";
+                    String[] options = {"Edit Data", "Hapus Data"};
+                    new com.google.android.material.dialog.MaterialAlertDialogBuilder(PengaturanKelasActivity.this)
+                            .setTitle("Kelas " + finalKelasTitle)
+                            .setItems(options, (dialog, which) -> {
+                                if (which == 0) {
+                                    Intent intent = new Intent(PengaturanKelasActivity.this, EditPengaturanKelasActivity.class);
+                                    intent.putExtra("id", kelasId);
+                                    addDataLauncher.launch(intent);
+                                    Helpers.overridePendingTransition_Enter_v1(PengaturanKelasActivity.this);
+                                } else if (which == 1) {
+                                    Helpers.showConfirm(PengaturanKelasActivity.this, "Konfirmasi", "Apakah Anda yakin ingin menghapus data aturan kelas \"" + finalKelasTitle + "\"?", (dialogInterface, i) -> {
+                                        dialogInterface.dismiss();
+                                        deleteKelas(kelasId);
+                                    });
+                                }
+                            })
+                            .show();
                 }
             }
         });
