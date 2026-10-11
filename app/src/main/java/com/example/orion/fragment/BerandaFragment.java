@@ -281,6 +281,7 @@ public class BerandaFragment extends Fragment {
                         loading.show();
                         Intent intent = new Intent(requireContext(), WelcomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Helpers.deleteDeviceTokenIfAny(requireContext());
                         pref.clear();
                         Helpers.delay(500, new Runnable() {
                             @Override

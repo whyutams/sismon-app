@@ -168,4 +168,20 @@ public interface ApiService {
 
     @DELETE("kelas/{id}")
     Call<JsonObject> kelasDelete(@Path("id") String id);
+
+    @POST("device-token")
+    Call<JsonObject> sendDeviceToken(@Body JsonObject body);
+
+    @retrofit2.http.HTTP(method = "DELETE", path = "device-token", hasBody = true)
+    Call<JsonObject> deleteDeviceToken(@Body JsonObject body);
+
+    @GET("notifications")
+    Call<JsonObject> getNotifications();
+
+    @POST("notifications/{id}/read")
+    Call<JsonObject> markNotificationAsRead(@Path("id") String id);
+
+    @POST("notifications/read-all")
+    Call<JsonObject> markAllNotificationsAsRead();
+
 }

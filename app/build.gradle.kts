@@ -1,5 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -55,5 +57,9 @@ dependencies {
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation ("org.apache.poi:poi:5.2.3")
     implementation ("org.apache.poi:poi-ooxml:5.2.3")
+    // firebase
+    implementation(platform("com.google.firebase:firebase-bom:35.0.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging")
 
 }

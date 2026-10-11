@@ -112,6 +112,7 @@ public class ProfileFragment extends Fragment {
                     Helpers.showConfirm(requireActivity(), "Konfirmasi", "Apakah Anda yakin ingin keluar?", (dialogInterface, i) -> {
                         Intent intent = new Intent(requireContext(), WelcomeActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Helpers.deleteDeviceTokenIfAny(requireContext());
                         pref.clear();
                         startActivity(intent);
                         Helpers.overridePendingTransition_Enter_v1(requireActivity());
@@ -166,7 +167,8 @@ public class ProfileFragment extends Fragment {
             Helpers.showConfirm(requireActivity(), "Konfirmasi", "Apakah Anda yakin ingin keluar?", (dialogInterface, i) -> {
                 Intent intent = new Intent(requireContext(), WelcomeActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                pref.clear();
+                Helpers.deleteDeviceTokenIfAny(requireContext());
+                        pref.clear();
                 startActivity(intent);
                 Helpers.overridePendingTransition_Enter_v1(requireActivity());
                 requireActivity().finish();

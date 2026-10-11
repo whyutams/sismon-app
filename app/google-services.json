@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1084722328859",
+    "project_id": "sismon-app",
+    "storage_bucket": "sismon-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084722328859:android:e1b600c896bda70b308fbe",
+        "android_client_info": {
+          "package_name": "com.example.orion"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCu0Gnp4UtiNz3wi3WmrzbQ55Kq_aoUf9U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

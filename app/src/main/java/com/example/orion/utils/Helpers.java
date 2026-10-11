@@ -347,4 +347,26 @@ public class Helpers {
             }
         });
     }
+
+    public static void deleteDeviceTokenIfAny(Context context) {
+        if (context == null) return;
+        try {
+            PreferenceManager pref = new PreferenceManager(context);
+            String fcmToken = pref.getFcmToken();
+            if (fcmToken != null && !fcmToken.isEmpty() && pref.getToken() != null) {
+                com.google.gson.JsonObject payload = new com.google.gson.JsonObject();
+                payload.addProperty("fcm_token", fcmToken);
+
+                com.example.orion.utils.api.ApiService apiService =
+                        com.example.orion.utils.api.ApiClient.getClient(context).create(com.example.orion.utils.api.ApiService.class);
+                apiService.deleteDeviceToken(payload).enqueue(new retrofit2.Callback<com.google.gson.JsonObject>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<com.google.gson.JsonObject> call, retrofit2.Response<com.google.gson.JsonObject> response) {}
+
+                    @Override
+                    public void onFailure(retrofit2.Call<com.google.gson.JsonObject> call, Throwable t) {}
+                });
+            }
+        } catch (Exception ignored) {}
+    }
 }

@@ -85,6 +85,31 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+                // Sinkronisasi FCM token ke server jika user sedang login
+        PreferenceManager prefManager = new PreferenceManager(this);
+        if (prefManager.getToken() != null) {
+            com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            String fcmToken = task.getResult();
+                            prefManager.saveFcmToken(fcmToken);
+
+                            JsonObject tokenPayload = new JsonObject();
+                            tokenPayload.addProperty("fcm_token", fcmToken);
+                            tokenPayload.addProperty("device_type", "android");
+
+                            ApiService tokenApi = ApiClient.getClient(MainActivity.this).create(ApiService.class);
+                            tokenApi.sendDeviceToken(tokenPayload).enqueue(new Callback<JsonObject>() {
+                                @Override
+                                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {}
+
+                                @Override
+                                public void onFailure(Call<JsonObject> call, Throwable t) {}
+                            });
+                        }
+                    });
+        }
+
         if (NetworkUtil.isConnected(this)) {
             ApiService apiService = ApiClient.getClient(MainActivity.this).create(ApiService.class);
             apiService.whoami().enqueue(new Callback<JsonObject>() {

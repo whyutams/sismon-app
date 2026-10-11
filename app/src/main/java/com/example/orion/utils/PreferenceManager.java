@@ -9,6 +9,7 @@ public class PreferenceManager {
     private static final String PREF_NAME = "OrionAppPrefs";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_USER_DATA = "user_data";
+    private static final String KEY_FCM_TOKEN = "fcm_token";
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
@@ -43,4 +44,14 @@ public class PreferenceManager {
         editor.clear();
         editor.apply();
     }
+
+    public void saveFcmToken(String token) {
+        editor.putString(KEY_FCM_TOKEN, token);
+        editor.apply();
+    }
+
+    public String getFcmToken() {
+        return prefs.getString(KEY_FCM_TOKEN, null);
+    }
+
 }

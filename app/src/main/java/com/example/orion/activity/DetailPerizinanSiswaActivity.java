@@ -114,7 +114,7 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         String index = getIntent().getStringExtra("index");
         String status = getIntent().getStringExtra("status");
-        if (status.equals("pending")) isPending = true;
+        if ("pending".equals(status)) isPending = true;
         loadData(id, index);
     }
 
