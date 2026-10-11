@@ -184,4 +184,11 @@ public interface ApiService {
     @POST("notifications/read-all")
     Call<JsonObject> markAllNotificationsAsRead();
 
+    @GET("app-update/check")
+    Call<JsonObject> checkAppUpdate(@retrofit2.http.Query("current_version_name") String currentVersionName);
+
+    @retrofit2.http.Streaming
+    @GET
+    Call<okhttp3.ResponseBody> downloadApkFile(@retrofit2.http.Url String fileUrl);
+
 }

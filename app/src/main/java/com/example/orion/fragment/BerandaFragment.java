@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
+import com.example.orion.utils.AppUpdateHelper;
 import com.example.orion.activity.AkunGuruActivity;
 import com.example.orion.activity.AkunOrangtuaActivity;
 import com.example.orion.activity.AkunSatpamActivity;
@@ -710,8 +711,23 @@ public class BerandaFragment extends Fragment {
         dialog.setContentView(R.layout.dialog_tentang);
         dialog.setCancelable(true);
 
-        Button btnOK=dialog.findViewById(R.id.btnOK);
-        btnOK.setOnClickListener(v -> dialog.dismiss());
+        TextView tvVersi = dialog.findViewById(R.id.tvVersi);
+        if (tvVersi != null) {
+            tvVersi.setText("Versi: " + AppUpdateHelper.getCurrentVersionName(requireContext()));
+        }
+
+        Button btnUpdate = dialog.findViewById(R.id.btnUpdate);
+        if (btnUpdate != null) {
+            btnUpdate.setOnClickListener(v -> {
+                dialog.dismiss();
+                AppUpdateHelper.showManualUpdateConfirmDialog(requireActivity());
+            });
+        }
+
+        Button btnOK = dialog.findViewById(R.id.btnOK);
+        if (btnOK != null) {
+            btnOK.setOnClickListener(v -> dialog.dismiss());
+        }
 
         if (dialog.getWindow() != null) {
             dialog.getWindow().setLayout(

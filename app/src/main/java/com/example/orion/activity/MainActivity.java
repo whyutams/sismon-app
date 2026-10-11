@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.example.orion.R;
 import com.example.orion.fragment.BerandaFragment;
 import com.example.orion.fragment.ProfileFragment;
+import com.example.orion.utils.AppUpdateHelper;
 import com.example.orion.utils.Helpers;
 import com.example.orion.utils.NetworkUtil;
 import com.example.orion.utils.PreferenceManager;
@@ -184,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             });
         }
+
+        // Pemeriksaan pembaruan aplikasi otomatis
+        AppUpdateHelper.checkUpdateAuto(this);
 
         bottomTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override

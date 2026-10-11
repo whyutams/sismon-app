@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
+import com.example.orion.utils.AppUpdateHelper;
 import com.example.orion.activity.MainActivity;
 import com.example.orion.activity.UbahPasswordActivity;
 import com.example.orion.activity.WelcomeActivity;
@@ -277,8 +278,23 @@ public class ProfileFragment extends Fragment {
         dialog.setContentView(R.layout.dialog_tentang);
         dialog.setCancelable(true);
 
+        TextView tvVersi = dialog.findViewById(R.id.tvVersi);
+        if (tvVersi != null) {
+            tvVersi.setText("Versi: " + AppUpdateHelper.getCurrentVersionName(requireContext()));
+        }
+
+        Button btnUpdate = dialog.findViewById(R.id.btnUpdate);
+        if (btnUpdate != null) {
+            btnUpdate.setOnClickListener(v -> {
+                dialog.dismiss();
+                AppUpdateHelper.showManualUpdateConfirmDialog(requireActivity());
+            });
+        }
+
         Button btnOK = dialog.findViewById(R.id.btnOK);
-        btnOK.setOnClickListener(v -> dialog.dismiss());
+        if (btnOK != null) {
+            btnOK.setOnClickListener(v -> dialog.dismiss());
+        }
 
         if (dialog.getWindow() != null) {
             dialog.getWindow().setLayout(
