@@ -24,7 +24,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.JsonObject;
 
-import com.google.gson.JsonObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;

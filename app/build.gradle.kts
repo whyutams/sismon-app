@@ -58,8 +58,8 @@ dependencies {
     implementation ("org.apache.poi:poi:5.2.3")
     implementation ("org.apache.poi:poi-ooxml:5.2.3")
     // firebase
-    implementation(platform("com.google.firebase:firebase-bom:35.0.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-messaging")
+    implementation("com.google.firebase:firebase-messaging:24.1.0")
 
 }
