@@ -191,4 +191,47 @@ public interface ApiService {
     @GET
     Call<okhttp3.ResponseBody> downloadApkFile(@retrofit2.http.Url String fileUrl);
 
+@GET("keterlambatan")
+    Call<JsonObject> getKeterlambatan(
+            @retrofit2.http.Query("page") int page,
+            @retrofit2.http.Query("per_page") int perPage,
+            @retrofit2.http.Query("search") String search
+    );
+
+    @GET("perizinan")
+    Call<JsonObject> getPerizinan(
+            @retrofit2.http.Query("page") int page,
+            @retrofit2.http.Query("per_page") int perPage,
+            @retrofit2.http.Query("search") String search
+    );
+
+    @GET("siswa")
+    Call<JsonObject> getSiswa(
+            @retrofit2.http.Query("page") int page,
+            @retrofit2.http.Query("per_page") int perPage,
+            @retrofit2.http.Query("search") String search
+    );
+
+    @GET("users")
+    Call<JsonObject> getUsers(
+            @retrofit2.http.Query("role") String role,
+            @retrofit2.http.Query("page") int page,
+            @retrofit2.http.Query("per_page") int perPage,
+            @retrofit2.http.Query("search") String search
+    );
+
+    @GET("jurusan")
+    Call<JsonObject> getJurusan(
+            @retrofit2.http.Query("page") int page,
+            @retrofit2.http.Query("per_page") int perPage,
+            @retrofit2.http.Query("search") String search
+    );
+
+    @GET("kelas")
+    Call<JsonObject> getKelas(
+            @retrofit2.http.Query("page") int page,
+            @retrofit2.http.Query("per_page") int perPage,
+            @retrofit2.http.Query("search") String search
+    );
+
 }

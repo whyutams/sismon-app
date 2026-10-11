@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
 import com.example.orion.utils.Helpers;
+import com.example.orion.utils.PaginationHelper;
 import com.example.orion.utils.NetworkUtil;
 import com.example.orion.utils.PreferenceManager;
 import com.example.orion.utils.api.ApiClient;
@@ -50,6 +51,12 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     LinearLayout ll_progress, ll_countainer_list, ll_notfound;
     ArrayList<HashMap<String, String>> dataList = new ArrayList<>();
+    private int currentPage = 1;
+    private int lastPage = 1;
+    private boolean isLoading = false;
+    private boolean isLoadingMore = false;
+    private String currentSearch = "";
+    private PaginationHelper paginationHelper;
     private ActivityResultLauncher<Intent> addDataLauncher;
     private FloatingActionButton fab_tambah;
     private boolean fab_tambah_allowed = false;
@@ -106,17 +113,18 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
         ll_notfound = findViewById(R.id.ll_notfound);
 
         swipeRefreshLayout.setColorSchemeColors(getColor(R.color.primary));
-        loadData();
 
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            swipeRefreshLayout.setRefreshing(true);
-
-            new Handler().postDelayed(() -> {
-                loadData();
-                swipeRefreshLayout.setRefreshing(false);
-            }, 1000);
+        paginationHelper = new PaginationHelper(this, ll_countainer_list, () -> {
+            if (!isLoading && !isLoadingMore && currentPage < lastPage) {
+                loadData(currentPage + 1, false);
+            }
         });
 
+        loadData(1, true);
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadData(1, true);
+        });
         addDataLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -212,16 +220,16 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                filterData(query);
+                currentSearch = query != null ? query.trim() : "";
+                loadData(1, true);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) {
-                    reloadAllItems();
-                } else {
-                    filterData(newText);
+                if (newText.isEmpty() && !currentSearch.isEmpty()) {
+                    currentSearch = "";
+                    loadData(1, true);
                 }
                 return true;
             }
@@ -239,12 +247,13 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 Helpers.tintToolbarButtons(toolbar);
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
-                reloadAllItems(); // tampilkan semua
                 if (articleItem != null) {
                     articleItem.setVisible(true);
                 }
-
-                reloadAllItems();
+                if (!currentSearch.isEmpty()) {
+                    currentSearch = "";
+                    loadData(1, true);
+                }
                 return true;
             }
         });
@@ -253,67 +262,98 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
     }
 
 
-    private void loadData() {
-        if (NetworkUtil.isConnected(this)) {
-            ApiService apiService = ApiClient.getClient(AkunOrangtuaActivity.this).create(ApiService.class);
-            apiService.info().enqueue(new Callback<JsonObject>() {
-                @Override
-                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        JsonObject json = response.body();
+        private void loadData() {
+        loadData(1, true);
+    }
 
-                        String status = json.has("status") ? json.get("status").getAsString() : "";
+    private void loadData(int page, boolean isRefresh) {
+        if (!NetworkUtil.isConnected(this)) {
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+            if (isRefresh) {
+                Helpers.showAlert(this, null, "Tidak ada koneksi internet! Coba lagi nanti.", "OK", (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    finish();
+                });
+            } else {
+                Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
 
-                        if (status.equals("success")) {
-                            dataList.clear();
-                            ll_countainer_list.removeAllViews();
+        if (isRefresh) {
+            isLoading = true;
+            currentPage = 1;
+            lastPage = 1;
+            ll_progress.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.GONE);
+            ll_notfound.setVisibility(View.GONE);
+            ll_countainer_list.removeAllViews();
+            dataList.clear();
+        } else {
+            isLoadingMore = true;
+            if (paginationHelper != null) paginationHelper.showLoadingMore(true);
+        }
 
-                            JsonObject main_data = json.has("data") ? json.get("data").getAsJsonObject() : null;
-                            JsonObject data = main_data.has("data") ? main_data.get("data").getAsJsonObject() : null;
-                            JsonArray user_orangtua = data.has("user_orangtua") ? data.get("user_orangtua").getAsJsonArray() : null;
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.getUsers("orangtua", page, 15, currentSearch.isEmpty() ? null : currentSearch).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (isFinishing() || isDestroyed()) return;
 
-                            if (user_orangtua.size() != 0) {
-                                for (int i = 0; i < user_orangtua.size(); i++) {
-                                    JsonObject d = user_orangtua.get(i).getAsJsonObject();
-                                    addItem(d, i, user_orangtua.size());
-                                }
+                isLoading = false;
+                isLoadingMore = false;
+                if (paginationHelper != null) paginationHelper.showLoadingMore(false);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
 
-                                ll_progress.setVisibility(View.GONE);
-                                swipeRefreshLayout.setVisibility(View.VISIBLE);
-                            } else {
-                                Helpers.delay(1000, new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        if (isFinishing() || isDestroyed()) return;
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject json = response.body();
+                    String status = json.has("status") ? json.get("status").getAsString() : "";
 
-                                        ll_progress.setVisibility(View.GONE);
-                                        ll_notfound.setVisibility(View.VISIBLE);
-                                    }
-                                });
+                    if (status.equals("success")) {
+                        currentPage = json.has("current_page") ? json.get("current_page").getAsInt() : page;
+                        lastPage = json.has("last_page") ? json.get("last_page").getAsInt() : 1;
+
+                        JsonArray items = json.has("data") && json.get("data").isJsonArray() ? json.getAsJsonArray("data") : new JsonArray();
+
+                        if (items.size() > 0) {
+                            int total = json.has("total") ? json.get("total").getAsInt() : items.size();
+                            int startIndex = dataList.size();
+                            for (int i = 0; i < items.size(); i++) {
+                                JsonObject d = items.get(i).getAsJsonObject();
+                                addItem(d, startIndex + i, total);
                             }
-
+                            ll_progress.setVisibility(View.GONE);
+                            swipeRefreshLayout.setVisibility(View.VISIBLE);
+                            ll_notfound.setVisibility(View.GONE);
                         } else {
-                            Toast.makeText(AkunOrangtuaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
+                            if (page == 1) {
+                                ll_progress.setVisibility(View.GONE);
+                                ll_notfound.setVisibility(View.VISIBLE);
+                            }
                         }
                     } else {
                         Toast.makeText(AkunOrangtuaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
                     }
+                } else {
+                    Toast.makeText(AkunOrangtuaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
                 }
+            }
 
-                @Override
-                public void onFailure(Call<JsonObject> call, Throwable t) {
-                    Toast.makeText(AkunOrangtuaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                if (isFinishing() || isDestroyed()) return;
+
+                isLoading = false;
+                isLoadingMore = false;
+                if (paginationHelper != null) paginationHelper.showLoadingMore(false);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+
+                if (page == 1) {
+                    ll_progress.setVisibility(View.GONE);
                 }
-            });
-        } else {
-            Helpers.showAlert(this, null, "Tidak ada koneksi internet! Coba lagi nanti.", "OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-                    finish();
-                }
-            });
-        }
+                Toast.makeText(AkunOrangtuaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void addItem(JsonObject data, int index, int total) {

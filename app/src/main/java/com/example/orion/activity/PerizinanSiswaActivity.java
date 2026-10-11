@@ -39,6 +39,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
 import com.example.orion.utils.Helpers;
+import com.example.orion.utils.PaginationHelper;
 import com.example.orion.utils.NetworkUtil;
 import com.example.orion.utils.PreferenceManager;
 import com.example.orion.utils.api.ApiClient;
@@ -68,6 +69,12 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     LinearLayout ll_progress, ll_countainer_list, ll_notfound;
     ArrayList<HashMap<String, String>> dataList = new ArrayList<>();
+    private int currentPage = 1;
+    private int lastPage = 1;
+    private boolean isLoading = false;
+    private boolean isLoadingMore = false;
+    private String currentSearch = "";
+    private PaginationHelper paginationHelper;
     private ActivityResultLauncher<Intent> addDataLauncher, detailDataLauncher;
     private FloatingActionButton fab_tambah;
     private boolean fab_tambah_showed = false;
@@ -128,16 +135,18 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
         ll_notfound = findViewById(R.id.ll_notfound);
 
         swipeRefreshLayout.setColorSchemeColors(getColor(R.color.primary));
-        loadData();
 
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            swipeRefreshLayout.setRefreshing(true);
-            new Handler().postDelayed(() -> {
-                loadData();
-                swipeRefreshLayout.setRefreshing(false);
-            }, 1000);
+        paginationHelper = new PaginationHelper(this, ll_countainer_list, () -> {
+            if (!isLoading && !isLoadingMore && currentPage < lastPage) {
+                loadData(currentPage + 1, false);
+            }
         });
 
+        loadData(1, true);
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadData(1, true);
+        });
         addDataLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -231,14 +240,17 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                filterData(query);
+                currentSearch = query != null ? query.trim() : "";
+                loadData(1, true);
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.isEmpty()) reloadAllItems();
-                else filterData(newText);
+                if (newText.isEmpty() && !currentSearch.isEmpty()) {
+                    currentSearch = "";
+                    loadData(1, true);
+                }
                 return true;
             }
         });
@@ -286,57 +298,95 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
 
     // ========== FUNGSI LOAD DATA (SAMA DENGAN YANG LAMA) ==========
 
-    private void loadData() {
+        private void loadData() {
+        loadData(1, true);
+    }
+
+    private void loadData(int page, boolean isRefresh) {
         if (!NetworkUtil.isConnected(this)) {
-            Helpers.showAlert(this, null, "Tidak ada koneksi internet! Coba lagi nanti.", "OK", (dialogInterface, i) -> {
-                dialogInterface.dismiss();
-                finish();
-            });
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+            if (isRefresh) {
+                Helpers.showAlert(this, null, "Tidak ada koneksi internet! Coba lagi nanti.", "OK", (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    finish();
+                });
+            } else {
+                Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 
+        if (isRefresh) {
+            isLoading = true;
+            currentPage = 1;
+            lastPage = 1;
+            ll_progress.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.GONE);
+            ll_notfound.setVisibility(View.GONE);
+            ll_countainer_list.removeAllViews();
+            dataList.clear();
+        } else {
+            isLoadingMore = true;
+            if (paginationHelper != null) paginationHelper.showLoadingMore(true);
+        }
+
         ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
-        apiService.info().enqueue(new Callback<JsonObject>() {
+        apiService.getPerizinan(page, 15, currentSearch.isEmpty() ? null : currentSearch).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                if (!response.isSuccessful() || response.body() == null) {
-                    Toast.makeText(PerizinanSiswaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                if (isFinishing() || isDestroyed()) return;
 
-                JsonObject json = response.body();
-                String status = json.has("status") ? json.get("status").getAsString() : "";
+                isLoading = false;
+                isLoadingMore = false;
+                if (paginationHelper != null) paginationHelper.showLoadingMore(false);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
 
-                if (!status.equals("success")) {
-                    Toast.makeText(PerizinanSiswaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject json = response.body();
+                    String status = json.has("status") ? json.get("status").getAsString() : "";
 
-                ll_countainer_list.removeAllViews();
-                dataList.clear();
+                    if (status.equals("success")) {
+                        currentPage = json.has("current_page") ? json.get("current_page").getAsInt() : page;
+                        lastPage = json.has("last_page") ? json.get("last_page").getAsInt() : 1;
 
-                JsonObject main_data = json.getAsJsonObject("data");
-                JsonObject data = main_data.getAsJsonObject("data");
-                JsonArray perizinan = data.getAsJsonArray("perizinan");
+                        JsonArray items = json.has("data") && json.get("data").isJsonArray() ? json.getAsJsonArray("data") : new JsonArray();
 
-                if (perizinan.size() != 0) {
-                    for (int i = 0; i < perizinan.size(); i++) {
-                        JsonObject d = perizinan.get(i).getAsJsonObject();
-                        addItem(d, i, perizinan.size());
+                        if (items.size() > 0) {
+                            int total = json.has("total") ? json.get("total").getAsInt() : items.size();
+                            int startIndex = dataList.size();
+                            for (int i = 0; i < items.size(); i++) {
+                                JsonObject d = items.get(i).getAsJsonObject();
+                                addItem(d, startIndex + i, total);
+                            }
+                            ll_progress.setVisibility(View.GONE);
+                            swipeRefreshLayout.setVisibility(View.VISIBLE);
+                            ll_notfound.setVisibility(View.GONE);
+                        } else {
+                            if (page == 1) {
+                                ll_progress.setVisibility(View.GONE);
+                                ll_notfound.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    } else {
+                        Toast.makeText(PerizinanSiswaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
                     }
-                    ll_progress.setVisibility(View.GONE);
-                    swipeRefreshLayout.setVisibility(View.VISIBLE);
                 } else {
-                    Helpers.delay(1000, () -> {
-                        if (isFinishing() || isDestroyed()) return;
-                        ll_progress.setVisibility(View.GONE);
-                        ll_notfound.setVisibility(View.VISIBLE);
-                    });
+                    Toast.makeText(PerizinanSiswaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
+                if (isFinishing() || isDestroyed()) return;
+
+                isLoading = false;
+                isLoadingMore = false;
+                if (paginationHelper != null) paginationHelper.showLoadingMore(false);
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+
+                if (page == 1) {
+                    ll_progress.setVisibility(View.GONE);
+                }
                 Toast.makeText(PerizinanSiswaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
