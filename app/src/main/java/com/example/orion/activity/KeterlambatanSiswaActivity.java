@@ -346,10 +346,16 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
                             ll_progress.setVisibility(View.GONE);
                             swipeRefreshLayout.setVisibility(View.VISIBLE);
                             ll_notfound.setVisibility(View.GONE);
+                            if (fab_tambah_allowed && fab_tambah.getVisibility() != View.VISIBLE) {
+                                Helpers.animateZoomIn_v1(fab_tambah);
+                            }
                         } else {
                             if (page == 1) {
                                 ll_progress.setVisibility(View.GONE);
                                 ll_notfound.setVisibility(View.VISIBLE);
+                                if (fab_tambah_allowed && fab_tambah.getVisibility() != View.VISIBLE) {
+                                    Helpers.animateZoomIn_v1(fab_tambah);
+                                }
                             }
                         }
                     } else {
@@ -432,8 +438,8 @@ public class KeterlambatanSiswaActivity extends AppCompatActivity {
 
         ll_countainer_list.addView(itemView, ll_countainer_list.getChildCount() - (ll_countainer_list.getChildCount() + 1));
 
-        if (total == index + 1) {
-            if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
+        if (fab_tambah_allowed && fab_tambah.getVisibility() != View.VISIBLE) {
+            Helpers.animateZoomIn_v1(fab_tambah);
             Helpers.delay(1000, new Runnable() {
                 @Override
                 public void run() {

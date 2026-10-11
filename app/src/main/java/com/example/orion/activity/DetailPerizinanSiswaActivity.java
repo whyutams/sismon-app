@@ -199,6 +199,9 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
                                         .placeholder(R.drawable.ic_image_24)
                                         .error(R.drawable.ic_image_24)
                                         .into(iv_gambar);
+
+                    final String previewGambar = gambar;
+                    iv_gambar.setOnClickListener(v -> Helpers.showImagePreview(DetailPerizinanSiswaActivity.this, previewGambar));
                             } else {
                                 iv_gambar.setImageResource(R.drawable.ic_image_24);
                                 iv_gambar.setImageTintList(

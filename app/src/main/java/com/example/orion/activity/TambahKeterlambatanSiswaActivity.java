@@ -33,6 +33,7 @@ import androidx.appcompat.widget.SearchView;
 
 import com.example.orion.R;
 import com.example.orion.utils.Helpers;
+import com.example.orion.utils.ImageCompressHelper;
 import com.example.orion.utils.NetworkUtil;
 import com.example.orion.utils.PreferenceManager;
 import com.example.orion.utils.api.ApiClient;
@@ -143,9 +144,15 @@ public class TambahKeterlambatanSiswaActivity extends AppCompatActivity {
 
                                 MultipartBody.Part gambar = null;
                                 if (imagePath != null) {
-                                    File file = new File(imagePath);
-                                    RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
-                                    gambar = MultipartBody.Part.createFormData("gambar", file.getName(), requestFile);
+                                    File fileToUpload = null;
+                                    if (imageUri != null) {
+                                        fileToUpload = ImageCompressHelper.compressImage(TambahKeterlambatanSiswaActivity.this, imageUri);
+                                    }
+                                    if (fileToUpload == null) {
+                                        fileToUpload = new File(imagePath);
+                                    }
+                                    RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), fileToUpload);
+                                    gambar = MultipartBody.Part.createFormData("gambar", fileToUpload.getName(), requestFile);
                                 }
 
                                 if (NetworkUtil.isConnected(TambahKeterlambatanSiswaActivity.this)) {

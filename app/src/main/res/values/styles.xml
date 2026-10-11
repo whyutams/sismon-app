@@ -62,5 +62,10 @@
     <style name="OrionToolbarNavigationButtonStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">
         <item name="android:tint">@color/white</item>
     </style>
+
+    <style name="RoundedImagePreview">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">20dp</item>
+    </style>
 </resources>
 

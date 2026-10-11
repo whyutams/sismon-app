@@ -361,10 +361,16 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
                             ll_progress.setVisibility(View.GONE);
                             swipeRefreshLayout.setVisibility(View.VISIBLE);
                             ll_notfound.setVisibility(View.GONE);
+                            if (fab_tambah_showed && fab_tambah.getVisibility() != View.VISIBLE) {
+                                Helpers.animateZoomIn_v1(fab_tambah);
+                            }
                         } else {
                             if (page == 1) {
                                 ll_progress.setVisibility(View.GONE);
                                 ll_notfound.setVisibility(View.VISIBLE);
+                                if (fab_tambah_showed && fab_tambah.getVisibility() != View.VISIBLE) {
+                                    Helpers.animateZoomIn_v1(fab_tambah);
+                                }
                             }
                         }
                     } else {
@@ -474,7 +480,9 @@ public class PerizinanSiswaActivity extends AppCompatActivity {
 
         ll_countainer_list.addView(itemView);
 
-        if (total == index + 1 && fab_tambah_showed) Helpers.animateZoomIn_v1(fab_tambah);
+        if (fab_tambah_showed && fab_tambah.getVisibility() != View.VISIBLE) {
+            Helpers.animateZoomIn_v1(fab_tambah);
+        }
     }
 
     // ========== FUNGSI FILTER DATA (SAMA) ==========

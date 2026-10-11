@@ -27,6 +27,9 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.example.orion.R;
 import com.example.orion.utils.Helpers;
+import com.example.orion.utils.CropImageDialog;
+import com.example.orion.utils.ImageCompressHelper;
+import java.io.File;
 import com.example.orion.utils.NetworkUtil;
 import com.example.orion.utils.PreferenceManager;
 import com.example.orion.utils.api.ApiClient;
@@ -50,6 +53,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private Uri selectedImageUri = null;
     private String imagePath = null;
+    private String currentProfileUrl = null;
     private ShapeableImageView siv_profile;
 
     @Override
@@ -97,11 +101,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
         if (user != null) {
             if (user.has("foto_profil") && !user.get("foto_profil").isJsonNull()) {
-                String fotoUrl = user.get("foto_profil").getAsString();
-                if (!fotoUrl.startsWith("http")) fotoUrl = ApiClient.base_url + fotoUrl;
+                currentProfileUrl = user.get("foto_profil").getAsString();
+                if (!currentProfileUrl.startsWith("http")) currentProfileUrl = ApiClient.base_url + currentProfileUrl;
                 siv_profile.setImageTintList(null);
                 Glide.with(this)
-                        .load(fotoUrl)
+                        .load(currentProfileUrl)
                         .placeholder(R.drawable.ic_account_circle_24)
                         .error(R.drawable.ic_account_circle_24)
                         .into(siv_profile);
@@ -112,18 +116,18 @@ public class EditProfileActivity extends AppCompatActivity {
             et_alamat.setText(user.has("alamat") ? user.get("alamat").getAsString() : "");
         }
 
-        siv_profile.setOnClickListener(v -> {
-            String permission;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                permission = android.Manifest.permission.READ_MEDIA_IMAGES;
-            } else {
-                permission = android.Manifest.permission.READ_EXTERNAL_STORAGE;
-            }
+        View ll_edit = findViewById(R.id.ll_edit);
+        if (ll_edit != null) {
+            ll_edit.setOnClickListener(v -> checkPermissionAndOpenGallery());
+        }
 
-            if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
-                openGallery();
+        siv_profile.setOnClickListener(v -> {
+            if (imagePath != null) {
+                Helpers.showImagePreview(EditProfileActivity.this, new File(imagePath));
+            } else if (currentProfileUrl != null && !currentProfileUrl.isEmpty()) {
+                Helpers.showImagePreview(EditProfileActivity.this, currentProfileUrl);
             } else {
-                requestPermissionLauncher.launch(permission);
+                checkPermissionAndOpenGallery();
             }
         });
 
@@ -214,26 +218,35 @@ public class EditProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void checkPermissionAndOpenGallery() {
+        String permission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permission = android.Manifest.permission.READ_MEDIA_IMAGES;
+        } else {
+            permission = android.Manifest.permission.READ_EXTERNAL_STORAGE;
+        }
+
+        if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
+            openGallery();
+        } else {
+            requestPermissionLauncher.launch(permission);
+        }
+    }
+
     private ActivityResultLauncher<Intent> pickImageLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     selectedImageUri = result.getData().getData();
-
-                    siv_profile.setBackground(null);
-                    siv_profile.setImageTintList(null);
-                    siv_profile.setImageResource(0);
-                    siv_profile.setImageURI(selectedImageUri);
-
-                    imagePath = Helpers.getRealPathFromURI(EditProfileActivity.this, selectedImageUri);
-                    if (imagePath == null) {
-                        Toast.makeText(this, "Gagal mendapatkan path file. Coba pilih gambar lain.", Toast.LENGTH_SHORT).show();
+                    if (selectedImageUri != null) {
+                        // Launch 1:1 square crop modal with draggable/pannable view
+                        new CropImageDialog(EditProfileActivity.this, selectedImageUri, (croppedFile, croppedBitmap) -> {
+                            siv_profile.setBackground(null);
+                            siv_profile.setImageTintList(null);
+                            siv_profile.setImageBitmap(croppedBitmap);
+                            imagePath = croppedFile.getAbsolutePath();
+                        }).show();
                     }
-                } else {
-                    siv_profile.setImageResource(R.drawable.ic_account_circle_24);
-                    siv_profile.setImageTintList(ContextCompat.getColorStateList(this, R.color.primary));
-                    selectedImageUri = null;
-                    imagePath = null;
                 }
             }
     );

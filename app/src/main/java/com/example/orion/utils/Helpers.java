@@ -3,6 +3,13 @@ package com.example.orion.utils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.app.Dialog;
+import android.widget.ImageView;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Window;
+import android.graphics.Bitmap;
+import java.io.File;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -367,6 +374,64 @@ public class Helpers {
                     public void onFailure(retrofit2.Call<com.google.gson.JsonObject> call, Throwable t) {}
                 });
             }
+        } catch (Exception ignored) {}
+    }
+
+    public static void showImagePreview(Context context, Object imageSource) {
+        if (context == null || imageSource == null) return;
+        try {
+            Dialog dialog = new Dialog(context);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setContentView(R.layout.dialog_foto);
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(true);
+
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setLayout(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                );
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.getWindow().getAttributes().windowAnimations = android.R.style.Animation_Dialog;
+            }
+
+            View root = dialog.findViewById(R.id.dialog_root);
+            ImageView popupFoto = dialog.findViewById(R.id.popupfoto);
+
+            // Close on clicking anywhere: background or photo itself
+            if (root != null) root.setOnClickListener(v -> dialog.dismiss());
+            if (popupFoto != null) popupFoto.setOnClickListener(v -> dialog.dismiss());
+
+            if (popupFoto != null) {
+                popupFoto.setImageTintList(null);
+                if (imageSource instanceof String) {
+                    String url = (String) imageSource;
+                    if (!url.startsWith("http") && !url.startsWith("content:") && !url.startsWith("file:")) {
+                        url = com.example.orion.utils.api.ApiClient.base_url + url;
+                    }
+                    com.bumptech.glide.Glide.with(context)
+                            .load(url)
+                            .placeholder(R.drawable.ic_image_24)
+                            .error(R.drawable.ic_image_24)
+                            .into(popupFoto);
+                } else if (imageSource instanceof android.net.Uri) {
+                    com.bumptech.glide.Glide.with(context)
+                            .load((android.net.Uri) imageSource)
+                            .placeholder(R.drawable.ic_image_24)
+                            .error(R.drawable.ic_image_24)
+                            .into(popupFoto);
+                } else if (imageSource instanceof Bitmap) {
+                    popupFoto.setImageBitmap((Bitmap) imageSource);
+                } else if (imageSource instanceof File) {
+                    com.bumptech.glide.Glide.with(context)
+                            .load((File) imageSource)
+                            .placeholder(R.drawable.ic_image_24)
+                            .error(R.drawable.ic_image_24)
+                            .into(popupFoto);
+                }
+            }
+
+            dialog.show();
         } catch (Exception ignored) {}
     }
 }

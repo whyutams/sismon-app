@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="0dp">
+    android:layout_height="match_parent"
+    android:background="#80000000"
+    android:clickable="true"
+    android:focusable="true">
 
     <ImageView
         android:id="@+id/popupfoto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
+        android:contentDescription="Preview Foto"
         android:src="@drawable/ic_image_24" />
+
 </FrameLayout>
