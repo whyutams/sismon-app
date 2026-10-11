@@ -215,11 +215,14 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
                             String dateIso = (data.has("date") && !data.get("date").isJsonNull()) ? data.get("date").getAsString() : null;
                             tv_tanggal.setText(Helpers.formatDateTimeCombined(dateIso));
 
-                            String _status = data.get("status").getAsString();
+                            String _status = data.has("status") && !data.get("status").isJsonNull() ? data.get("status").getAsString() : "";
+                            isPending = "pending".equalsIgnoreCase(_status);
 
                             if (_status.equals("approved")) tv_status.setText("Disetujui");
                             else if (_status.equals("rejected")) tv_status.setText("Ditolak");
                             else tv_status.setText("Menunggu persetujuan");
+
+                            invalidateOptionsMenu();
 
                             // Audit trail
                             tv_dibuat_oleh.setText(Helpers.formatUserAudit(data.has("created_by") && !data.get("created_by").isJsonNull() ? data.getAsJsonObject("created_by") : null));
@@ -325,7 +328,7 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
         String role = user != null && user.has("role") ? user.get("role").getAsString() : "";
         boolean canApprove = isPending && (role.equals("kesiswaan") || role.equals("piket") || role.equals("guru_piket") || role.equals("bimbingan_konseling") || role.equals("superadmin"));
         boolean canDelete = role.equals("superadmin") || role.equals("kesiswaan") || role.equals("piket") || role.equals("guru_piket") || role.equals("bimbingan_konseling") || role.equals("guru");
-        boolean canEdit = role.equals("superadmin") || role.equals("kesiswaan") || role.equals("piket") || role.equals("guru_piket") || role.equals("bimbingan_konseling") || role.equals("guru");
+        boolean canEdit = isPending && (role.equals("superadmin") || role.equals("kesiswaan") || role.equals("piket") || role.equals("guru_piket") || role.equals("bimbingan_konseling") || role.equals("guru"));
 
         if (canApprove || canDelete || canEdit) {
             inflater.inflate(R.menu.menu_top_nav_detail_perizinan, menu);
@@ -394,6 +397,10 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
             return true;
         }
         if (item.getItemId() == R.id.nav_edit) {
+            if (!isPending) {
+                Toast.makeText(this, "Data perizinan hanya dapat diedit jika status masih menunggu persetujuan.", Toast.LENGTH_SHORT).show();
+                return true;
+            }
             Intent editIntent = new Intent(this, EditPerizinanSiswaActivity.class);
             editIntent.putExtra("id", id);
             editDataLauncher.launch(editIntent);
