@@ -272,7 +272,10 @@ public class BerandaFragment extends Fragment {
 
 
             toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.nav_about) {
+                if (item.getItemId() == R.id.nav_update) {
+                    AppUpdateHelper.showManualUpdateConfirmDialog(requireActivity());
+                    return true;
+                } else if (item.getItemId() == R.id.nav_about) {
                     showDialogTentang();
                     return true;
                 } else if (item.getItemId() == R.id.nav_logout) {
@@ -714,14 +717,6 @@ public class BerandaFragment extends Fragment {
         TextView tvVersi = dialog.findViewById(R.id.tvVersi);
         if (tvVersi != null) {
             tvVersi.setText("Versi: " + AppUpdateHelper.getCurrentVersionName(requireContext()));
-        }
-
-        Button btnUpdate = dialog.findViewById(R.id.btnUpdate);
-        if (btnUpdate != null) {
-            btnUpdate.setOnClickListener(v -> {
-                dialog.dismiss();
-                AppUpdateHelper.showManualUpdateConfirmDialog(requireActivity());
-            });
         }
 
         Button btnOK = dialog.findViewById(R.id.btnOK);

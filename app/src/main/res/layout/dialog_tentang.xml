@@ -15,6 +15,7 @@
         android:layout_marginBottom="12dp"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="@color/black"
         android:text="Tentang Aplikasi" />
 
     <TextView
@@ -24,46 +25,29 @@
         android:textSize="15sp"
         android:lineSpacingExtra="4dp"
         android:justificationMode="inter_word"
+        android:textColor="#333333"
         android:text="SISMON (Sistem Monitoring Siswa) adalah aplikasi untuk membantu sekolah dalam mengelola keterlambatan, perizinan, dan aktivitas siswa lainnya.\n\nDikembangkan oleh: Tim ORION" />
 
     <TextView
         android:id="@+id/tvVersi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="24dp"
         android:textSize="15sp"
         android:textStyle="bold"
         android:textColor="@color/primary"
         android:text="Versi: 1.0" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/btnOK"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="end"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnUpdate"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:backgroundTint="@color/gray"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="Pembaruan"
-            android:textAllCaps="false" />
-
-        <Button
-            android:id="@+id/btnOK"
-            style="@style/Widget.MaterialComponents.Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/primary"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="OK"
-            android:textAllCaps="false" />
-    </LinearLayout>
+        android:layout_gravity="end"
+        android:backgroundTint="@color/primary"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:text="OK"
+        android:textAllCaps="false" />
 </LinearLayout>
