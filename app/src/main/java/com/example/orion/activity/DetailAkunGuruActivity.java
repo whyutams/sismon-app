@@ -38,6 +38,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailAkunGuruActivity extends AppCompatActivity {
+    private boolean isDataLoaded = false;
 
     ImageView iv_gambar;
     TextView tv_no, tv_nip, tv_nama, tv_jurusan, tv_nomorHp, tv_email, tv_alamat, tv_username;
@@ -142,6 +143,8 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
 
                             ll_progress.setVisibility(View.GONE);
                             sv_main.setVisibility(View.VISIBLE);
+                            isDataLoaded = true;
+                            invalidateOptionsMenu();
                         } else {
                             Toast.makeText(DetailAkunGuruActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
                             finish();
@@ -230,6 +233,9 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (!isDataLoaded) {
+            return true;
+        }
         PreferenceManager pref = new PreferenceManager(this);
         JsonObject user = pref.getUserData();
         String role = user != null && user.has("role") ? user.get("role").getAsString() : "";
@@ -255,37 +261,6 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void deleteGuru() {
-        if (!NetworkUtil.isConnected(this)) {
-            Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        ll_progress.setVisibility(View.VISIBLE);
-        sv_main.setVisibility(View.GONE);
-        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
-        apiService.userDelete(ortu_id).enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                ll_progress.setVisibility(View.GONE);
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(DetailAkunGuruActivity.this, "Akun guru berhasil dihapus", Toast.LENGTH_SHORT).show();
-                    setResult(RESULT_OK);
-                    finish();
-                } else {
-                    sv_main.setVisibility(View.VISIBLE);
-                    Toast.makeText(DetailAkunGuruActivity.this, "Gagal menghapus akun guru", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                ll_progress.setVisibility(View.GONE);
-                sv_main.setVisibility(View.VISIBLE);
-                Toast.makeText(DetailAkunGuruActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void deleteUser() {

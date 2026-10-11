@@ -60,6 +60,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailPerizinanSiswaActivity extends AppCompatActivity {
+    private boolean isDataLoaded = false;
 
     private ImageView iv_gambar;
     private TextView tv_no, tv_nis, tv_nama, tv_nomorHp, tv_jurusan, tv_kelas, tv_ortu, tv_tanggal, tv_keterangan, tv_status;
@@ -238,6 +239,8 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
 
                             ll_progress.setVisibility(View.GONE);
                             sv_main.setVisibility(View.VISIBLE);
+                            isDataLoaded = true;
+                            invalidateOptionsMenu();
                         } else {
                             Toast.makeText(DetailPerizinanSiswaActivity.this, "Tidak dapat memuat data. Coba lagi nanti.", Toast.LENGTH_SHORT).show();
                             finish();
@@ -268,6 +271,9 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (!isDataLoaded) {
+            return true;
+        }
         MenuInflater inflater = getMenuInflater();
         String role = user != null && user.has("role") ? user.get("role").getAsString() : "";
         boolean canApprove = isPending && (role.equals("kesiswaan") || role.equals("piket") || role.equals("guru_piket") || role.equals("bimbingan_konseling") || role.equals("superadmin"));
