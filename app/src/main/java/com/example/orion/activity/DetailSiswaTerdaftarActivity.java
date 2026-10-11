@@ -190,12 +190,10 @@ public class DetailSiswaTerdaftarActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.nav_delete) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Hapus Data Siswa")
-                    .setMessage("Apakah Anda yakin ingin menghapus data siswa ini? Tindakan ini tidak dapat dibatalkan.")
-                    .setPositiveButton("Hapus", (dialog, which) -> deleteSiswa())
-                    .setNegativeButton("Batal", null)
-                    .show();
+            Helpers.showConfirm(this, "Konfirmasi", "Apakah Anda yakin ingin menghapus data siswa ini?", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+            deleteSiswa();
+        });
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -206,27 +204,32 @@ public class DetailSiswaTerdaftarActivity extends AppCompatActivity {
             Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
             return;
         }
-        ll_progress.setVisibility(View.VISIBLE);
-        sv_main.setVisibility(View.GONE);
+        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(this);
+        loading.show();
         ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         apiService.siswaDelete(id).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-                ll_progress.setVisibility(View.GONE);
+                loading.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(DetailSiswaTerdaftarActivity.this, "Data siswa berhasil dihapus", Toast.LENGTH_SHORT).show();
                     setResult(RESULT_OK);
                     finish();
                 } else {
-                    sv_main.setVisibility(View.VISIBLE);
-                    Toast.makeText(DetailSiswaTerdaftarActivity.this, "Gagal menghapus data siswa", Toast.LENGTH_SHORT).show();
+                    String msg = "Gagal menghapus data siswa";
+                    try {
+                        if (response.errorBody() != null) {
+                            JsonObject err = new com.google.gson.JsonParser().parse(response.errorBody().string()).getAsJsonObject();
+                            if (err.has("message")) msg = err.get("message").getAsString();
+                        }
+                    } catch (Exception ignored) {}
+                    Toast.makeText(DetailSiswaTerdaftarActivity.this, msg, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                ll_progress.setVisibility(View.GONE);
-                sv_main.setVisibility(View.VISIBLE);
+                loading.dismiss();
                 Toast.makeText(DetailSiswaTerdaftarActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

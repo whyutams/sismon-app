@@ -241,12 +241,10 @@ public class DetailAkunOrangtuaActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.nav_delete) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Hapus Akun Orang Tua")
-                    .setMessage("Apakah Anda yakin ingin menghapus akun orang tua ini? Tindakan ini tidak dapat dibatalkan.")
-                    .setPositiveButton("Hapus", (dialog, which) -> deleteOrangtua())
-                    .setNegativeButton("Batal", null)
-                    .show();
+            Helpers.showConfirm(this, "Konfirmasi", "Apakah Anda yakin ingin menghapus akun orang tua ini?", (dialogInterface, i) -> {
+                dialogInterface.dismiss();
+                deleteUser();
+            });
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -278,6 +276,42 @@ public class DetailAkunOrangtuaActivity extends AppCompatActivity {
             public void onFailure(Call<JsonObject> call, Throwable t) {
                 ll_progress.setVisibility(View.GONE);
                 sv_main.setVisibility(View.VISIBLE);
+                Toast.makeText(DetailAkunOrangtuaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void deleteUser() {
+        if (!NetworkUtil.isConnected(this)) {
+            Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(this);
+        loading.show();
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.userDelete(getIntent().getStringExtra("id")).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                loading.dismiss();
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(DetailAkunOrangtuaActivity.this, "Data akun orang tua berhasil dihapus", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    String msg = "Gagal menghapus data akun orang tua";
+                    try {
+                        if (response.errorBody() != null) {
+                            JsonObject err = new com.google.gson.JsonParser().parse(response.errorBody().string()).getAsJsonObject();
+                            if (err.has("message")) msg = err.get("message").getAsString();
+                        }
+                    } catch (Exception ignored) {}
+                    Toast.makeText(DetailAkunOrangtuaActivity.this, msg, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                loading.dismiss();
                 Toast.makeText(DetailAkunOrangtuaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

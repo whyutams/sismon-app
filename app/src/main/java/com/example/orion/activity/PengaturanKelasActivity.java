@@ -360,12 +360,10 @@ public class PengaturanKelasActivity extends AppCompatActivity {
                 if (role.equals("superadmin") || role.equals("kepsek")) {
                     String kelasId = data.get("id").getAsString();
                     String namaKelas = data.has("kelas") ? data.get("kelas").getAsString() : "kelas ini";
-                    new AlertDialog.Builder(PengaturanKelasActivity.this)
-                            .setTitle("Hapus Kelas")
-                            .setMessage("Apakah Anda yakin ingin menghapus data aturan kelas \"" + namaKelas + "\"? Tindakan ini tidak dapat dibatalkan.")
-                            .setPositiveButton("Hapus", (dialog, which) -> deleteKelas(kelasId))
-                            .setNegativeButton("Batal", null)
-                            .show();
+                    Helpers.showConfirm(PengaturanKelasActivity.this, "Konfirmasi", "Apakah Anda yakin ingin menghapus data aturan kelas \"" + namaKelas + "\"?", (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        deleteKelas(kelasId);
+                    });
                 }
             }
         });
@@ -446,12 +444,10 @@ public class PengaturanKelasActivity extends AppCompatActivity {
             if (role.equals("superadmin") || role.equals("kepsek")) {
                 String kelasId = item.get("id");
                 String namaKelas = item.containsKey("kelas") ? item.get("kelas") : "kelas ini";
-                new AlertDialog.Builder(PengaturanKelasActivity.this)
-                        .setTitle("Hapus Kelas")
-                        .setMessage("Apakah Anda yakin ingin menghapus data aturan kelas \"" + namaKelas + "\"? Tindakan ini tidak dapat dibatalkan.")
-                        .setPositiveButton("Hapus", (dialog, which) -> deleteKelas(kelasId))
-                        .setNegativeButton("Batal", null)
-                        .show();
+                Helpers.showConfirm(PengaturanKelasActivity.this, "Konfirmasi", "Apakah Anda yakin ingin menghapus data aturan kelas \"" + namaKelas + "\"?", (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        deleteKelas(kelasId);
+                    });
             }
         });
 
@@ -481,18 +477,17 @@ public class PengaturanKelasActivity extends AppCompatActivity {
             Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
             return;
         }
-        ll_progress.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setVisibility(View.GONE);
+        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(this);
+        loading.show();
         ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         apiService.kelasDelete(id).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                loading.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(PengaturanKelasActivity.this, "Data aturan kelas berhasil dihapus", Toast.LENGTH_SHORT).show();
                     loadData();
                 } else {
-                    ll_progress.setVisibility(View.GONE);
-                    swipeRefreshLayout.setVisibility(View.VISIBLE);
                     String msg = "Gagal menghapus data kelas";
                     try {
                         if (response.errorBody() != null) {
@@ -506,8 +501,7 @@ public class PengaturanKelasActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                ll_progress.setVisibility(View.GONE);
-                swipeRefreshLayout.setVisibility(View.VISIBLE);
+                loading.dismiss();
                 Toast.makeText(PengaturanKelasActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

@@ -343,12 +343,10 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
                 if (role.equals("superadmin") || role.equals("kepsek")) {
                     String jurusanId = data.get("id").getAsString();
                     String namaJurusan = data.has("nama") ? data.get("nama").getAsString() : "jurusan ini";
-                    new AlertDialog.Builder(JurusanTerdaftarActivity.this)
-                            .setTitle("Hapus Jurusan")
-                            .setMessage("Apakah Anda yakin ingin menghapus jurusan \"" + namaJurusan + "\"? Tindakan ini tidak dapat dibatalkan.")
-                            .setPositiveButton("Hapus", (dialog, which) -> deleteJurusan(jurusanId))
-                            .setNegativeButton("Batal", null)
-                            .show();
+                    Helpers.showConfirm(JurusanTerdaftarActivity.this, "Konfirmasi", "Apakah Anda yakin ingin menghapus jurusan \"" + namaJurusan + "\"?", (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        deleteJurusan(jurusanId);
+                    });
                 }
             }
         });
@@ -429,12 +427,10 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
             if (role.equals("superadmin") || role.equals("kepsek")) {
                 String jurusanId = item.get("id");
                 String namaJurusan = item.containsKey("nama") ? item.get("nama") : "jurusan ini";
-                new AlertDialog.Builder(JurusanTerdaftarActivity.this)
-                        .setTitle("Hapus Jurusan")
-                        .setMessage("Apakah Anda yakin ingin menghapus jurusan \"" + namaJurusan + "\"? Tindakan ini tidak dapat dibatalkan.")
-                        .setPositiveButton("Hapus", (dialog, which) -> deleteJurusan(jurusanId))
-                        .setNegativeButton("Batal", null)
-                        .show();
+                Helpers.showConfirm(JurusanTerdaftarActivity.this, "Konfirmasi", "Apakah Anda yakin ingin menghapus jurusan \"" + namaJurusan + "\"?", (dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                        deleteJurusan(jurusanId);
+                    });
             }
         });
 
@@ -464,18 +460,17 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
             Toast.makeText(this, "Tidak ada koneksi internet", Toast.LENGTH_SHORT).show();
             return;
         }
-        ll_progress.setVisibility(View.VISIBLE);
-        swipeRefreshLayout.setVisibility(View.GONE);
+        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(this);
+        loading.show();
         ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
         apiService.jurusanDelete(id).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                loading.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
                     Toast.makeText(JurusanTerdaftarActivity.this, "Data jurusan berhasil dihapus", Toast.LENGTH_SHORT).show();
                     loadData();
                 } else {
-                    ll_progress.setVisibility(View.GONE);
-                    swipeRefreshLayout.setVisibility(View.VISIBLE);
                     String msg = "Gagal menghapus data jurusan";
                     try {
                         if (response.errorBody() != null) {
@@ -489,8 +484,7 @@ public class JurusanTerdaftarActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                ll_progress.setVisibility(View.GONE);
-                swipeRefreshLayout.setVisibility(View.VISIBLE);
+                loading.dismiss();
                 Toast.makeText(JurusanTerdaftarActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

@@ -296,12 +296,10 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.nav_delete) {
-            Helpers.showConfirm(this, "Hapus Data", "Apakah Anda yakin ingin menghapus data perizinan ini? Tindakan ini tidak dapat dibatalkan.", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    deletePerizinan();
-                }
-            });
+            Helpers.showConfirm(this, "Konfirmasi", "Apakah Anda yakin ingin menghapus data perizinan ini?", (dialogInterface, i) -> {
+            dialogInterface.dismiss();
+            deletePerizinan();
+        });
             return true;
         }
         if(isPending && (user.get("role").getAsString().equals("kesiswaan")||user.get("role").getAsString().equals("piket")||user.get("role").getAsString().equals("bimbingan_konseling"))) {
@@ -644,7 +642,14 @@ public class DetailPerizinanSiswaActivity extends AppCompatActivity {
                     setResult(RESULT_OK);
                     finish();
                 } else {
-                    Toast.makeText(DetailPerizinanSiswaActivity.this, "Gagal menghapus data perizinan", Toast.LENGTH_SHORT).show();
+                    String msg = "Gagal menghapus data perizinan";
+                    try {
+                        if (response.errorBody() != null) {
+                            JsonObject err = new com.google.gson.JsonParser().parse(response.errorBody().string()).getAsJsonObject();
+                            if (err.has("message")) msg = err.get("message").getAsString();
+                        }
+                    } catch (Exception ignored) {}
+                    Toast.makeText(DetailPerizinanSiswaActivity.this, msg, Toast.LENGTH_SHORT).show();
                 }
             }
 
