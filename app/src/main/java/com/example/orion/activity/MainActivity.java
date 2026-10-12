@@ -228,6 +228,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        AppUpdateHelper.checkPendingInstall(this);
+    }
+
+    @Override
     public void finish() {
         super.finish();
         Helpers.overridePendingTransition_Exit_v1(this);
