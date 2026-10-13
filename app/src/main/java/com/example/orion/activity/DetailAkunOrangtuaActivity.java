@@ -109,7 +109,30 @@ public class DetailAkunOrangtuaActivity extends AppCompatActivity {
                             if (isFinishing() || isDestroyed()) return;
 
                             tv_no.setText(index != null && !index.trim().isEmpty() && !"null".equalsIgnoreCase(index.trim()) ? index.trim() : "-");
-                            tv_siswa.setText(ortuDariSiswa != null && !ortuDariSiswa.trim().isEmpty() && !"null".equalsIgnoreCase(ortuDariSiswa.trim()) ? ortuDariSiswa.trim() : "-");
+                            String anakText = "-";
+if (data.has("siswa") && !data.get("siswa").isJsonNull() && data.get("siswa").isJsonArray()) {
+    JsonArray arrS = data.getAsJsonArray("siswa");
+    if (arrS.size() > 0) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arrS.size(); i++) {
+            JsonObject s = arrS.get(i).getAsJsonObject();
+            String namaS = s.has("nama") && !s.get("nama").isJsonNull() ? s.get("nama").getAsString().trim() : "-";
+            String nisS = s.has("nis") && !s.get("nis").isJsonNull() ? s.get("nis").getAsString().trim() : "";
+            String kelasS = s.has("kelas") && !s.get("kelas").isJsonNull() ? s.get("kelas").getAsString().trim() : "";
+            if (i > 0) sb.append("\n");
+            sb.append(namaS);
+            if (!nisS.isEmpty() || !kelasS.isEmpty()) {
+                sb.append(" (");
+                if (!nisS.isEmpty()) sb.append(nisS).append("/");
+                sb.append(kelasS).append(")");
+            }
+        }
+        anakText = sb.toString();
+    }
+} else if (ortuDariSiswa != null && !ortuDariSiswa.trim().isEmpty() && !"null".equalsIgnoreCase(ortuDariSiswa.trim())) {
+    anakText = ortuDariSiswa.trim();
+}
+tv_siswa.setText(anakText);
                             tv_username.setText(data.has("username") && !data.get("username").isJsonNull() ? data.get("username").getAsString() : "-");
                             String nama = data.has("nama") && !data.get("nama").isJsonNull() ? data.get("nama").getAsString().trim() : "";
                             tv_nama.setText(!nama.isEmpty() && !"null".equalsIgnoreCase(nama) ? nama : "-");
@@ -204,7 +227,7 @@ public class DetailAkunOrangtuaActivity extends AppCompatActivity {
 
                                     if(!d.get("orangtua_id").isJsonNull()) {
                                         if((d.get("orangtua_id").getAsString()).equals(ortu_id)) {
-                                            ortuDariSiswa += (ortuDariSiswa.equals("") ? "" : ",\n") + d.get("nama").getAsString() + " ("+(!d.get("nis").isJsonNull() ? (d.get("nis").getAsString()+"/") : "")+d.get("kelas").getAsString()+")";
+                                            ortuDariSiswa += (ortuDariSiswa.equals("") ? "" : "\n") + d.get("nama").getAsString() + " ("+(!d.get("nis").isJsonNull() ? (d.get("nis").getAsString()+"/") : "")+d.get("kelas").getAsString()+")";
                                         }
                                     }
                                 }

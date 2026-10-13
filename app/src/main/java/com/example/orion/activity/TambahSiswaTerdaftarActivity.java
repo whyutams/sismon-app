@@ -28,6 +28,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
@@ -486,6 +487,13 @@ public class TambahSiswaTerdaftarActivity extends AppCompatActivity {
             }
         });
 
+        builder.setNegativeButton("Batal", (d, which) -> d.dismiss());
+        builder.setNeutralButton("Kosongkan Pilihan", (d, which) -> {
+            selectedOrangtuaId = null;
+            et_orangtua.setText("");
+            d.dismiss();
+        });
+
         AlertDialog dialog = builder.create();
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -498,6 +506,18 @@ public class TambahSiswaTerdaftarActivity extends AppCompatActivity {
         });
 
         dialog.show();
+
+        Button btnNegative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        if (btnNegative != null) {
+            btnNegative.setTextColor(ContextCompat.getColor(this, R.color.gray));
+            btnNegative.setAllCaps(false);
+        }
+
+        Button btnNeutral = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
+        if (btnNeutral != null) {
+            btnNeutral.setTextColor(ContextCompat.getColor(this, R.color.error));
+            btnNeutral.setAllCaps(false);
+        }
     }
 
     private void showKelasPicker() {

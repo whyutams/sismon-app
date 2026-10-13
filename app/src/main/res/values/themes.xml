@@ -37,6 +37,11 @@
         <item name="searchViewStyle">@style/SearchViewStyle.White</item>
         <item name="toolbarNavigationButtonStyle">@style/OrionToolbarNavigationButtonStyle</item>
 
+            <item name="materialAlertDialogTheme">@style/OrionAlertDialogTheme</item>
+        <item name="alertDialogTheme">@style/OrionAlertDialogTheme</item>
+        <item name="buttonBarNegativeButtonStyle">@style/OrionDialogNegativeButton</item>
+        <item name="buttonBarPositiveButtonStyle">@style/OrionDialogPositiveButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/OrionDialogNeutralButton</item>
     </style>
 
     <!-- Base application theme. -->

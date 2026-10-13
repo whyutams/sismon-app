@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -16,6 +17,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Streaming;
 
 public interface ApiService {
     @POST("login")
@@ -298,4 +300,26 @@ public interface ApiService {
             @Part("jurusan_id") RequestBody jurusan_id
     );
 
+
+    @Streaming
+    @GET("siswa/export/template")
+    Call<ResponseBody> siswaExportTemplate();
+
+    @Multipart
+    @POST("siswa/import")
+    Call<JsonObject> siswaImport(
+            @Part MultipartBody.Part file,
+            @Part("preview") @Nullable RequestBody preview
+    );
+
+    @Streaming
+    @GET("users/export/template/orangtua")
+    Call<ResponseBody> orangtuaExportTemplate();
+
+    @Multipart
+    @POST("users/import/orangtua")
+    Call<JsonObject> orangtuaImport(
+            @Part MultipartBody.Part file,
+            @Part("preview") @Nullable RequestBody preview
+    );
 }

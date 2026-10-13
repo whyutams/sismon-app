@@ -28,6 +28,27 @@ import com.example.orion.utils.Helpers;
 import com.example.orion.utils.PaginationHelper;
 import com.example.orion.utils.NetworkUtil;
 import com.example.orion.utils.PreferenceManager;
+import android.net.Uri;
+import android.os.Environment;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.widget.Button;
+import androidx.appcompat.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+import java.io.OutputStream;
+import androidx.core.content.FileProvider;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import com.example.orion.utils.api.ApiClient;
 import com.example.orion.utils.api.ApiService;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -58,6 +79,8 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
     private String currentSearch = "";
     private PaginationHelper paginationHelper;
     private ActivityResultLauncher<Intent> addDataLauncher;
+    private ActivityResultLauncher<Intent> excelPickerLauncher;
+    private ActivityResultLauncher<Intent> saveTemplateLauncher;
     private FloatingActionButton fab_tambah;
     private boolean fab_tambah_allowed = false;
 
@@ -125,6 +148,25 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(() -> {
             loadData(1, true);
         });
+                saveTemplateLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        Uri targetUri = result.getData().getData();
+                        downloadTemplateToUri(targetUri);
+                    }
+                }
+        );
+        excelPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        Uri fileUri = result.getData().getData();
+                        processImportExcel(fileUri);
+                    }
+                }
+        );
+
         addDataLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -153,22 +195,47 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.nav_search) {
             return true;
+        } else if (item.getItemId() == R.id.nav_download_template) {
+            downloadTemplateExcel();
+            return true;
+        } else if (item.getItemId() == R.id.nav_import_excel) {
+            openExcelFilePicker();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_top_nav_search_only, menu);
-
-        for (int i = 0; i < menu.size(); i++) {
-            Drawable icon = menu.getItem(i).getIcon();
-            if (icon != null) {
-                icon.setTint(ContextCompat.getColor(this, R.color.white));
-            }
-        }
+        getMenuInflater().inflate(R.menu.menu_top_nav_search_and_overflow, menu);
 
         MenuItem searchItem = menu.findItem(R.id.nav_search);
+        if (searchItem != null && searchItem.getIcon() != null) {
+            searchItem.getIcon().setTint(ContextCompat.getColor(this, R.color.white));
+        }
+
+        MenuItem downloadItem = menu.findItem(R.id.nav_download_template);
+        if (downloadItem != null) {
+            downloadItem.setVisible(fab_tambah_allowed);
+            if (downloadItem.getIcon() != null) {
+                downloadItem.getIcon().mutate().setColorFilter(new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN));
+            }
+            SpannableString s = new SpannableString(downloadItem.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.BLACK), 0, s.length(), 0);
+            downloadItem.setTitle(s);
+        }
+
+        MenuItem importItem = menu.findItem(R.id.nav_import_excel);
+        if (importItem != null) {
+            importItem.setVisible(fab_tambah_allowed);
+            if (importItem.getIcon() != null) {
+                importItem.getIcon().mutate().setColorFilter(new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN));
+            }
+            SpannableString s = new SpannableString(importItem.getTitle());
+            s.setSpan(new ForegroundColorSpan(Color.BLACK), 0, s.length(), 0);
+            importItem.setTitle(s);
+        }
+
         MenuItem articleItem = menu.findItem(R.id.nav_export);
         androidx.appcompat.widget.SearchView searchView =
                 (androidx.appcompat.widget.SearchView) searchItem.getActionView();
@@ -204,6 +271,9 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
             if (navIcon != null) {
                 navIcon.setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
             }
+            if (toolbar.getOverflowIcon() != null) {
+                toolbar.getOverflowIcon().setColorFilter(new PorterDuffColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN));
+            }
         }
 
         searchView.setOnSearchClickListener(new View.OnClickListener() {
@@ -214,6 +284,8 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
                 if (articleItem != null) {
                     articleItem.setVisible(false);
                 }
+                if (downloadItem != null) downloadItem.setVisible(false);
+                if (importItem != null) importItem.setVisible(false);
             }
         });
 
@@ -240,6 +312,8 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
             public boolean onMenuItemActionExpand(MenuItem item) {
                 Helpers.tintToolbarButtons(toolbar);
                 if (fab_tambah_allowed) Helpers.animateZoomIn_v1(fab_tambah);
+                if (downloadItem != null) downloadItem.setVisible(false);
+                if (importItem != null) importItem.setVisible(false);
                 return true; // allow expand
             }
 
@@ -250,6 +324,8 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
                 if (articleItem != null) {
                     articleItem.setVisible(true);
                 }
+                if (downloadItem != null) downloadItem.setVisible(fab_tambah_allowed);
+                if (importItem != null) importItem.setVisible(fab_tambah_allowed);
                 if (!currentSearch.isEmpty()) {
                     currentSearch = "";
                     loadData(1, true);
@@ -561,4 +637,396 @@ public class AkunOrangtuaActivity extends AppCompatActivity {
         super.finish();
         Helpers.overridePendingTransition_Exit_v1(this);
     }
+
+
+    private void downloadTemplateExcel() {
+        showUnduhTemplateDialog();
+    }
+
+    private void showUnduhTemplateDialog() {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_unduh_template, null);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create();
+
+        View btnSimpan = dialogView.findViewById(R.id.btn_action_simpan);
+        View btnBagikan = dialogView.findViewById(R.id.btn_action_bagikan);
+        Button btnBatal = dialogView.findViewById(R.id.btn_batal_unduh);
+
+        if (btnSimpan != null) {
+            btnSimpan.setOnClickListener(v -> {
+                dialog.dismiss();
+                launchSaveTemplatePicker();
+            });
+        }
+
+        if (btnBagikan != null) {
+            btnBagikan.setOnClickListener(v -> {
+                dialog.dismiss();
+                shareTemplateViaWhatsApp();
+            });
+        }
+
+        if (btnBatal != null) {
+            btnBatal.setOnClickListener(v -> dialog.dismiss());
+        }
+
+        dialog.show();
+    }
+
+    private void launchSaveTemplatePicker() {
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        intent.putExtra(Intent.EXTRA_TITLE, "template_import_orangtua.xlsx");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, MediaStore.Downloads.EXTERNAL_CONTENT_URI);
+        }
+        try {
+            saveTemplateLauncher.launch(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "Tidak dapat membuka pengelola berkas: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void downloadTemplateToUri(Uri targetUri) {
+        if (!NetworkUtil.isConnected(this)) {
+            Toast.makeText(this, "Tidak ada koneksi internet.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(this, "Menyimpan berkas template...", Toast.LENGTH_SHORT).show();
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.orangtuaExportTemplate().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    new Thread(() -> {
+                        try {
+                            InputStream is = response.body().byteStream();
+                            OutputStream os = getContentResolver().openOutputStream(targetUri);
+                            if (os != null) {
+                                byte[] buffer = new byte[4096];
+                                int read;
+                                while ((read = is.read(buffer)) != -1) {
+                                    os.write(buffer, 0, read);
+                                }
+                                os.flush();
+                                os.close();
+                            }
+                            is.close();
+                            runOnUiThread(() -> Toast.makeText(AkunOrangtuaActivity.this, "Template berhasil disimpan di perangkat!", Toast.LENGTH_LONG).show());
+                        } catch (Exception e) {
+                            runOnUiThread(() -> Toast.makeText(AkunOrangtuaActivity.this, "Gagal menyimpan berkas: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        }
+                    }).start();
+                } else {
+                    Toast.makeText(AkunOrangtuaActivity.this, "Gagal mengunduh template Excel.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(AkunOrangtuaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void shareTemplateViaWhatsApp() {
+        if (!NetworkUtil.isConnected(this)) {
+            Toast.makeText(this, "Tidak ada koneksi internet.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Toast.makeText(this, "Menyiapkan berkas template...", Toast.LENGTH_SHORT).show();
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.orangtuaExportTemplate().enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    new Thread(() -> {
+                        try {
+                            File cacheDir = getCacheDir();
+                            File templateFile = new File(cacheDir, "template_import_orangtua.xlsx");
+
+                            InputStream is = response.body().byteStream();
+                            FileOutputStream fos = new FileOutputStream(templateFile);
+                            byte[] buffer = new byte[4096];
+                            int read;
+                            while ((read = is.read(buffer)) != -1) {
+                                fos.write(buffer, 0, read);
+                            }
+                            fos.flush();
+                            fos.close();
+                            is.close();
+
+                            Uri contentUri = FileProvider.getUriForFile(
+                                    AkunOrangtuaActivity.this,
+                                    getPackageName() + ".provider",
+                                    templateFile
+                            );
+
+                            runOnUiThread(() -> {
+                                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                shareIntent.setType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                                shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+                                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Template Import Orang Tua");
+                                shareIntent.putExtra(Intent.EXTRA_TEXT, "Berikut berkas template import orang tua.");
+                                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                shareIntent.setPackage("com.whatsapp");
+
+                                try {
+                                    startActivity(shareIntent);
+                                } catch (ActivityNotFoundException e) {
+                                    try {
+                                        shareIntent.setPackage("com.whatsapp.w4b");
+                                        startActivity(shareIntent);
+                                    } catch (ActivityNotFoundException ex) {
+                                        shareIntent.setPackage(null);
+                                        startActivity(Intent.createChooser(shareIntent, "Bagikan Template Excel via"));
+                                    }
+                                }
+                            });
+                        } catch (Exception e) {
+                            runOnUiThread(() -> Toast.makeText(AkunOrangtuaActivity.this, "Gagal memproses berkas: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                        }
+                    }).start();
+                } else {
+                    Toast.makeText(AkunOrangtuaActivity.this, "Gagal mengunduh template Excel.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(AkunOrangtuaActivity.this, "Terjadi kesalahan: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void openExcelFilePicker() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        String[] mimeTypes = {
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "application/vnd.ms-excel",
+                "application/wps-office.xlsx"
+        };
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        excelPickerLauncher.launch(Intent.createChooser(intent, "Pilih Berkas Excel Akun Orang Tua"));
+    }
+
+    private void processImportExcel(Uri uri) {
+        if (!NetworkUtil.isConnected(this)) {
+            Toast.makeText(this, "Tidak ada koneksi internet.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(this);
+        loading.show();
+
+        new Thread(() -> {
+            try {
+                File tempFile = new File(getCacheDir(), "import_orangtua_" + System.currentTimeMillis() + ".xlsx");
+                InputStream is = getContentResolver().openInputStream(uri);
+                if (is == null) {
+                    runOnUiThread(() -> {
+                        loading.dismiss();
+                        Toast.makeText(this, "Gagal membaca berkas.", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
+                FileOutputStream fos = new FileOutputStream(tempFile);
+                byte[] buf = new byte[4096];
+                int len;
+                while ((len = is.read(buf)) != -1) {
+                    fos.write(buf, 0, len);
+                }
+                fos.flush();
+                fos.close();
+                is.close();
+
+                runOnUiThread(() -> {
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), tempFile);
+                    MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", tempFile.getName(), requestFile);
+                    RequestBody previewPart = RequestBody.create(MultipartBody.FORM, "1");
+
+                    ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+                    apiService.orangtuaImport(filePart, previewPart).enqueue(new Callback<JsonObject>() {
+                        @Override
+                        public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                            loading.dismiss();
+                            if (response.isSuccessful() && response.body() != null) {
+                                JsonObject res = response.body();
+                                String status = res.has("status") ? res.get("status").getAsString() : "";
+                                if ("success".equalsIgnoreCase(status)) {
+                                    int totalRows = 0;
+                                    if (res.has("summary") && res.get("summary").isJsonObject()) {
+                                        JsonObject summary = res.getAsJsonObject("summary");
+                                        totalRows = summary.has("total_rows") ? summary.get("total_rows").getAsInt() : 0;
+                                    }
+                                    if (totalRows == 0) {
+                                        if (tempFile.exists()) tempFile.delete();
+                                        Toast.makeText(AkunOrangtuaActivity.this, "Berkas Excel tidak memiliki baris data.", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                    showImportPreviewDialog(tempFile, res);
+                                } else {
+                                    if (tempFile.exists()) tempFile.delete();
+                                    String msg = res.has("message") ? res.get("message").getAsString() : "Gagal memproses berkas.";
+                                    Toast.makeText(AkunOrangtuaActivity.this, msg, Toast.LENGTH_LONG).show();
+                                }
+                            } else {
+                                Toast.makeText(AkunOrangtuaActivity.this, "Gagal memvalidasi berkas Excel.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<JsonObject> call, Throwable t) {
+                            loading.dismiss();
+                            Toast.makeText(AkunOrangtuaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    loading.dismiss();
+                    Toast.makeText(this, "Gagal membaca berkas: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+    }
+
+    private void showImportPreviewDialog(File tempFile, JsonObject res) {
+        int checkTotal = 0;
+        if (res.has("summary") && res.get("summary").isJsonObject()) {
+            JsonObject summary = res.getAsJsonObject("summary");
+            checkTotal = summary.has("total_rows") ? summary.get("total_rows").getAsInt() : 0;
+        }
+        if (checkTotal == 0) {
+            if (tempFile.exists()) tempFile.delete();
+            Toast.makeText(this, "Berkas Excel tidak memiliki baris data.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_import_preview, null);
+        builder.setView(dialogView);
+
+        TextView tvTitle = dialogView.findViewById(R.id.tv_dialog_title);
+        if (tvTitle != null) tvTitle.setText("Pratinjau Akun Orang Tua");
+
+        TextView tvFileName = dialogView.findViewById(R.id.tv_file_name);
+        TextView tvTotal = dialogView.findViewById(R.id.tv_total_rows);
+        TextView tvValid = dialogView.findViewById(R.id.tv_valid_rows);
+        TextView tvInvalid = dialogView.findViewById(R.id.tv_invalid_rows);
+        LinearLayout llAllValid = dialogView.findViewById(R.id.ll_all_valid_section);
+        LinearLayout llErrorSec = dialogView.findViewById(R.id.ll_error_section);
+        LinearLayout llErrorContainer = dialogView.findViewById(R.id.ll_error_container);
+        Button btnBatal = dialogView.findViewById(R.id.btn_batal_preview);
+        Button btnSimpan = dialogView.findViewById(R.id.btn_simpan_database);
+
+        tvFileName.setText("Berkas: " + tempFile.getName());
+
+        int totalRows = 0, validRows = 0, invalidRows = 0;
+        if (res.has("summary") && res.get("summary").isJsonObject()) {
+            JsonObject summary = res.getAsJsonObject("summary");
+            totalRows = summary.has("total_rows") ? summary.get("total_rows").getAsInt() : 0;
+            validRows = summary.has("valid_rows") ? summary.get("valid_rows").getAsInt() : 0;
+            invalidRows = summary.has("invalid_rows") ? summary.get("invalid_rows").getAsInt() : 0;
+        }
+
+        tvTotal.setText(String.valueOf(totalRows));
+        tvValid.setText(String.valueOf(validRows));
+        tvInvalid.setText(String.valueOf(invalidRows));
+
+        JsonArray errors = res.has("errors") && res.get("errors").isJsonArray() ? res.getAsJsonArray("errors") : new JsonArray();
+
+        if (invalidRows > 0 && errors.size() > 0) {
+            llErrorSec.setVisibility(View.VISIBLE);
+            llAllValid.setVisibility(View.GONE);
+            llErrorContainer.removeAllViews();
+
+            for (int i = 0; i < errors.size(); i++) {
+                JsonObject err = errors.get(i).getAsJsonObject();
+                int row = err.has("row") ? err.get("row").getAsInt() : 0;
+                String identifier = err.has("identifier") ? err.get("identifier").getAsString() : "-";
+                String msg = err.has("message") ? err.get("message").getAsString() : "";
+
+                View itemErr = LayoutInflater.from(this).inflate(R.layout.item_import_error, llErrorContainer, false);
+                TextView tvBadge = itemErr.findViewById(R.id.tv_error_badge);
+                TextView tvId = itemErr.findViewById(R.id.tv_error_identifier);
+                TextView tvMsg = itemErr.findViewById(R.id.tv_error_message);
+
+                tvBadge.setText("Baris " + row);
+                tvId.setText(identifier);
+                tvMsg.setText(msg);
+
+                llErrorContainer.addView(itemErr);
+            }
+        } else {
+            llErrorSec.setVisibility(View.GONE);
+            llAllValid.setVisibility(View.VISIBLE);
+        }
+
+        builder.setCancelable(false);
+        AlertDialog dialog = builder.create();
+
+        btnBatal.setOnClickListener(v -> {
+            dialog.dismiss();
+            if (tempFile.exists()) tempFile.delete();
+        });
+
+        if (validRows == 0) {
+            btnSimpan.setEnabled(false);
+            btnSimpan.setAlpha(0.5f);
+        } else {
+            final int finalValid = validRows;
+            btnSimpan.setOnClickListener(v -> {
+                dialog.dismiss();
+                commitImportExcel(tempFile, finalValid);
+            });
+        }
+
+        dialog.show();
+    }
+
+    private void commitImportExcel(File tempFile, int validCount) {
+        Helpers.LoadingHelper loading = new Helpers.LoadingHelper(this);
+        loading.show();
+
+        RequestBody requestFile = RequestBody.create(MediaType.parse("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"), tempFile);
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", tempFile.getName(), requestFile);
+        RequestBody previewPart = RequestBody.create(MultipartBody.FORM, "0");
+
+        ApiService apiService = ApiClient.getClient(this).create(ApiService.class);
+        apiService.orangtuaImport(filePart, previewPart).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                loading.dismiss();
+                if (tempFile.exists()) tempFile.delete();
+
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject res = response.body();
+                    String status = res.has("status") ? res.get("status").getAsString() : "";
+                    if ("success".equalsIgnoreCase(status)) {
+                        Toast.makeText(AkunOrangtuaActivity.this, "Berhasil mengimpor " + validCount + " akun orang tua!", Toast.LENGTH_LONG).show();
+                        loadData(1, true);
+                    } else {
+                        String msg = res.has("message") ? res.get("message").getAsString() : "Gagal mengimpor data.";
+                        Toast.makeText(AkunOrangtuaActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(AkunOrangtuaActivity.this, "Gagal menyimpan data ke database.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                loading.dismiss();
+                if (tempFile.exists()) tempFile.delete();
+                Toast.makeText(AkunOrangtuaActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }
+

@@ -25,6 +25,7 @@
                 android:layout_height="match_parent"
                 android:elevation="4dp"
                 android:theme="@style/OrionToolbarThemeOverlay"
+                app:popupTheme="@style/ThemeOverlay.Material3.Light"
                 app:menu="@menu/menu_top_nav_list_activity"
                 app:navigationIconTint="@color/white"
                 app:title="Akun Orangtua"
