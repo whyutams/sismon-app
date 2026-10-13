@@ -509,14 +509,22 @@ public class TambahSiswaTerdaftarActivity extends AppCompatActivity {
 
         Button btnNegative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         if (btnNegative != null) {
-            btnNegative.setTextColor(ContextCompat.getColor(this, R.color.gray));
+            btnNegative.setTextColor(Color.WHITE);
+            btnNegative.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.gray));
             btnNegative.setAllCaps(false);
+            if (btnNegative instanceof com.google.android.material.button.MaterialButton) {
+                ((com.google.android.material.button.MaterialButton) btnNegative).setCornerRadius((int) (12 * getResources().getDisplayMetrics().density));
+            }
         }
 
         Button btnNeutral = dialog.getButton(DialogInterface.BUTTON_NEUTRAL);
         if (btnNeutral != null) {
-            btnNeutral.setTextColor(ContextCompat.getColor(this, R.color.error));
+            btnNeutral.setTextColor(Color.WHITE);
+            btnNeutral.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.merah));
             btnNeutral.setAllCaps(false);
+            if (btnNeutral instanceof com.google.android.material.button.MaterialButton) {
+                ((com.google.android.material.button.MaterialButton) btnNeutral).setCornerRadius((int) (12 * getResources().getDisplayMetrics().density));
+            }
         }
     }
 
