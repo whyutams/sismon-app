@@ -390,6 +390,9 @@ public class AkunGuruActivity extends AppCompatActivity {
 
         HashMap<String, String> map = new HashMap<>();
 
+        String role = (data.has("role") && !data.get("role").isJsonNull()) ? data.get("role").getAsString().trim() : "guru";
+        String roleFormatted = Helpers.formatRole(role);
+
         if (data.has("jurusan") && !data.get("jurusan").isJsonNull()) {
             JsonObject jurusan = data.get("jurusan").getAsJsonObject();
             String alias = "";
@@ -398,9 +401,13 @@ public class AkunGuruActivity extends AppCompatActivity {
                 alias = jurusan.get("alias").getAsString();
 
             String j = jurusan.get("nama").getAsString() + (!alias.equals("") ? " (" + alias + ")" : "");
-            tvJurusanText.setText(j);
+            tvJurusanText.setText(j + " • " + roleFormatted);
             map.put("jurusan", j);
+        } else {
+            tvJurusanText.setText(roleFormatted);
+            map.put("jurusan", "-");
         }
+        map.put("role", role);
 
         if (data.has("foto_profil") && !data.get("foto_profil").isJsonNull()) {
             String foto_profil = data.get("foto_profil").getAsString();

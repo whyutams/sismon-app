@@ -95,6 +95,7 @@ public class BerandaFragment extends Fragment {
     private LinearLayout cardContainer;
     private LinearLayout llProfileInfo;
     private LinearLayout llMenuContainer;
+    private View llScrollContent;
 
     private ApiService apiService;
 
@@ -138,6 +139,7 @@ public class BerandaFragment extends Fragment {
         cardContainer = view.findViewById(R.id.card_statistik);
         llProfileInfo = view.findViewById(R.id.ll_profile_info);
         llMenuContainer = view.findViewById(R.id.ll_menu_container);
+        llScrollContent = view.findViewById(R.id.ll_scroll_content);
 
         PreferenceManager pref = new PreferenceManager(requireContext());
         if (pref != null) {
@@ -258,13 +260,17 @@ public class BerandaFragment extends Fragment {
                 int statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
                 int navBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
 
+                float density = getResources().getDisplayMetrics().density;
+                int topOffset = (int) (120 * density);
+                int bottomPadding = navBarHeight + (int) (100 * density);
+
                 ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
-                p.topMargin = statusBarHeight + 360;
+                p.topMargin = statusBarHeight + topOffset;
                 toolbar.setLayoutParams(p);
                 toolbar.requestLayout();
 
                 if (scrollView != null) {
-                    scrollView.setPadding(0, 0, 0, navBarHeight + 300);
+                    scrollView.setPadding(0, 0, 0, bottomPadding);
                 }
 
                 return insets;
@@ -337,6 +343,17 @@ public class BerandaFragment extends Fragment {
                         float translationY = -1 * percentage * (cardHeight * 0.2f);
                         llMenuContainer.setTranslationY(translationY);
                     }
+                }
+
+                if (llScrollContent != null) {
+                    float density = getResources().getDisplayMetrics().density;
+                    float dp85 = 85 * density;
+                    float translation = -dp85 * (1.0f - percentage);
+                    llScrollContent.setTranslationY(translation);
+                }
+                if (appBar != null) {
+                    float density = getResources().getDisplayMetrics().density;
+                    ViewCompat.setElevation(appBar, percentage * 8 * density);
                 }
             });
         }

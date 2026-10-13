@@ -41,6 +41,9 @@
         </provider>
 
         <activity
+            android:name=".activity.EditAkunGuruActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.DetailAkunGuruActivity"
             android:exported="false"
             android:screenOrientation="portrait"

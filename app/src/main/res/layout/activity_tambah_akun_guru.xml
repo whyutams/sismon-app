@@ -138,6 +138,26 @@
                             </com.google.android.material.textfield.TextInputLayout>
 
                             <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/til_role"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                app:endIconDrawable="@drawable/ic_person_24"
+                                app:endIconMode="custom">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/et_role"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:clickable="true"
+                                    android:cursorVisible="false"
+                                    android:focusable="false"
+                                    android:hint="Role Akun Guru"
+                                    android:text="Guru biasa"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
                                 android:id="@+id/til_jurusan"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

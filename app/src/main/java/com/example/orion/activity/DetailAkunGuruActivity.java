@@ -16,6 +16,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -39,12 +42,21 @@ import retrofit2.Response;
 
 public class DetailAkunGuruActivity extends AppCompatActivity {
     private boolean isDataLoaded = false;
+    private ImageView iv_gambar;
+    private TextView tv_no, tv_nip, tv_nama, tv_role, tv_jurusan, tv_nomorHp, tv_email, tv_alamat, tv_username, tv_dibuat_oleh, tv_dibuat_pada, tv_diperbarui_oleh, tv_diperbarui_pada;
+    private LinearLayout ll_progress;
+    private ScrollView sv_main;
+    private String ortuDariSiswa = "", ortu_id = null;
 
-    ImageView iv_gambar;
-    TextView tv_no, tv_nip, tv_nama, tv_jurusan, tv_nomorHp, tv_email, tv_alamat, tv_username, tv_dibuat_oleh, tv_dibuat_pada, tv_diperbarui_oleh, tv_diperbarui_pada;
-    LinearLayout ll_progress;
-    ScrollView sv_main;
-    String ortuDariSiswa = "", ortu_id = null;
+    private final ActivityResultLauncher<Intent> editDataLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    setResult(RESULT_OK);
+                    loadData(ortu_id, getIntent().getStringExtra("index"));
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +80,7 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
         tv_no = findViewById(R.id.tv_no);
         tv_username = findViewById(R.id.tv_username);
         tv_nip = findViewById(R.id.tv_nip);
+        tv_role = findViewById(R.id.tv_role);
         tv_jurusan = findViewById(R.id.tv_jurusan);
         tv_nama = findViewById(R.id.tv_nama);
         tv_nomorHp = findViewById(R.id.tv_nomorHp);
@@ -113,6 +126,9 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
                             tv_username.setText(data.has("username") && !data.get("username").isJsonNull() ? data.get("username").getAsString() : "-");
                             String nip = data.has("nip") && !data.get("nip").isJsonNull() ? data.get("nip").getAsString().trim() : "";
                             tv_nip.setText(!nip.isEmpty() && !"null".equalsIgnoreCase(nip) ? nip : "-");
+
+                            String role = data.has("role") && !data.get("role").isJsonNull() ? data.get("role").getAsString().trim() : "";
+                            if (tv_role != null) tv_role.setText(Helpers.formatRole(role));
 
                             if (data.has("jurusan_id") && !data.get("jurusan_id").isJsonNull() && data.has("jurusan") && !data.get("jurusan").isJsonNull() && data.get("jurusan").isJsonObject()) {
                                 JsonObject jurusan = data.get("jurusan").getAsJsonObject();
@@ -264,7 +280,7 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
         JsonObject user = pref.getUserData();
         String role = user != null && user.has("role") ? user.get("role").getAsString() : "";
         if (role.equals("superadmin")) {
-            getMenuInflater().inflate(R.menu.menu_top_nav_detail_delete, menu);
+            getMenuInflater().inflate(R.menu.menu_top_nav_detail_edit_delete, menu);
             for (int i = 0; i < menu.size(); i++) {
                 Drawable icon = menu.getItem(i).getIcon();
                 if (icon != null) {
@@ -277,6 +293,14 @@ public class DetailAkunGuruActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.nav_edit) {
+            Intent intent = new Intent(this, EditAkunGuruActivity.class);
+            intent.putExtra("id", ortu_id);
+            editDataLauncher.launch(intent);
+            Helpers.overridePendingTransition_Enter_v1(this);
+            return true;
+        }
+
         if (item.getItemId() == R.id.nav_delete) {
             Helpers.showConfirm(this, "Konfirmasi", "Apakah Anda yakin ingin menghapus akun guru ini?", (dialogInterface, i) -> {
                 dialogInterface.dismiss();

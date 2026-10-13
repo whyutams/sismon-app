@@ -191,6 +191,31 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="8dp"
                                         android:layout_weight="1"
+                                        android:text="Role"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:id="@+id/tv_role"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
+                                        android:textAlignment="textEnd"
+                                        android:textColor="@android:color/darker_gray"
+                                        tools:text="Guru biasa" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="8dp"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_weight="1"
                                         android:text="Jurusan"
                                         android:textStyle="bold" />
 

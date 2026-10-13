@@ -125,6 +125,14 @@ public interface ApiService {
     Call<JsonObject> userShow(@Path("id") String id);
 
     @Multipart
+    @POST("users/{id}")
+    Call<JsonObject> userGuruUpdate(
+            @Path("id") String id,
+            @Part("_method") RequestBody method,
+            @Part("role") RequestBody role
+    );
+
+    @Multipart
     @POST("siswa")
     Call<JsonObject> siswaAdd(
             @Part("nis") @Nullable RequestBody nis,

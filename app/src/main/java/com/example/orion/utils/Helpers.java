@@ -199,6 +199,18 @@ public class Helpers {
 
         role = role.trim();
 
+        if (role.equalsIgnoreCase("guru")) {
+            return "Guru biasa";
+        }
+        if (role.equalsIgnoreCase("kesiswaan")) {
+            return "Kesiswaan";
+        }
+        if (role.equalsIgnoreCase("bimbingan_konseling") || role.equalsIgnoreCase("bk")) {
+            return "BK";
+        }
+        if (role.equalsIgnoreCase("guru_piket") || role.equalsIgnoreCase("piket")) {
+            return "Piket";
+        }
         if (role.equalsIgnoreCase("kepsek")) {
             return "Kepala Sekolah";
         }

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 
@@ -67,12 +68,13 @@ import retrofit2.Response;
 
 public class TambahAkunGuruActivity extends AppCompatActivity {
 
-    private TextInputEditText et_nip, et_nama, et_nomorHp, et_email, et_alamat, et_username, et_password, et_jurusan;
-    private TextInputLayout til_nip, til_nama, til_nomorHp, til_email, til_alamat, til_username, til_password, til_jurusan;
+    private TextInputEditText et_nip, et_nama, et_nomorHp, et_email, et_alamat, et_username, et_password, et_jurusan, et_role;
+    private TextInputLayout til_nip, til_nama, til_nomorHp, til_email, til_alamat, til_username, til_password, til_jurusan, til_role;
     private Button btn_simpan;
     private List<Map<String, @Nullable Object>> userList = new ArrayList<>();
     private List<Map<String, @Nullable Object>> jurusanList = new ArrayList<>();
     private String selectedJurusanId = null;
+    private String selectedRole = "guru";
     private JsonObject user;
 
     @Override
@@ -102,6 +104,8 @@ public class TambahAkunGuruActivity extends AppCompatActivity {
         til_alamat = findViewById(R.id.til_alamat);
         til_username = findViewById(R.id.til_username);
         til_password = findViewById(R.id.til_password);
+        til_role = findViewById(R.id.til_role);
+        et_role = findViewById(R.id.et_role);
         et_nip = findViewById(R.id.et_nip);
         et_nama = findViewById(R.id.et_nama);
         et_nomorHp = findViewById(R.id.et_nomorHp);
@@ -114,6 +118,11 @@ public class TambahAkunGuruActivity extends AppCompatActivity {
 
         loadUsers();
         loadJurusan();
+
+        et_role.setOnClickListener(v -> showRolePicker());
+        if (til_role != null) {
+            til_role.setEndIconOnClickListener(v -> showRolePicker());
+        }
 
         et_jurusan.setOnClickListener(v -> showJurusanPicker());
 
@@ -180,7 +189,7 @@ public class TambahAkunGuruActivity extends AppCompatActivity {
                                 RequestBody jurusan = RequestBody.create(MultipartBody.FORM, selectedJurusanId);
                                 RequestBody username = RequestBody.create(MultipartBody.FORM, et_username.getText().toString());
                                 RequestBody password = RequestBody.create(MultipartBody.FORM, "12345678");
-                                RequestBody role = RequestBody.create(MultipartBody.FORM, "guru");
+                                RequestBody role = RequestBody.create(MultipartBody.FORM, selectedRole);
 
                                 if (NetworkUtil.isConnected(TambahAkunGuruActivity.this)) {
                                     ApiService apiService = ApiClient.getClient(TambahAkunGuruActivity.this).create(ApiService.class);
@@ -336,6 +345,37 @@ public class TambahAkunGuruActivity extends AppCompatActivity {
                     finish();
                 }
             });
+        }
+    }
+
+    private void showRolePicker() {
+        final String[] roleNames = {"Guru biasa (Default)", "Kesiswaan", "BK", "Piket"};
+        final String[] roleValues = {"guru", "kesiswaan", "bimbingan_konseling", "guru_piket"};
+
+        int checkedItem = 0;
+        for (int i = 0; i < roleValues.length; i++) {
+            if (roleValues[i].equals(selectedRole)) {
+                checkedItem = i;
+                break;
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Pilih Role Guru");
+        builder.setSingleChoiceItems(roleNames, checkedItem, (dialog, which) -> {
+            selectedRole = roleValues[which];
+            if (which == 0) {
+                et_role.setText("Guru biasa");
+            } else {
+                et_role.setText(roleNames[which]);
+            }
+            dialog.dismiss();
+        });
+        builder.setNegativeButton("Batal", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        if (dialog.getButton(DialogInterface.BUTTON_NEGATIVE) != null) {
+            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, R.color.primary));
         }
     }
 
