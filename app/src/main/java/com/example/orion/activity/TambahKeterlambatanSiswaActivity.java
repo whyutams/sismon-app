@@ -270,18 +270,18 @@ public class TambahKeterlambatanSiswaActivity extends AppCompatActivity {
                             JsonObject data = main_data.has("data") ? main_data.get("data").getAsJsonObject() : null;
                             JsonArray siswas = data.has("siswa") ? data.get("siswa").getAsJsonArray() : null;
 
-                            if (siswas != null || siswas.size() != 0) {
+                            if (siswas != null && siswas.size() > 0) {
                                 for (int i = 0; i < siswas.size(); i++) {
                                     JsonObject d = siswas.get(i).getAsJsonObject();
 
                                     Map<String, Object> siswa = new HashMap<>();
-                                    siswa.put("id", d.get("id").getAsString());
-                                    siswa.put("nis", d.get("nis").isJsonNull() ? "-" : d.get("nis").getAsString());
-                                    siswa.put("nama", d.get("nama").getAsString());
-                                    siswa.put("nomor_hp", (d.get("nomor_hp").isJsonNull() ? "-" : d.get("nomor_hp").getAsString()));
-                                    siswa.put("jurusan", d.get("jurusan").getAsJsonObject());
-                                    siswa.put("orangtua", (!d.get("orangtua").isJsonNull() ? d.get("orangtua").getAsJsonObject() : null));
-                                    siswa.put("kelas", d.get("kelas").getAsString());
+                                    siswa.put("id", d.has("id") && !d.get("id").isJsonNull() ? d.get("id").getAsString() : "");
+                                    siswa.put("nis", d.has("nis") && !d.get("nis").isJsonNull() ? d.get("nis").getAsString() : "-");
+                                    siswa.put("nama", d.has("nama") && !d.get("nama").isJsonNull() ? d.get("nama").getAsString() : "");
+                                    siswa.put("nomor_hp", d.has("nomor_hp") && !d.get("nomor_hp").isJsonNull() ? d.get("nomor_hp").getAsString() : "-");
+                                    siswa.put("jurusan", d.has("jurusan") && !d.get("jurusan").isJsonNull() ? d.get("jurusan").getAsJsonObject() : null);
+                                    siswa.put("orangtua", d.has("orangtua") && !d.get("orangtua").isJsonNull() ? d.get("orangtua").getAsJsonObject() : null);
+                                    siswa.put("kelas", d.has("kelas") && !d.get("kelas").isJsonNull() ? d.get("kelas").getAsString() : "");
 
                                     siswaList.add(siswa);
                                 }
@@ -330,15 +330,26 @@ public class TambahKeterlambatanSiswaActivity extends AppCompatActivity {
                 TextView text2 = view.findViewById(android.R.id.text2);
 
                 Map<String, Object> s = getItem(position);
-                JsonObject jurusan = null;
-                if (s.get("jurusan") != null) {
-                    jurusan = ((JsonObject) s.get("jurusan")).getAsJsonObject();
-                }
+                if (s != null) {
+                    JsonObject jurusan = null;
+                    if (s.get("jurusan") != null && s.get("jurusan") instanceof JsonObject) {
+                        jurusan = (JsonObject) s.get("jurusan");
+                    }
 
-                text1.setText(s.get("nama").toString());
-                text2.setTextColor(getColor(android.R.color.darker_gray));
-                String nama_kelas = s.get("kelas").toString();
-                text2.setText("NIS: " + (s.get("nis").toString().isEmpty() ? "-" : s.get("nis").toString()) + " | " + (s.get("jurusan") != null ? (jurusan.has("alias") ? jurusan.get("alias").getAsString() : jurusan.get("nama").getAsString()) : "-") + " | " + (nama_kelas.isEmpty() ? "-" : nama_kelas));
+                    text1.setText(s.get("nama") != null ? s.get("nama").toString() : "");
+                    text2.setTextColor(getColor(android.R.color.darker_gray));
+                    String nama_kelas = s.get("kelas") != null ? s.get("kelas").toString() : "";
+                    String nis = s.get("nis") != null ? s.get("nis").toString() : "-";
+                    String aliasOrNama = "-";
+                    if (jurusan != null) {
+                        if (jurusan.has("alias") && !jurusan.get("alias").isJsonNull()) {
+                            aliasOrNama = jurusan.get("alias").getAsString();
+                        } else if (jurusan.has("nama") && !jurusan.get("nama").isJsonNull()) {
+                            aliasOrNama = jurusan.get("nama").getAsString();
+                        }
+                    }
+                    text2.setText("NIS: " + (nis.isEmpty() ? "-" : nis) + " | " + aliasOrNama + " | " + (nama_kelas.isEmpty() ? "-" : nama_kelas));
+                }
 
                 return view;
             }

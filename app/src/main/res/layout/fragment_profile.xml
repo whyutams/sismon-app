@@ -109,7 +109,11 @@
                         android:drawableTint="@color/white"
                         android:text="Ubah Profil"
                         android:textAllCaps="false"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        app:cornerRadius="12dp"
+                        android:singleLine="true"
+                        android:maxLines="1" />
                 </LinearLayout>
 
                 <com.facebook.shimmer.ShimmerFrameLayout
@@ -653,7 +657,11 @@
                     android:drawableTint="@color/white"
                     android:text="Keluar"
                     android:textAllCaps="false"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    android:singleLine="true"
+                    android:maxLines="1" />
 
                 <Button
                     android:id="@+id/btn_changePassword"
@@ -668,7 +676,11 @@
                     android:drawableTint="@color/white"
                     android:text="Ubah Password"
                     android:textAllCaps="false"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    android:singleLine="true"
+                    android:maxLines="1" />
             </LinearLayout>
 
 

@@ -22,6 +22,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -349,34 +351,51 @@ public class TambahAkunGuruActivity extends AppCompatActivity {
     }
 
     private void showRolePicker() {
-        final String[] roleNames = {"Guru biasa (Default)", "Kesiswaan", "BK", "Piket"};
-        final String[] roleValues = {"guru", "kesiswaan", "bimbingan_konseling", "guru_piket"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_picker_role, null);
+        builder.setView(dialogView);
 
-        int checkedItem = 0;
-        for (int i = 0; i < roleValues.length; i++) {
-            if (roleValues[i].equals(selectedRole)) {
-                checkedItem = i;
-                break;
-            }
+        RadioGroup rgRoles = dialogView.findViewById(R.id.rg_roles);
+        RadioButton rbGuru = dialogView.findViewById(R.id.rb_role_guru);
+        RadioButton rbKesiswaan = dialogView.findViewById(R.id.rb_role_kesiswaan);
+        RadioButton rbBK = dialogView.findViewById(R.id.rb_role_bk);
+        RadioButton rbPiket = dialogView.findViewById(R.id.rb_role_piket);
+        Button btnBatal = dialogView.findViewById(R.id.btn_batal);
+        Button btnPilih = dialogView.findViewById(R.id.btn_pilih);
+
+        if ("kesiswaan".equals(selectedRole)) {
+            rbKesiswaan.setChecked(true);
+        } else if ("bimbingan_konseling".equals(selectedRole)) {
+            rbBK.setChecked(true);
+        } else if ("guru_piket".equals(selectedRole)) {
+            rbPiket.setChecked(true);
+        } else {
+            rbGuru.setChecked(true);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Pilih Role Guru");
-        builder.setSingleChoiceItems(roleNames, checkedItem, (dialog, which) -> {
-            selectedRole = roleValues[which];
-            if (which == 0) {
-                et_role.setText("Guru biasa");
+        AlertDialog dialog = builder.create();
+
+        btnBatal.setOnClickListener(v -> dialog.dismiss());
+
+        btnPilih.setOnClickListener(v -> {
+            int checkedId = rgRoles.getCheckedRadioButtonId();
+            if (checkedId == R.id.rb_role_kesiswaan) {
+                selectedRole = "kesiswaan";
+                et_role.setText("Kesiswaan");
+            } else if (checkedId == R.id.rb_role_bk) {
+                selectedRole = "bimbingan_konseling";
+                et_role.setText("BK");
+            } else if (checkedId == R.id.rb_role_piket) {
+                selectedRole = "guru_piket";
+                et_role.setText("Piket");
             } else {
-                et_role.setText(roleNames[which]);
+                selectedRole = "guru";
+                et_role.setText("Guru biasa");
             }
             dialog.dismiss();
         });
-        builder.setNegativeButton("Batal", (dialog, which) -> dialog.dismiss());
-        AlertDialog dialog = builder.create();
+
         dialog.show();
-        if (dialog.getButton(DialogInterface.BUTTON_NEGATIVE) != null) {
-            dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, R.color.primary));
-        }
     }
 
     private void showJurusanPicker() {

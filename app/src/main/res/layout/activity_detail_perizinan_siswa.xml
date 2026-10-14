@@ -105,7 +105,11 @@
                             android:drawableTint="@color/white"
                             android:text="Bagikan"
                             android:textAllCaps="false"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/white"
+                            app:cornerRadius="12dp"
+                            android:singleLine="true"
+                            android:maxLines="1" />
 
                         <LinearLayout
                             android:id="@+id/ll_bio"

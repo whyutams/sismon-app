@@ -148,15 +148,21 @@ public class BerandaFragment extends Fragment {
             if (user != null) {
                 tv_user_name.setText(user.get("nama").getAsString());
 
-                if (user.has("jurusan")) {
+                if (user.has("jurusan") && !user.get("jurusan").isJsonNull()) {
                     JsonObject jurusan = user.get("jurusan").getAsJsonObject();
-                    tv_user_jurusan_alias.setText(jurusan.has("alias") && !jurusan.get("alias").isJsonNull()
-                            ? "Guru "+jurusan.get("alias").getAsString() : "-");
+                    String alias = jurusan.has("alias") && !jurusan.get("alias").isJsonNull() ? jurusan.get("alias").getAsString() : "";
+                    String role = user.has("role") && !user.get("role").isJsonNull() ? user.get("role").getAsString() : "guru";
+                    String baseText = alias.isEmpty() ? "Guru" : "Guru " + alias;
+                    if (!role.equals("guru")) {
+                        tv_user_jurusan_alias.setText(baseText + " (" + Helpers.formatRole(role) + ")");
+                    } else {
+                        tv_user_jurusan_alias.setText(alias.isEmpty() ? "-" : baseText);
+                    }
                     tv_user_jurusan.setText(jurusan.has("nama") && !jurusan.get("nama").isJsonNull()
                             ? jurusan.get("nama").getAsString() : "");
                     tv_user_jurusan.setVisibility(View.VISIBLE);
                 } else {
-                    String role = user.get("role").getAsString();
+                    String role = user.has("role") && !user.get("role").isJsonNull() ? user.get("role").getAsString() : "";
 
                     tv_user_jurusan_alias.setText(Helpers.formatRole(role));
                     tv_user_jurusan.setVisibility(View.GONE);
@@ -261,16 +267,15 @@ public class BerandaFragment extends Fragment {
                 int navBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
 
                 float density = getResources().getDisplayMetrics().density;
-                int topOffset = (int) (120 * density);
                 int bottomPadding = navBarHeight + (int) (100 * density);
 
                 ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
-                p.topMargin = statusBarHeight + topOffset;
+                p.topMargin = statusBarHeight + 360;
                 toolbar.setLayoutParams(p);
                 toolbar.requestLayout();
 
                 if (scrollView != null) {
-                    scrollView.setPadding(0, 0, 0, bottomPadding);
+                    scrollView.setPadding(0, 0, 0, navBarHeight + 300);
                 }
 
                 return insets;
@@ -315,6 +320,23 @@ public class BerandaFragment extends Fragment {
                 int totalScroll = appBar.getTotalScrollRange();
                 float percentage = (float) Math.abs(verticalOffset) / (float) totalScroll;
 
+                float density = getResources().getDisplayMetrics().density;
+                // Hanya naikkan elevasi toolbar ketika header sudah collapse (percentage >= 0.80f),
+                // agar hero header (gambar hijau) TIDAK menimpa card statistik saat belum collapse.
+                if (percentage >= 0.80f) {
+                    ViewCompat.setElevation(appBar, 20f * density);
+                    ViewCompat.setTranslationZ(appBar, 10f * density);
+                    if (cardContainer != null) {
+                        ViewCompat.setElevation(cardContainer, 0f);
+                    }
+                } else {
+                    ViewCompat.setElevation(appBar, 0f);
+                    ViewCompat.setTranslationZ(appBar, 0f);
+                    if (cardContainer != null) {
+                        ViewCompat.setElevation(cardContainer, 12f * density);
+                    }
+                }
+
                 if (llProfileInfo != null) {
                     float profileAlpha = 1.0f - (percentage * 2.0f);
                     if (profileAlpha < 0) profileAlpha = 0;
@@ -344,17 +366,6 @@ public class BerandaFragment extends Fragment {
                         llMenuContainer.setTranslationY(translationY);
                     }
                 }
-
-                if (llScrollContent != null) {
-                    float density = getResources().getDisplayMetrics().density;
-                    float dp85 = 85 * density;
-                    float translation = -dp85 * (1.0f - percentage);
-                    llScrollContent.setTranslationY(translation);
-                }
-                if (appBar != null) {
-                    float density = getResources().getDisplayMetrics().density;
-                    ViewCompat.setElevation(appBar, percentage * 8 * density);
-                }
             });
         }
     }
@@ -367,13 +378,19 @@ public class BerandaFragment extends Fragment {
 
             if (user.get("jurusan") != null && !user.get("jurusan").isJsonNull()) {
                 JsonObject jurusan = user.get("jurusan").getAsJsonObject();
-                tv_user_jurusan_alias.setText(jurusan.has("alias") && !jurusan.get("alias").isJsonNull()
-                        ? "Guru "+jurusan.get("alias").getAsString() : "-");
+                String alias = jurusan.has("alias") && !jurusan.get("alias").isJsonNull() ? jurusan.get("alias").getAsString() : "";
+                String role = user.has("role") && !user.get("role").isJsonNull() ? user.get("role").getAsString() : "guru";
+                String baseText = alias.isEmpty() ? "Guru" : "Guru " + alias;
+                if (!role.equals("guru")) {
+                    tv_user_jurusan_alias.setText(baseText + " (" + Helpers.formatRole(role) + ")");
+                } else {
+                    tv_user_jurusan_alias.setText(alias.isEmpty() ? "-" : baseText);
+                }
                 tv_user_jurusan.setText(jurusan.has("nama") && !jurusan.get("nama").isJsonNull()
                         ? jurusan.get("nama").getAsString() : "");
                 tv_user_jurusan.setVisibility(View.VISIBLE);
             } else {
-                String role = user.get("role").getAsString();
+                String role = user.has("role") && !user.get("role").isJsonNull() ? user.get("role").getAsString() : "";
 
                 tv_user_jurusan_alias.setText(Helpers.formatRole(role));
                 tv_user_jurusan.setVisibility(View.GONE);

@@ -221,7 +221,7 @@ tv_siswa.setText(anakText);
                             JsonObject data = main_data.has("data") ? main_data.get("data").getAsJsonObject() : null;
                             JsonArray siswas = data.has("siswa") ? data.get("siswa").getAsJsonArray() : null;
 
-                            if (siswas != null || siswas.size() != 0) {
+                            if (siswas != null && siswas.size() > 0) {
                                 for (int i = 0; i < siswas.size(); i++) {
                                     JsonObject d = siswas.get(i).getAsJsonObject();
 

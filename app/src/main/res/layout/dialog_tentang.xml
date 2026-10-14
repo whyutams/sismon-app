@@ -53,5 +53,7 @@
         android:paddingRight="24dp"
         android:text="OK"
         android:textColor="@color/white"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:singleLine="true"
+        android:maxLines="1" />
 </LinearLayout>

@@ -226,7 +226,11 @@
                     android:text="Simpan"
                     android:textAllCaps="false"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:cornerRadius="12dp"
+                    android:singleLine="true"
+                    android:maxLines="1" />
 
             </LinearLayout>
         </ScrollView>

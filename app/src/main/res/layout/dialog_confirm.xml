@@ -45,7 +45,9 @@
             android:paddingRight="16dp"
             android:text="Batal"
             android:textColor="@color/white"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:singleLine="true"
+            android:maxLines="1" />
 
         <Button
             android:id="@+id/btnPositive"
@@ -59,7 +61,9 @@
             android:paddingRight="16dp"
             android:text="Ya"
             android:textColor="@color/white"
-            android:textAllCaps="false" />
+            android:textAllCaps="false"
+            android:singleLine="true"
+            android:maxLines="1" />
 
     </LinearLayout>
 </LinearLayout>
